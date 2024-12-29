@@ -7,10 +7,6 @@ class BaseRepository(ABC):
         pass
 
     @abstractmethod
-    async def find_by_id(self):
-        pass
-
-    @abstractmethod
     async def update(self):
         pass
 
