@@ -1,5 +1,5 @@
 from domain.abstacts.uow.base_uow import BaseUnitOfWork
-from infrastructure.persistence.repository.sqlalchemy_repository import SqlAlchemyAuthRepository
+from infrastructure.uow.sqlalchemy_uow import SqlAlchemyAuthRepository
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
