@@ -1,5 +1,6 @@
 from domain.interface.uow.base_uow import BaseUnitOfWork
 from domain.interface.services.auth_service import AuthServiceInterface
+from application.interface.password_security import PasswordSecurityInterface
 from infrastructure.security.password_service import PasswordSecurityService
 from domain.entities.user import User
 from domain.valueobject.username import Username
@@ -10,7 +11,7 @@ from domain.valueobject.role import Role
 
 class AuthService(AuthServiceInterface):
     """Сервис для управления регистрацией и аутентификацией пользователей."""
-    def __init__(self, uow: BaseUnitOfWork, password_service: PasswordSecurityService):
+    def __init__(self, uow: BaseUnitOfWork, password_service: PasswordSecurityInterface):
         self.uow = uow
         self.password_service = password_service
     
