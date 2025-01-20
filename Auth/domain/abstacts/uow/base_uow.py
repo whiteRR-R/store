@@ -1,9 +1,9 @@
-from domain.abstacts.repository.base_repository import BaseRepository
+from domain.abstacts.repository.base_repository import IBaseRepository
 from abc import ABC, abstractmethod
 
 
 class BaseUnitOfWork(ABC):
-    repository: BaseRepository
+    repository: IBaseRepository
 
     @abstractmethod
     async def __aenter__(self):
