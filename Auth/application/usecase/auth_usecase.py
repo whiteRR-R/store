@@ -1,4 +1,4 @@
-from domain.abstacts.services.auth_service import AuthServiceInterface
+from domain.interface.services.auth_service import AuthServiceInterface
 
 
 class AuthUseCase:

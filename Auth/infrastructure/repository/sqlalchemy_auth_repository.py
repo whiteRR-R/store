@@ -1,5 +1,5 @@
 from domain.entities.user import User
-from domain.abstacts.repository.sqlalchemy_auth_repository import ISqlAlchemyAuthRepository
+from domain.interface.repository.sqlalchemy_auth_repository import ISqlAlchemyAuthRepository
 from infrastructure.persistence.models.user_model import UserModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select

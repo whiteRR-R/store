@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from domain.abstacts.repository.base_repository import IBaseRepository
+from domain.interface.repository.base_repository import IBaseRepository
 
 
 class ISqlAlchemyAuthRepository(IBaseRepository, ABC):

@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from domain.abstacts.usecases.auth_use_case import AuthUseCaseInterface
+from domain.interface.usecases.auth_use_case import AuthUseCaseInterface
 from application.dtos.user_register_dto import UserRegisterRequest
 
 

@@ -1,5 +1,5 @@
-from domain.abstacts.uow.base_uow import BaseUnitOfWork
-from domain.abstacts.services.auth_service import AuthServiceInterface
+from domain.interface.uow.base_uow import BaseUnitOfWork
+from domain.interface.services.auth_service import AuthServiceInterface
 from infrastructure.security.password_service import PasswordSecurityService
 from domain.entities.user import User
 from domain.valueobject.username import Username
