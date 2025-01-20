@@ -1,12 +1,12 @@
 from domain.entities.user import User
-from domain.abstacts.repository.base_repository import IBaseRepository
+from domain.abstacts.repository.sqlalchemy_auth_repository import ISqlAlchemyAuthRepository
 from infrastructure.persistence.models.user_model import UserModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from typing import Optional
 
 
-class SqlAlchemyAuthRepository(IBaseRepository):
+class SqlAlchemyAuthRepository(ISqlAlchemyAuthRepository):
     """Инициализация Sqlalchemy Auth Repository репозитория."""
     def __init__(self, session: AsyncSession):
         self.session = session
