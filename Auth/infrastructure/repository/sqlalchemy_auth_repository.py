@@ -28,5 +28,11 @@ class SqlAlchemyAuthRepository(ISqlAlchemyAuthRepository):
         )
         user = stmt.one_or_none()
         return user
-           
+    
+    async def find_by_email(self, email: str) -> Optional[UserModel]:
+        stmt = await self.session.execute(
+            select(UserModel).where(UserModel.email == email)
+        )
+        user = stmt.one_or_none()
+        return user
         
