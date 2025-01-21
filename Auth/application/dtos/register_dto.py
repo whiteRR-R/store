@@ -6,3 +6,7 @@ class UserRegisterRequest(BaseModel):
     role: str
     email: str
     password: str
+    
+
+class UserRegisterResponse(BaseModel):
+    message: str = "User successful registred"
