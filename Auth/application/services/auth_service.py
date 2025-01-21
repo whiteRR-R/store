@@ -56,7 +56,7 @@ class AuthService(AuthServiceInterface):
             
             if not user:
                 raise ValueError("Username or password not correct")
-            if self.password_service.verify_password(password, user.hash_password):
+            if not self.password_service.verify_password(password, user.hash_password):
                 raise ValueError("Username or password not correct")
             
             payload = {"sub": username}
