@@ -21,7 +21,7 @@ if config.config_file_name is not None:
 from infrastructure.persistence.database import Base
 from config import config_manager
 target_metadata = Base.metadata
-config.set_main_option("sqlalchemy_url", config_manager.database_settings.database_url)
+config.set_main_option("sqlalchemy.url", config_manager.database_settings.database_url)
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
