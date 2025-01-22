@@ -1,16 +1,18 @@
 from domain.interface.uow.base_uow import BaseUnitOfWork
-from infrastructure.uow.sqlalchemy_uow import SqlAlchemyAuthRepository
+from infrastructure.repository.sqlalchemy_auth_repository import SqlAlchemyAuthRepository
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class SqlAlchemyUnitOfWork(BaseUnitOfWork):
     """Реализация Unit of Work для SQLAlchemy."""
-    def __init__(self, session: AsyncSession):
-        self.session = session
+    def __init__(self, session_factory):
+        self.session_factory = session_factory
+        self.session = None
         self.auth_repository = None
     
     async def __aenter__(self):
         """Вход в асинхронный контекст Unit of Work."""
+        self.session = self.session_factory()
         self.auth_repository = SqlAlchemyAuthRepository(self.session)
         return await super().__aenter__()
     
