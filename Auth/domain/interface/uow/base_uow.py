@@ -16,7 +16,7 @@ class BaseUnitOfWork(ABC):
         
     @property
     @abstractmethod
-    async def repository(self) -> IBaseRepository:
+    def repository(self) -> IBaseRepository:
         raise NotImplementedError
 
     @abstractmethod

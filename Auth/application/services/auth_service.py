@@ -28,7 +28,6 @@ class AuthService(AuthServiceInterface):
         и если нет, создает нового пользователя.
         """
         async with self.uow:
-            
             is_user = await self.uow.repository.find_by_username(username)
             is_email = await self.uow.repository.find_by_email(email)
             
@@ -46,7 +45,7 @@ class AuthService(AuthServiceInterface):
                 password_hash=hash_password
             )
             await self.uow.repository.create(new_user)
-            await self.uow.commit(new_user)
+            await self.uow.commit()
     
     async def login_user(self, username: str, password: str):
         """

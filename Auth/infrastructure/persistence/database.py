@@ -14,7 +14,7 @@ class Database:
         self._engine = create_async_engine(
             url=self._database_url,
         )
-        self._session_factory = async_sessionmaker(
+        self.session_factory = async_sessionmaker(
             bind=self._engine,
         )
 

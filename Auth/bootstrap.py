@@ -10,7 +10,7 @@ from infrastructure.security.password_security import PasswordSecurity
 
 def initializate_auth_controller():
     database = Database(config_manager.database_settings.database_url)
-    sql_alchemy_uow = SqlAlchemyUnitOfWork(database._session_factory)
+    sql_alchemy_uow = SqlAlchemyUnitOfWork(database.session_factory)
     password_security_service = PasswordSecurity()
     jwt_security_service = JWTSecurity()
     auth_service = AuthService(sql_alchemy_uow, password_security_service, jwt_security_service)

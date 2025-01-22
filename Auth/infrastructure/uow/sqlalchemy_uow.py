@@ -23,7 +23,7 @@ class SqlAlchemyUnitOfWork(BaseUnitOfWork):
         await super().__aexit__(exc_type, exc_value, traceback)
     
     @property
-    async def repository(self):
+    def repository(self):
         self._repository = SqlAlchemyAuthRepository(self.session)
         return self._repository
     
