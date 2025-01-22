@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 
 class BaseUnitOfWork(ABC):
-
+    
     @abstractmethod
     async def __aenter__(self):
         return self
@@ -13,6 +13,11 @@ class BaseUnitOfWork(ABC):
         if exc_type is not None:
             await self.rollback()
         await self.rollback()
+        
+    @property
+    @abstractmethod
+    async def repository(self) -> IBaseRepository:
+        raise NotImplementedError
 
     @abstractmethod
     async def commit(self):

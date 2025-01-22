@@ -4,8 +4,8 @@ from domain.entities.user import User
 from domain.valueobject.username import Username
 from domain.valueobject.email import Email
 from domain.valueobject.role import Role
-from application.interface.jwt_security import JWTSecurityInterface
-from application.interface.password_security import PasswordSecurityInterface
+from application.interface.security.jwt_security import JWTSecurityInterface
+from application.interface.security.password_security import PasswordSecurityInterface
 from application.dtos.jwt_token_dto import JWTTokens
 from datetime import timedelta
 
@@ -28,6 +28,7 @@ class AuthService(AuthServiceInterface):
         и если нет, создает нового пользователя.
         """
         async with self.uow:
+            
             is_user = await self.uow.repository.find_by_username(username)
             is_email = await self.uow.repository.find_by_email(email)
             
@@ -44,7 +45,7 @@ class AuthService(AuthServiceInterface):
                 email=email_vo, 
                 password_hash=hash_password
             )
-            await self.uow.auth_repository.create(new_user)
+            await self.uow.repository.create(new_user)
             await self.uow.commit(new_user)
     
     async def login_user(self, username: str, password: str):

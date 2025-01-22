@@ -8,12 +8,11 @@ class SqlAlchemyUnitOfWork(BaseUnitOfWork):
     def __init__(self, session_factory):
         self.session_factory = session_factory
         self.session = None
-        self.auth_repository = None
+        self._repository = None
     
     async def __aenter__(self):
         """Вход в асинхронный контекст Unit of Work."""
         self.session = self.session_factory()
-        self.auth_repository = SqlAlchemyAuthRepository(self.session)
         return await super().__aenter__()
     
     async def __aexit__(self, exc_type, exc_value, traceback):
@@ -22,6 +21,11 @@ class SqlAlchemyUnitOfWork(BaseUnitOfWork):
             await self.rollback()
         await self.session.close()
         await super().__aexit__(exc_type, exc_value, traceback)
+    
+    @property
+    async def repository(self):
+        self._repository = SqlAlchemyAuthRepository(self.session)
+        return self._repository
     
     async def commit(self):
         """Подтверждает текущую транзакцию."""
