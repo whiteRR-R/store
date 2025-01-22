@@ -3,7 +3,6 @@ from abc import ABC, abstractmethod
 
 
 class BaseUnitOfWork(ABC):
-    repository: IBaseRepository
 
     @abstractmethod
     async def __aenter__(self):
