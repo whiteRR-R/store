@@ -1,7 +1,7 @@
 import jwt
 from config import config_manager
 from datetime import timedelta, datetime, timezone
-from application.interface.jwt_security import JWTSecurityInterface
+from application.interface.security.jwt_security import JWTSecurityInterface
 
 
 class JWTSecurity(JWTSecurityInterface):
