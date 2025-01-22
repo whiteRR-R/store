@@ -171,4 +171,4 @@ cython_debug/
 .pypirc
 
 #certs
-/certs
+certs/
