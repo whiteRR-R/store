@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from domain.interface.repository.base_repository import IBaseRepository
 
 
-class ISqlAlchemyAuthRepository(IBaseRepository, ABC):
+class SqlAlchemyAuthRepositoryInterface(IBaseRepository, ABC):
     @abstractmethod
     async def create(self):
         raise NotImplementedError
