@@ -29,7 +29,7 @@ class SqlAlchemyUnitOfWork(BaseUnitOfWork):
     
     async def commit(self):
         """Подтверждает текущую транзакцию."""
-        return self.session.commit()
+        await self.session.commit()
     
     async def flush(self):
         """Сбрасывает изменения в текущую транзакцию."""

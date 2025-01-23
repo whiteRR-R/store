@@ -31,7 +31,7 @@ class AuthService(AuthServiceInterface):
             is_user = await self.uow.repository.find_by_username(username)
             is_email = await self.uow.repository.find_by_email(email)
             
-            if is_user and is_email:
+            if is_user or is_email:
                 raise ValueError("Username or email already exist")
             
             username_vo = Username(username)
