@@ -3,7 +3,7 @@ from pydantic import BaseModel
 
 class UserRegisterRequest(BaseModel):
     username: str
-    role: str
+    role: str = "user"
     email: str
     password: str
     
