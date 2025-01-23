@@ -5,7 +5,7 @@ class UserRegisterRequest(BaseModel):
     username: str
     role: str = "user"
     email: str
-    password: str
+    password: bytes
     
 
 class UserRegisterResponse(BaseModel):

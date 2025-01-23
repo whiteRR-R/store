@@ -22,7 +22,7 @@ class AuthService(AuthServiceInterface):
         self.password_service = password_service
         self.jwt_service = jwt_service
             
-    async def register_user(self, username: str, role: str, email: str, password: str):
+    async def register_user(self, username: str, role: str, email: str, password: bytes):
         """
         Регистрация нового пользователя. Проверяет, существует ли уже пользователь с таким именем, 
         и если нет, создает нового пользователя.
@@ -42,12 +42,12 @@ class AuthService(AuthServiceInterface):
                 username=username_vo,
                 role=role_vo, 
                 email=email_vo, 
-                password_hash=hash_password
+                hash_password=hash_password
             )
             await self.uow.repository.create(new_user)
             await self.uow.commit()
     
-    async def login_user(self, username: str, password: str):
+    async def login_user(self, username: str, password: bytes):
         """
         Логин пользователя. Проверяет правильность имени пользователя и пароля а так же создает токены.
         """
@@ -56,7 +56,7 @@ class AuthService(AuthServiceInterface):
             
             if not user:
                 raise ValueError("Username or password not correct")
-            if not self.password_service.verify_password(password, user.hash_password):
+            if not self.password_service.verify_password(password, user.hashed_password):
                 raise ValueError("Username or password not correct")
             
             payload = {"sub": username}

@@ -25,7 +25,7 @@ class JWTSecurity(JWTSecurityInterface):
             iat=now,
             exp=expire_time
         )
-        encoded = jwt.encode(payload=payload, key=private_key, algorithm=algorithm)
+        encoded = jwt.encode(payload=to_encode, key=private_key, algorithm=algorithm)
         return encoded
         
     

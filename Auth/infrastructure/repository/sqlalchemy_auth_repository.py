@@ -17,7 +17,7 @@ class SqlAlchemyAuthRepository(SqlAlchemyAuthRepositoryInterface):
             username=user.username,
             role=user.role,
             email=user.email,
-            password_hash=user.password_hash
+            hashed_password=user.hash_password
         )
         self.session.add(new_user)
         
@@ -26,7 +26,7 @@ class SqlAlchemyAuthRepository(SqlAlchemyAuthRepositoryInterface):
         stmt = await self.session.execute(
             select(UserModel).where(UserModel.username == username)
         )
-        user = stmt.one_or_none()
+        user = stmt.scalar_one_or_none()
         return user
     
     async def find_by_email(self, email: str) -> Optional[UserModel]:
@@ -34,6 +34,6 @@ class SqlAlchemyAuthRepository(SqlAlchemyAuthRepositoryInterface):
         stmt = await self.session.execute(
             select(UserModel).where(UserModel.email == email)
         )
-        user = stmt.one_or_none()
+        user = stmt.scalar_one_or_none()
         return user
         

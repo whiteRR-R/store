@@ -5,14 +5,12 @@ from application.interface.security.password_security import PasswordSecurityInt
 class PasswordSecurity(PasswordSecurityInterface):
     """Сервис для хэширования паролей и проверки пароля."""
     
-    def get_hash_password(self, password: str):
+    def get_hash_password(self, password: bytes) -> bytes:
         """Хэширование пароля с использованием bcrypt."""
         salt = bcrypt.gensalt()
-        hashed_password = bcrypt.hashpw(password=password.encode("utf-8"), salt=salt)
-        return hashed_password.decode("utf-8")
+        hashed_password = bcrypt.hashpw(password, salt)
+        return hashed_password
     
-    def verify_password(stored_hash: str, password: str) -> bool:
+    def verify_password(self, password: bytes, stored_hash: bytes) -> bool:
         """Проверка пароля."""
-        return bcrypt.checkpw(password.encode('utf-8'), stored_hash.encode('utf-8'))
-    
-
+        return bcrypt.checkpw(password, stored_hash)
