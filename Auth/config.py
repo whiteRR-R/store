@@ -10,15 +10,19 @@ class DatabaseSettings:
     database_url: str = os.getenv("DATABASE_URL")
 
 
-class JWTSecuritySettings:
+class JWTSettings:
     private_key: Path = BASE_DIR / "certs" / "private_key.pem"
     public_key: Path = BASE_DIR / "certs" / "public_key.pem"
     alghoritm: str = "RS256"
+    access_token_expire_time_minute = 15
+    refresh_token_expire_time_day = 20
+    access_token_type = 'access'
+    refresh_token_type = 'refresh'
 
 
 class ConfigManager:
     database_settings: DatabaseSettings = DatabaseSettings()
-    jwt_settings: JWTSecuritySettings = JWTSecuritySettings()
+    jwt_settings: JWTSettings = JWTSettings()
 
 
 config_manager = ConfigManager()
