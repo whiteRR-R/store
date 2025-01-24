@@ -4,7 +4,7 @@ from datetime import  timedelta
 
 class JWTSecurityInterface(ABC):
     @abstractmethod
-    def encode_jwt(self, payload: dict, expire_timedelta: timedelta | None):
+    def encode_jwt(self, payload: dict, expire_timedelta: timedelta | None) -> str:
         raise NotImplementedError
     
     @abstractmethod
