@@ -4,7 +4,7 @@ from domain.entities.user import User
 from domain.valueobject.username import Username
 from domain.valueobject.email import Email
 from domain.valueobject.role import Role
-from application.interface.security.jwt_security import JWTSecurityInterface
+from domain.interface.services.jwt_service import JWTServiceInterface
 from application.interface.security.password_security import PasswordSecurityInterface
 from application.dtos.jwt_token_dto import JWTTokens
 from datetime import timedelta
@@ -15,11 +15,11 @@ class AuthService(AuthServiceInterface):
     def __init__(
         self, 
         uow: BaseUnitOfWork,
-        password_service: PasswordSecurityInterface,
-        jwt_service: JWTSecurityInterface,
+        password_security: PasswordSecurityInterface,
+        jwt_service:JWTServiceInterface,
     ):
         self.uow = uow
-        self.password_service = password_service
+        self.password_security = password_security
         self.jwt_service = jwt_service
             
     async def register_user(self, username: str, role: str, email: str, password: bytes):
@@ -28,20 +28,20 @@ class AuthService(AuthServiceInterface):
         и если нет, создает нового пользователя.
         """
         async with self.uow:
-            is_user = await self.uow.repository.find_by_username(username)
-            is_email = await self.uow.repository.find_by_email(email)
+            existing_user = await self.uow.repository.find_by_username(username)
+            existing_email = await self.uow.repository.find_by_email(email)
             
-            if is_user or is_email:
+            if existing_user or existing_email:
                 raise ValueError("Username or email already exist")
             
-            username_vo = Username(username)
-            email_vo = Email(email)
-            role_vo = Role(role)
-            hash_password = self.password_service.get_hash_password(password)
+            username_value = Username(username)
+            email_value = Email(email)
+            role_value = Role(role)
+            hash_password = self.password_security.get_hash_password(password)
             new_user = User(
-                username=username_vo,
-                role=role_vo, 
-                email=email_vo, 
+                username=username_value,
+                role=role_value, 
+                email=email_value, 
                 hash_password=hash_password
             )
             await self.uow.repository.create(new_user)
@@ -56,28 +56,11 @@ class AuthService(AuthServiceInterface):
             
             if not user:
                 raise ValueError("Username or password not correct")
-            if not self.password_service.verify_password(password, user.hashed_password):
+            if not self.password_security.verify_password(password, user.hashed_password):
                 raise ValueError("Username or password not correct")
             
             payload = {"sub": username}
-            access_token = await self.create_access_token(payload=payload)
-            refresh_token = await self.create_refresh_token(payload=payload)
+            access_token = await self.jwt_service.create_access_token(payload)
+            refresh_token = await self.jwt_service.create_refresh_token(payload)
             return JWTTokens(access_token=access_token, refresh_token=refresh_token)
-        
-    async def create_access_token(self, payload: dict, expire_time: int | float = 15):
-        """ Генерует access токен для пользователя """
-        payload.update(type="access")
-        access_token = self.jwt_service.encode_jwt(
-            payload=payload,
-            expire_timedelta=timedelta(minutes=expire_time),
-        )
-        return access_token
-    
-    async def create_refresh_token(self, payload: dict, expire_time: int | float = 20):
-        """ Генерует refresh токен для пользователя """
-        payload.update(type="refresh")
-        refresh_token = self.jwt_service.encode_jwt(
-            payload=payload,
-            expire_timedelta=timedelta(days=expire_time)
-        )
-        return refresh_token
+
