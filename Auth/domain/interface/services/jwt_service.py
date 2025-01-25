@@ -4,7 +4,11 @@ from config import config_manager
 
 class JWTServiceInterface(ABC):
     @abstractmethod
-    def _create_token(self, payload: dict, token_type: str, expire_time: timedelta) -> str:
+    async def _create_token(self, payload: dict, token_type: str, expire_time: timedelta) -> str:
+        raise NotImplementedError
+    
+    @abstractmethod
+    async def decode_token(self, jwt_token: str):
         raise NotImplementedError
     
     @abstractmethod
@@ -23,4 +27,8 @@ class JWTServiceInterface(ABC):
         token_type: str = "refresh",
         expire_time_in_days: int = 20,
     ) -> str:
+        raise NotImplementedError
+    
+    @abstractmethod
+    async def get_token_subject(self, jwt_token: str):
         raise NotImplementedError
