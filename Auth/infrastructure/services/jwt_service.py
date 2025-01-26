@@ -13,8 +13,8 @@ class JWTService(JWTServiceInterface):
     
     async def _create_token(self, payload: dict, token_type: str, expire_timedelta: timedelta):
         """ Генерует токен для пользователя """
-        updated_payload = payload.update(type=token_type)
-        return self.jwt_security.encode_jwt(payload=updated_payload, expire_timedelta=expire_timedelta)
+        payload.update(type=token_type)
+        return self.jwt_security.encode_jwt(payload=payload, expire_timedelta=expire_timedelta)
 
     async def _decode_token(self, jwt_token: str):
         """ Декодитует токен """
@@ -28,7 +28,6 @@ class JWTService(JWTServiceInterface):
         expire_time_in_minutes: int = config_manager.jwt_settings.access_token_expire_time_minute,
     ):
         """ Генерует access токен для пользователя """
-        
         expire_timedelta = timedelta(minutes=expire_time_in_minutes)
         return await self._create_token(payload=payload, token_type=token_type, expire_timedelta=expire_timedelta)
     
@@ -39,20 +38,19 @@ class JWTService(JWTServiceInterface):
         expire_time_in_days: int = config_manager.jwt_settings.refresh_token_expire_time_day
     ):
         """ Генерует refresh токен для пользователя """
-        
         expire_timedelta = timedelta(days=expire_time_in_days)
         return await self._create_token(payload=payload, token_type=token_type, expire_timedelta=expire_timedelta)
     
-    async def generate_tokens(self, subject: str):
+    async def generate_jwt_tokens(self, subject: str):
         payload = {"sub":subject}
-        access_token = self.create_access_token(payload)
-        refresh_token = self.create_refresh_token(payload)
+        access_token = await self.create_access_token(payload)
+        refresh_token = await self.create_refresh_token(payload)
         return JWTTokens(access_token=access_token, refresh_token=refresh_token)
     
     async def get_token_subject(self, jwt_token: str):
         """ Возвращает имя пользователя из токена """
         try:
-            token_data = self._decode_token(jwt_token)
+            token_data = await self._decode_token(jwt_token)
             subject = token_data.get("sub")
             if subject is None:
                 raise InvalidTokenException("Could not validate credentials")
