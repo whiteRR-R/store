@@ -10,6 +10,15 @@ class User:
         self._role = role
         self._email = email
         self._hash_password = hash_password  
+    
+    @classmethod
+    def create(cls, username: str, role: str, email: str, hash_password: bytes):
+        return cls(
+            username=Username(username),
+            role=Role(role),
+            email=Email(email),
+            hash_password=hash_password
+        )
 
     @property
     def username(self):
