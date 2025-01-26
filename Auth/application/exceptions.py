@@ -10,3 +10,6 @@ class UserNotFoundException(Exception):
     """ Исключение если пользователь не найден """
     pass
 
+class RegistrationException(Exception):
+    """ Исключение для ошибок регистрации """
+    pass
