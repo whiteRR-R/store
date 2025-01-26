@@ -10,3 +10,5 @@ class AuthUseCaseInterface(ABC):
     async def login(self, username: str, password: str):
         raise NotImplementedError
     
+    async def get_current_user_info(self, jwt_token: str):
+        raise NotImplementedError
