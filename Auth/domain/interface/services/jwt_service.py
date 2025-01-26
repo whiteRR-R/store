@@ -30,5 +30,9 @@ class JWTServiceInterface(ABC):
         raise NotImplementedError
     
     @abstractmethod
+    async def generate_jwt_tokens(self, subject: str):
+        raise NotImplementedError
+    
+    @abstractmethod
     async def get_token_subject(self, jwt_token: str):
         raise NotImplementedError

@@ -1,4 +1,5 @@
 from domain.interface.services.jwt_service import JWTServiceInterface
+from application.dtos.jwt_token_dto import JWTTokens
 from application.interface.security.jwt_security import JWTSecurityInterface
 from infrastructure.exceptions import InvalidTokenException
 from jwt.exceptions import InvalidTokenError
@@ -41,6 +42,12 @@ class JWTService(JWTServiceInterface):
         
         expire_timedelta = timedelta(days=expire_time_in_days)
         return await self._create_token(payload=payload, token_type=token_type, expire_timedelta=expire_timedelta)
+    
+    async def generate_tokens(self, subject: str):
+        payload = {"sub":subject}
+        access_token = self.create_access_token(payload)
+        refresh_token = self.create_refresh_token(payload)
+        return JWTTokens(access_token=access_token, refresh_token=refresh_token)
     
     async def get_token_subject(self, jwt_token: str):
         """ Возвращает имя пользователя из токена """
