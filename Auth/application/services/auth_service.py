@@ -5,9 +5,9 @@ from domain.valueobject.username import Username
 from domain.valueobject.email import Email
 from domain.valueobject.role import Role
 from domain.interface.services.jwt_service import JWTServiceInterface
-from application.interface.security.password_security import PasswordSecurityInterface
 from application.dtos.jwt_token_dto import JWTTokens
-from application.exceptions import AlreadyExistsException, AuthenticationException, UserNotFoundException, InvalidTokenException
+from application.interface.security.password_security import PasswordSecurityInterface
+from application.exceptions import AlreadyExistsException, AuthenticationException, UserNotFoundException
 from datetime import timedelta
 
 
@@ -22,58 +22,28 @@ class AuthService(AuthServiceInterface):
         self.uow = uow
         self.password_security = password_security
         self.jwt_service = jwt_service
-            
-    async def register_user(self, username: str, role: str, email: str, password: bytes):
-        """
-        Регистрация нового пользователя. Проверяет, существует ли уже пользователь с таким именем, 
-        и если нет, создает нового пользователя.
-        """
+    
+    async def create_user(self, user: User):
         async with self.uow:
-            existing_user = await self.uow.repository.find_by_username(username)
-            existing_email = await self.uow.repository.find_by_email(email)
-            
-            if existing_user or existing_email:
-                raise ValueError("Username or email already exist")
-            
-            username_value = Username(username)
-            email_value = Email(email)
-            role_value = Role(role)
-            hash_password = self.password_security.get_hash_password(password)
-            new_user = User(
-                username=username_value,
-                role=role_value, 
-                email=email_value, 
-                hash_password=hash_password
-            )
-            await self.uow.repository.create(new_user)
+            await self.uow.repository.create(user)
             await self.uow.commit()
     
-    async def login_user(self, username: str, password: bytes):
-        """
-        Логин пользователя. Проверяет правильность имени пользователя и пароля а так же создает токены.
-        """
+    async def existing_username_and_email(self, username: str, email: str) -> str:
         async with self.uow:
-            user = await self.uow.repository.find_by_username(username)
-            
-            if not user:
-                raise AuthenticationException("Username or password not correct")
-            if not self.password_security.verify_password(password, user.hashed_password):
-                raise AuthenticationException("Username or password not correct")
-            
-            payload = {"sub": username}
-            access_token = await self.jwt_service.create_access_token(payload)
-            refresh_token = await self.jwt_service.create_refresh_token(payload)
-            return JWTTokens(access_token=access_token, refresh_token=refresh_token)
-    
-    async def get_current_user_info(self, jwt_token: str):
-        """ Возврашает информацию текущего пользователя """
+            if self.uow.repository.find_by_username(username):
+                return "username"
+            if self.uow.repository.find_by_email(email):
+                return "email"
+        return None
+
+        
+    async def verify_user_credentials(self, username: str, password: bytes):
         async with self.uow:
-            subject_name = self.jwt_service.get_token_subject(jwt_token)
-            user = self.uow.repository.find_by_username(subject_name)
+            existing_user = self.uow.repository.find_by_username(username)
             
-            if user is None:
-                raise UserNotFoundException("User not found or invalid credentials")
+            if not existing_user:
+                raise AuthenticationException("User not found")
+            if not self.password_security.verify_password(password, existing_user.hash_password):
+                raise AuthenticationException("password was not correct")
             
-            return user
-                
-    
+            return existing_user
