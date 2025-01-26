@@ -15,4 +15,8 @@ class AuthServiceInterface(ABC):
     async def verify_user_credentials(self, username: str, password: str):
         raise NotImplementedError
     
+    @abstractmethod
+    async def get_user_data(self, username: str):
+        raise NotImplementedError
+    
     
