@@ -31,19 +31,23 @@ class AuthService(AuthServiceInterface):
     async def existing_username_and_email(self, username: str, email: str) -> str:
         async with self.uow:
             if self.uow.repository.find_by_username(username):
-                return "username"
+                raise AlreadyExistsException("Username already exception")
             if self.uow.repository.find_by_email(email):
-                return "email"
+                raise AlreadyExistsException("Email already exception")
         return None
 
-        
     async def verify_user_credentials(self, username: str, password: bytes):
         async with self.uow:
             existing_user = self.uow.repository.find_by_username(username)
-            
             if not existing_user:
                 raise AuthenticationException("User not found")
             if not self.password_security.verify_password(password, existing_user.hash_password):
-                raise AuthenticationException("password was not correct")
-            
+                raise AuthenticationException("Password was not correct")
             return existing_user
+    
+    async def get_user_data(self, username: str):
+        async with self.uow:
+            user = self.uow.repository.find_by_username(username)
+            if user is None:
+                raise UserNotFoundException("User not found or invalid credentials")
+            return user
