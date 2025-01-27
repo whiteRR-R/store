@@ -30,12 +30,13 @@ class AuthUseCase:
         except AlreadyExistsException as exception:
             raise RegistrationException(f"Registration failed: {str(exception)}")
         
-    async def login(self, username: str, password: bytes):
+    async def login(self, username: str, password: str):
         """
         Логин пользователя. Проверяет правильность имени пользователя и пароля а так же создает токены.
         """
         try: 
-            user = await self.auth_service.verify_user_credentials(username, password)
+            password_bytes = password.encode()
+            user = await self.auth_service.verify_user_credentials(username, password_bytes)
             jwt_tokens = await self.jwt_service.generate_jwt_tokens(user.username)
             return jwt_tokens
         except AuthenticationException as exception:
