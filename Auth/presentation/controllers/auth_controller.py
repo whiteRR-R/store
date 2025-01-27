@@ -50,17 +50,13 @@ class AuthController:
 
     @handle_http_exception    
     async def register(self, user: UserRegisterRequest) -> UserRegisterResponse:
-        try:
-            await self.auth_use_case.register(
-                username=user.username,
-                role=user.role,
-                email=user.email,
-                password=user.password
-            )
-            return UserRegisterResponse()
-        
-        except Exception as e:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+        await self.auth_use_case.register(
+            username=user.username,
+            role=user.role,
+            email=user.email,
+            password=user.password
+        )
+        return UserRegisterResponse()
     
     @handle_http_exception
     async def login(
