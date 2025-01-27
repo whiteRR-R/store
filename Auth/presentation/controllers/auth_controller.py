@@ -5,8 +5,7 @@ from application.dtos.register_dto import UserRegisterRequest, UserRegisterRespo
 from application.dtos.login_dto import UserLoginRequest
 from application.dtos.jwt_token_dto import JWTTokenResponse
 from application.dtos.user_dto import UserDataResponse
-
-
+from presentation.decorators.http_exception import handle_http_exception
 
 
 class AuthController:
@@ -21,12 +20,14 @@ class AuthController:
             "/register",
             self.register,
             methods=["POST"],
+            status_code=status.HTTP_201_CREATED,
             response_model=UserRegisterResponse
         )
         self.router.add_api_route(
             "/login",
             self.login,
             methods=["POST"],
+            status_code=status.HTTP_201_CREATED,
             response_model=JWTTokenResponse
         )
         
@@ -34,6 +35,7 @@ class AuthController:
             "/refresh",
             self.auth_refresh_token,
             methods=["POST"],
+            status_code=status.HTTP_201_CREATED,
             response_model=JWTTokenResponse,
             response_model_exclude_none=True
         )
@@ -42,9 +44,11 @@ class AuthController:
             "/me",
             self.get_user_data,
             methods=["GET"],
+            status_code=status.HTTP_200_OK,
             response_model=UserDataResponse
         )
-        
+
+    @handle_http_exception    
     async def register(self, user: UserRegisterRequest) -> UserRegisterResponse:
         try:
             await self.auth_use_case.register(
@@ -58,6 +62,7 @@ class AuthController:
         except Exception as e:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     
+    @handle_http_exception
     async def login(
         self,
         login_scheme: UserLoginRequest = Form()
@@ -68,10 +73,12 @@ class AuthController:
             refresh_token=user_tokens.refresh_token,
         )
     
+    @handle_http_exception
     async def auth_refresh_token(self, jwt_token: str) -> JWTTokenResponse:
        access_token = await self.auth_use_case.generate_access_token_from_refresh(jwt_token)
        return JWTTokenResponse(access_token=access_token)
-       
+    
+    @handle_http_exception
     async def get_user_data(self, jwt_token: str=Depends(oauth2_scheme)) -> UserDataResponse:
         user_info = await self.auth_use_case.get_current_user_info(jwt_token)
         return user_info
