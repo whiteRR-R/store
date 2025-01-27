@@ -1,5 +1,5 @@
 from config import config_manager
-from presentation.http.controllers.auth_controller import AuthController
+from presentation.controllers.auth_controller import AuthController
 from application.usecase.auth_usecase import AuthUseCase
 from application.services.auth_service import AuthService
 from infrastructure.persistence.database import Database
