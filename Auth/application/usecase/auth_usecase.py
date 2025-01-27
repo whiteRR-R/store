@@ -61,8 +61,8 @@ class AuthUseCase(AuthUseCaseInterface):
                 subject_name = await self.jwt_service.get_token_subject(jwt_token)
                 user = await self.auth_service.get_user_data(subject_name)    
                 return user
-        except AuthenticationException:
-            raise UserNotFoundException("Authentication failed: User not found")
+        except AuthenticationException as exception:
+            raise UserNotFoundException(f"Authentication not found: {str(exception)}")
     
     async def generate_access_token_from_refresh(self, jwt_token: str):
         """ Генерирует новый access-токен на основе валидного refresh-токена. """
@@ -77,5 +77,5 @@ class AuthUseCase(AuthUseCaseInterface):
                 payload = {"sub": subject}
                 access_token = await self.jwt_service.create_access_token(payload)
             return access_token
-        except Exception:
-            raise TokenProcessingException("Failed to generate access token from refresh token")
+        except Exception as exception:
+            raise TokenProcessingException(f"Failed to generate access token from refresh token: {str(exception)}")
