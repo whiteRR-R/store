@@ -1,7 +1,7 @@
 from domain.interface.services.jwt_service import JWTServiceInterface
 from application.dtos.jwt_token_dto import JWTTokens
 from application.interface.security.jwt_security import JWTSecurityInterface
-from infrastructure.exceptions import InvalidTokenException
+from infrastructure.exceptions import InvalidTokenException, InvalidTokenTypeException
 from jwt.exceptions import InvalidTokenError
 from config import config_manager
 from datetime import timedelta
@@ -42,10 +42,19 @@ class JWTService(JWTServiceInterface):
         return await self._create_token(payload=payload, token_type=token_type, expire_timedelta=expire_timedelta)
     
     async def generate_jwt_tokens(self, subject: str):
+        """ Генерует refresh и access токены и возвращает их"""
         payload = {"sub":subject}
         access_token = await self.create_access_token(payload)
         refresh_token = await self.create_refresh_token(payload)
         return JWTTokens(access_token=access_token, refresh_token=refresh_token)
+    
+    async def validate_token_type(self, jwt_token: str, token_type: str):
+        """ Проверяет, соответствует ли тип токена ожидаемому, и возвращает subject токена. """
+        jwt_data = await self._decode_token(jwt_token)
+        jwt_type = jwt_data.get("type")
+        if jwt_type != token_type:
+            raise InvalidTokenTypeException(f"Invalid token type {jwt_type!r} excepted {token_type!r}")
+        return True
     
     async def get_token_subject(self, jwt_token: str):
         """ Возвращает имя пользователя из токена """
