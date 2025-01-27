@@ -13,3 +13,6 @@ class UserNotFoundException(Exception):
 class RegistrationException(Exception):
     """ Исключение для ошибок регистрации """
     pass
+
+class TokenProcessingException(Exception):
+    pass
