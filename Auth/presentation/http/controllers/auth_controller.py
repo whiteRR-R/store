@@ -3,6 +3,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from domain.interface.usecases.auth_use_case import AuthUseCaseInterface
 from application.dtos.register_dto import UserRegisterRequest, UserRegisterResponse
 from application.dtos.login_dto import UserLoginRequest, UserLoginResponse
+from application.dtos.user_dto import UserDataResponse
 
 
 
@@ -30,11 +31,11 @@ class AuthController:
             "/me",
             self.get_user_data,
             methods=["GET"],
+            response_model=UserDataResponse
         )
         
     async def register(self, user: UserRegisterRequest) -> UserRegisterResponse:
         try:
-            print(type(user.password))
             await self.auth_use_case.register(
                 username=user.username,
                 role=user.role,
@@ -48,15 +49,14 @@ class AuthController:
     
     async def login(
         self,
-        username: str = Form(),
-        password: bytes = Form()
+        login_scheme: UserLoginRequest = Form()
     ) -> UserLoginResponse:
-        user_tokens = await self.auth_use_case.login(username=username, password=password)
+        user_tokens = await self.auth_use_case.login(username=login_scheme.username, password=login_scheme.password)
         return UserLoginResponse(
             access_token=user_tokens.access_token,
             refresh_token=user_tokens.refresh_token,
         )
  
-    async def get_user_data(self, jwt_token: str=Depends(oauth2_scheme)):
+    async def get_user_data(self, jwt_token: str=Depends(oauth2_scheme)) -> UserDataResponse:
         user_info = await self.auth_use_case.get_current_user_info(jwt_token)
         return user_info
