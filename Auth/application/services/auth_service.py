@@ -30,9 +30,9 @@ class AuthService(AuthServiceInterface):
     
     async def existing_username_and_email(self, username: str, email: str) -> str:
         async with self.uow:
-            if self.uow.repository.find_by_username(username):
+            if await self.uow.repository.find_by_username(username):
                 raise AlreadyExistsException("Username already exception")
-            if self.uow.repository.find_by_email(email):
+            if await self.uow.repository.find_by_email(email):
                 raise AlreadyExistsException("Email already exception")
         return None
 
