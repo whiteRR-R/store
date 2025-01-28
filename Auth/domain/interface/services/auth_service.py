@@ -16,7 +16,10 @@ class AuthServiceInterface(ABC):
         raise NotImplementedError
     
     @abstractmethod
-    async def get_user_data(self, username: str):
+    async def get_user_by_username(self, username: str):
         raise NotImplementedError
     
+    @abstractmethod
+    async def get_user_by_email(self, email: str):
+        raise NotImplementedError
     

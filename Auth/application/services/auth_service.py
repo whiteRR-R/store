@@ -7,7 +7,7 @@ from domain.valueobject.role import Role
 from domain.interface.services.jwt_service import JWTServiceInterface
 from application.dtos.jwt_token_dto import JWTTokens
 from application.interface.security.password_security import PasswordSecurityInterface
-from application.exceptions import AlreadyExistsException, AuthenticationException, UserNotFoundException
+from application.exceptions import AlreadyExistsException, AuthException, UserNotFoundException
 from datetime import timedelta
 
 
@@ -40,14 +40,21 @@ class AuthService(AuthServiceInterface):
         async with self.uow:
             existing_user = await self.uow.repository.find_by_username(username)
             if not existing_user:
-                raise AuthenticationException("User not found")
+                raise AuthException("User not found")
             if not self.password_security.verify_password(password, existing_user.hashed_password):
-                raise AuthenticationException("Password was not correct")
+                raise AuthException("Password was not correct")
             return existing_user
     
-    async def get_user_data(self, username: str):
+    async def get_user_by_username(self, username: str):
         async with self.uow:
             user = await self.uow.repository.find_by_username(username)
+            if user is None:
+                raise UserNotFoundException("User not found or invalid credentials")
+            return user
+    
+    async def get_user_by_email(self, email: str):
+        async with self.uow:
+            user = await self.uow.repository.find_by_email(email)
             if user is None:
                 raise UserNotFoundException("User not found or invalid credentials")
             return user
