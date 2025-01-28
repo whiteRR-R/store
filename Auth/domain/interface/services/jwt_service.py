@@ -12,6 +12,15 @@ class JWTServiceInterface(ABC):
         raise NotImplementedError
     
     @abstractmethod
+    async def create_reset_token(
+        self,
+        payload: dict,
+        token_type: str = "reset",
+        expire_time_in_minutes: int = 10,
+    ) -> str:
+        raise NotImplementedError
+    
+    @abstractmethod
     async def create_access_token(
         self,
         payload: dict,

@@ -21,6 +21,16 @@ class JWTService(JWTServiceInterface):
         token_data = self.jwt_security.decode_jwt(jwt_token)
         return token_data
     
+    async def create_reset_token(
+        self,
+        payload: dict,
+        token_type: str = config_manager.jwt_settings.reset_token_type,
+        expire_time_in_minutes = config_manager.jwt_settings.reset_token_expire_time_minute,
+    ):
+        """ Генерует reset токен для пользователя для зброса пароля """
+        expire_timedelta = timedelta(minutes=expire_time_in_minutes)
+        return await self._create_token(payload=payload, token_type=token_type, expire_timedelta=expire_timedelta)
+    
     async def create_access_token(
         self,
         payload: dict,
