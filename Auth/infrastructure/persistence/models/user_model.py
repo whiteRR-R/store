@@ -22,13 +22,3 @@ class UserModel(Base):
         self.role = user.role
         self.email = user.email
         self.hashed_password = user.hash_password
-    
-    @staticmethod
-    def to_domain(self) -> User:
-        """ Преобразует ORM-модель в доменную модель. """
-        return User(
-            username=Username(self.username),
-            role=Role(self.role),
-            email=Email(self.email),
-            hash_password=self.hashed_password
-        )

@@ -11,25 +11,24 @@ class SqlAlchemyAuthRepository(SqlAlchemyAuthRepositoryInterface):
     def __init__(self, session: AsyncSession):
         self.session = session
     
-    async def create(self, user: User) -> User:
+    async def create(self, user: User) -> UserModel:
         """ Создает нового пользователя в базе данных. """
         new_user = UserModel(user)
-        self.session.add(new_user)
         
-    async def find_by_username(self, username: str) -> Optional[User]:
+    async def find_by_username(self, username: str) -> Optional[UserModel]:
         """ Находит пользователя по его имени (username). """
         stmt = await self.session.execute(
             select(UserModel).where(UserModel.username == username)
         )
         user = stmt.scalar_one_or_none()
-        return user.to_domain() if user else None
+        return user
     
-    async def find_by_email(self, email: str) -> Optional[User]:
+    async def find_by_email(self, email: str) -> Optional[UserModel]:
         """ Находит пользователя по его почте (email). """
         stmt = await self.session.execute(
             select(UserModel).where(UserModel.email == email)
         )
         user = stmt.scalar_one_or_none()
-        return user.to_domain() if user else None
+        return user
 
         
