@@ -25,6 +25,7 @@ class UserModel(Base):
     
     @staticmethod
     def to_domain(self) -> User:
+        """ Преобразует ORM-модель в доменную модель. """
         return User(
             username=Username(self.username),
             role=Role(self.role),
