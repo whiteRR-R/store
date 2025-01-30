@@ -6,7 +6,6 @@ class Base(DeclarativeBase):
     """Базовый класс для всех моделей SQLAlchemy"""
     pass
 
-
 class Database:
     """Класс для управления подключением к базе данных sqlalchemy"""
     def __init__(self, database_url: str):
@@ -14,14 +13,14 @@ class Database:
         self._engine = create_async_engine(
             url=self._database_url,
         )
-        self.session_factory = async_sessionmaker(
+        self._session_factory = async_sessionmaker(
             bind=self._engine,
         )
-
-    async def init_db(self):
-        async with self._engine.begin() as conn:
-            await conn.run_sync(Base.metadata.create_all)
-        
+    
+    @property
+    def session_factory(self):
+        return self._session_factory
+    
     async def get_session(self):
         async with self._session_factory as session:    
             try:
