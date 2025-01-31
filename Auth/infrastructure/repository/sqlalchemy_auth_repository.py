@@ -2,7 +2,8 @@ from domain.entities.user import User
 from domain.interface.repository.sqlalchemy_auth_repository import SqlAlchemyAuthRepositoryInterface
 from infrastructure.persistence.models.user_model import UserModel
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy.exc import NoResultFound
+from sqlalchemy import select, update
 from typing import Optional
 
 
@@ -14,6 +15,7 @@ class SqlAlchemyAuthRepository(SqlAlchemyAuthRepositoryInterface):
     async def create(self, user: User) -> UserModel:
         """ Создает нового пользователя в базе данных. """
         new_user = UserModel(user)
+        self.session.add(new_user)
         
     async def find_by_username(self, username: str) -> Optional[UserModel]:
         """ Находит пользователя по его имени (username). """
@@ -31,4 +33,22 @@ class SqlAlchemyAuthRepository(SqlAlchemyAuthRepositoryInterface):
         user = stmt.scalar_one_or_none()
         return user
 
+    async def update(self, user: User):
+        """ Обновляет данные пользователя """
+        update_data = {
+            "username": user.username.value,
+            "email": user.email.value,
+            "role": user.role.value,
+            "hashed_password": user.hash_password
+        }
         
+        result = await self.session.execute(
+            update(UserModel)
+            .where(UserModel.username == user.username)
+            .values(**update_data)
+            .execution_options(synchronize_session="fetch")
+        )
+        
+        if result.rowcount == 0:
+            raise NoResultFound(f"User with id {user.id} not found.")
+

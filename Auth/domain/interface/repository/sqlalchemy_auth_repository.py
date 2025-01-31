@@ -14,3 +14,6 @@ class SqlAlchemyAuthRepositoryInterface(IBaseRepository, ABC):
     
     async def find_by_email(self, email: str):
         raise NotImplementedError
+    
+    async def update(self, user: User):
+        raise NotImplementedError
