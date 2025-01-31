@@ -5,37 +5,46 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 class SqlAlchemyUnitOfWork(BaseUnitOfWork):
     """Реализация Unit of Work для SQLAlchemy."""
-    def __init__(self, session_factory):
-        self.session_factory = session_factory
-        self.session = None
-        self._repository = None
-    
-    async def __aenter__(self):
-        """Вход в асинхронный контекст Unit of Work."""
-        self.session = self.session_factory()
-        return await super().__aenter__()
-    
-    async def __aexit__(self, exc_type, exc_value, traceback):
-        """Выход из асинхронного контекста Unit of Work."""
-        if exc_type is not None:
-            await self.rollback()
-        await self.session.close()
-        await super().__aexit__(exc_type, exc_value, traceback)
-    
-    @property
-    def repository(self):
+    def __init__(self, session: AsyncSession):
+        self.session = session
+        self.new_objects = []
+        self.dirty_objects = []
+        self.deleted_objects = []
         self._repository = SqlAlchemyAuthRepository(self.session)
-        return self._repository
+    
+    async def register_new(self, obj):
+        self.new_objects.append(obj)
+    
+    async def register_dirty(self, obj):
+        self.dirty_objects.append(obj)
+    
+    async def register_deleted(self, obj):
+        self.deleted_objects.append(obj)
     
     async def commit(self):
         """Подтверждает текущую транзакцию."""
-        await self.session.commit()
-    
-    async def flush(self):
-        """Сбрасывает изменения в текущую транзакцию."""
-        await self.session.flush()
+        try:
+            for object in self.new_objects:
+                self._repository.create(object)
+            for object in self.deleted_objects:
+                self.session.delete(object)
+            for object in self.dirty_objects:
+                self._repository.update(object)
+            await self.session.commit()
+            await self.clear()
+        except Exception:
+            await self.rollback()
     
     async def rollback(self):
         """Откатывает текущую транзакцию."""
         await self.session.rollback()
 
+    async def clear(self):
+        self.new_objects.clear()
+        self.dirty_objects.clear()
+        self.deleted_objects.clear()
+
+    @property
+    def repository(self):
+        self._repository = SqlAlchemyAuthRepository(self.session)
+        return self._repository
