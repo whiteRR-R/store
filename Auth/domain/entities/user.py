@@ -20,6 +20,9 @@ class User:
             hash_password=hash_password
         )
 
+    def update_password(self, new_hash_password: bytes):
+        self.hash_password = new_hash_password
+        
     @property
     def username(self):
         return str(self._username)
