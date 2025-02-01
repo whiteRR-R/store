@@ -24,37 +24,42 @@ class AuthService(AuthServiceInterface):
         self.jwt_service = jwt_service
     
     async def create_user(self, user: User):
-        async with self.uow:
-            await self.uow.repository.create(user)
-            await self.uow.commit()
+        user = self.uow.repository.create(user)
+        await self.uow.register_new(user)
+        await self.uow.commit()
     
     async def existing_username_and_email(self, username: str, email: str) -> str:
-        async with self.uow:
-            if await self.uow.repository.find_by_username(username):
-                raise AlreadyExistsException("Username already exception")
-            if await self.uow.repository.find_by_email(email):
-                raise AlreadyExistsException("Email already exception")
+        if await self.uow.repository.find_by_username(username):
+            raise AlreadyExistsException("Username already exception")
+        if await self.uow.repository.find_by_email(email):
+            raise AlreadyExistsException("Email already exception")
         return None
 
     async def verify_user_credentials(self, username: str, password: bytes):
-        async with self.uow:
-            existing_user = await self.uow.repository.find_by_username(username)
-            if not existing_user:
-                raise AuthException("User not found")
-            if not self.password_security.verify_password(password, existing_user.hashed_password):
-                raise AuthException("Password was not correct")
-            return existing_user
+        existing_user = await self.uow.repository.find_by_username(username)
+        if not existing_user:
+            raise AuthException("User not found")
+        if not self.password_security.verify_password(password, existing_user.hashed_password):
+            raise AuthException("Password was not correct")
+        return existing_user
     
     async def get_user_by_username(self, username: str):
-        async with self.uow:
-            user = await self.uow.repository.find_by_username(username)
-            if user is None:
-                raise UserNotFoundException("User not found or invalid credentials")
-            return user
-    
+        user = await self.uow.repository.find_by_username(username)
+        if user is None:
+            raise UserNotFoundException("User not found or invalid credentials")
+        return user
+     
     async def get_user_by_email(self, email: str):
-        async with self.uow:
-            user = await self.uow.repository.find_by_email(email)
-            if user is None:
-                raise UserNotFoundException("User not found or invalid credentials")
-            return user
+        user = await self.uow.repository.find_by_email(email)
+        if user is None:
+            raise UserNotFoundException("User not found or invalid credentials")
+        return user
+    
+    async def update_password(self, username: str, new_password: bytes):
+        user = await self.get_user_by_username(username)
+        hashed_password = self.password_security.get_hash_password(new_password)
+        updated_user = User.create(username=user.username,role=user.role,email=user.email, hash_password=hashed_password)
+        await self.uow.register_dirty(updated_user)
+        await self.commit()
+            
+        
