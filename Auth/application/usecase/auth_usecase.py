@@ -5,7 +5,7 @@ from domain.entities.user import User
 from application.interface.security.password_security import PasswordSecurityInterface
 from application.exceptions import (
     AlreadyExistsException,
-    AuthenticationException,
+    AuthException,
     UserNotFoundException,
     RegistrationException,
     TokenProcessingException,
@@ -30,12 +30,11 @@ class AuthUseCase(AuthUseCaseInterface):
         и если нет, создает нового пользователя.
         """
         try:
-            user_exist = await self.auth_service.existing_username_and_email(username, email)
-            if user_exist is None:
-                hashed_password = self.password_security.get_hash_password(password)
-                user = User.create(username=username,role=role,email=email, hash_password=hashed_password)
-                await self.auth_service.create_user(user)
-        except AlreadyExistsException as exception:
+            await self.auth_service.existing_username_and_email(username, email)
+            hashed_password = self.password_security.get_hash_password(password)
+            user = User.create(username=username,role=role,email=email, hash_password=hashed_password)
+            await self.auth_service.create_user(user)
+        except RegistrationException as exception:
             raise RegistrationException(f"Registration failed: {str(exception)}")
         
     async def login(self, username: str, password: str):
@@ -47,35 +46,46 @@ class AuthUseCase(AuthUseCaseInterface):
             user = await self.auth_service.verify_user_credentials(username, password_bytes)
             jwt_tokens = await self.jwt_service.generate_jwt_tokens(user.username)
             return jwt_tokens
-        except AuthenticationException as exception:
-            raise AuthenticationException(f"Authentication failed: {str(exception)}")
+        except AuthException as exception:
+            raise AuthException(f"Authentication failed: {str(exception)}")
             
     async def get_current_user_info(self, jwt_token: str):
         """ Возврашает информацию текущего пользователя """
         try:
-            is_valid = await self.jwt_service.validate_token_type(
-                jwt_token=jwt_token,
-                token_type=config_manager.jwt_settings.access_token_type
-            )
-            if is_valid:
-                subject_name = await self.jwt_service.get_token_subject(jwt_token)
-                user = await self.auth_service.get_user_data(subject_name)    
-                return user
-        except AuthenticationException as exception:
-            raise UserNotFoundException(f"Authentication not found: {str(exception)}")
+            await self.jwt_service.validate_token_type(jwt_token=jwt_token, token_type=config_manager.jwt_settings.reset_token_type)
+            subject_name = await self.jwt_service.get_token_subject(jwt_token)
+            user = await self.auth_service.get_user_by_username(subject_name)    
+            return user
+        except AuthException as exception:
+            raise UserNotFoundException(f"User not found: {str(exception)}")
     
     async def generate_access_token_from_refresh(self, jwt_token: str):
         """ Генерирует новый access-токен на основе валидного refresh-токена. """
         try:
-            is_valid = await self.jwt_service.validate_token_type(
-                jwt_token=jwt_token, 
-                token_type=config_manager.jwt_settings.refresh_token_type
-            )
-            
-            if is_valid:
-                subject = await self.jwt_service.get_token_subject(jwt_token)
-                payload = {"sub": subject}
-                access_token = await self.jwt_service.create_access_token(payload)
+            await self.jwt_service.validate_token_type(jwt_token=jwt_token, token_type=config_manager.jwt_settings.reset_token_type)
+            subject = await self.jwt_service.get_token_subject(jwt_token)
+            payload = {"sub": subject}
+            access_token = await self.jwt_service.create_access_token(payload)
             return access_token
-        except Exception as exception:
+        except AuthException as exception:
             raise TokenProcessingException(f"Failed to generate access token from refresh token: {str(exception)}")
+    
+    async def forgot_password(self, email: str):
+        """ Генерирует reset-токен для сброса пароля """
+        try:
+            user = await self.auth_service.get_user_by_email(email)
+            payload = {"sub": user.username}
+            reset_token = self.jwt_service.create_reset_token(payload)
+            return reset_token
+        except Exception as exception:
+            raise TokenProcessingException(f"Failed to generate token: {str(exception)}")
+    
+    async def reset_password(self, jwt_token: str, new_password: bytes):
+        """ Сбросывает пароль через reset-токен """
+        try:
+            await self.jwt_service.validate_token_type(jwt_token=jwt_token, token_type=config_manager.jwt_settings.reset_token_type)
+            subject = await self.jwt_service.get_token_subject(jwt_token)
+            await self.auth_service.update_password(subject, new_password)
+            
+        except Exception:
+            return None          
