@@ -9,8 +9,8 @@ class JWTSecurity(JWTSecurityInterface):
         self,
         payload: dict,
         expire_timedelta: timedelta | None = None,
-        private_key: str = config_manager.jwt_settings.private_key.read_text(),
-        algorithm: str = config_manager.jwt_settings.alghoritm
+        private_key: str = config_manager.jwt.PRIVATE_KEY.read_text(),
+        algorithm: str = config_manager.jwt.ALGORITHM
         ):
         
         to_encode = payload.copy()
@@ -32,8 +32,8 @@ class JWTSecurity(JWTSecurityInterface):
     def decode_jwt(
         self,
         jwt_token: str,
-        public_key: str = config_manager.jwt_settings.public_key.read_text(),
-        algoritm: str = config_manager.jwt_settings.alghoritm,
+        public_key: str = config_manager.jwt.PUBLIC_KEY.read_text(),
+        algoritm: str = config_manager.jwt.ALGORITHM,
         ):
         
         decoded = jwt.decode(jwt=jwt_token, key=public_key, algorithms=[algoritm])

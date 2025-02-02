@@ -24,8 +24,8 @@ class JWTService(JWTServiceInterface):
     async def create_reset_token(
         self,
         payload: dict,
-        token_type: str = config_manager.jwt_settings.reset_token_type,
-        expire_time_in_minutes = config_manager.jwt_settings.reset_token_expire_time_minute,
+        token_type: str = config_manager.jwt.RESET_TOKEN_TYPE,
+        expire_time_in_minutes = config_manager.jwt.reset_token_expire_time_minute,
     ):
         """ Генерует reset токен для пользователя для зброса пароля """
         expire_timedelta = timedelta(minutes=expire_time_in_minutes)
@@ -34,8 +34,8 @@ class JWTService(JWTServiceInterface):
     async def create_access_token(
         self,
         payload: dict,
-        token_type: str = config_manager.jwt_settings.access_token_type,
-        expire_time_in_minutes: int = config_manager.jwt_settings.access_token_expire_time_minute,
+        token_type: str = config_manager.jwt.ACCESS_TOKEN_TYPE,
+        expire_time_in_minutes: int = config_manager.jwt.access_token_expire_time_minute,
     ):
         """ Генерует access токен для пользователя """
         expire_timedelta = timedelta(minutes=expire_time_in_minutes)
@@ -44,8 +44,8 @@ class JWTService(JWTServiceInterface):
     async def create_refresh_token(
         self,
         payload: dict,
-        token_type: str = config_manager.jwt_settings.refresh_token_type,
-        expire_time_in_days: int = config_manager.jwt_settings.refresh_token_expire_time_day
+        token_type: str = config_manager.jwt.REFRESH_TOKEN_TYPE,
+        expire_time_in_days: int = config_manager.jwt.refresh_token_expire_time_day
     ):
         """ Генерует refresh токен для пользователя """
         expire_timedelta = timedelta(days=expire_time_in_days)

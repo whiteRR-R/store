@@ -52,7 +52,7 @@ class AuthUseCase(AuthUseCaseInterface):
     async def get_current_user_info(self, jwt_token: str):
         """ Возврашает информацию текущего пользователя """
         try:
-            await self.jwt_service.validate_token_type(jwt_token=jwt_token, token_type=config_manager.jwt_settings.reset_token_type)
+            await self.jwt_service.validate_token_type(jwt_token=jwt_token, token_type=config_manager.jwt.RESET_TOKEN_TYPE)
             subject_name = await self.jwt_service.get_token_subject(jwt_token)
             user = await self.auth_service.get_user_by_username(subject_name)    
             return user
@@ -62,7 +62,7 @@ class AuthUseCase(AuthUseCaseInterface):
     async def generate_access_token_from_refresh(self, jwt_token: str):
         """ Генерирует новый access-токен на основе валидного refresh-токена. """
         try:
-            await self.jwt_service.validate_token_type(jwt_token=jwt_token, token_type=config_manager.jwt_settings.reset_token_type)
+            await self.jwt_service.validate_token_type(jwt_token=jwt_token, token_type=config_manager.jwt.RESET_TOKEN_TYPE)
             subject = await self.jwt_service.get_token_subject(jwt_token)
             payload = {"sub": subject}
             access_token = await self.jwt_service.create_access_token(payload)
@@ -83,7 +83,7 @@ class AuthUseCase(AuthUseCaseInterface):
     async def reset_password(self, jwt_token: str, new_password: bytes):
         """ Сбросывает пароль через reset-токен """
         try:
-            await self.jwt_service.validate_token_type(jwt_token=jwt_token, token_type=config_manager.jwt_settings.reset_token_type)
+            await self.jwt_service.validate_token_type(jwt_token=jwt_token, token_type=config_manager.jwt.RESET_TOKEN_TYPE)
             subject = await self.jwt_service.get_token_subject(jwt_token)
             await self.auth_service.update_password(subject, new_password)
             
