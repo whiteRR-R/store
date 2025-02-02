@@ -16,12 +16,12 @@ class JWTSettings(BaseModel):
     PRIVATE_KEY: Path = BASE_DIR / "certs" / "private_key.pem"
     PUBLIC_KEY: Path = BASE_DIR / "certs" / "public_key.pem"
     ALGORITHM: str = "RS256"
-    RESET_TOKEN_TYPE = 'reset'
-    ACCESS_TOKEN_TYPE = 'access'
-    REFRESH_TOKEN_TYPE = 'refresh'
-    reset_token_expire_time_minute = 10
-    access_token_expire_time_minute = 15
-    refresh_token_expire_time_day = 20
+    RESET_TOKEN_TYPE: str = 'reset'
+    ACCESS_TOKEN_TYPE: str = 'access'
+    REFRESH_TOKEN_TYPE: str = 'refresh'
+    reset_token_expire_time_minute: int = 10
+    access_token_expire_time_minute: int = 15
+    refresh_token_expire_time_day: int = 20
 
 
 class ConfigManager(BaseSettings):
