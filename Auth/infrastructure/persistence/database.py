@@ -22,7 +22,7 @@ class Database:
         return self._session_factory
     
     async def get_session(self):
-        async with self._session_factory as session:    
+        async with self._session_factory() as session:    
             try:
                 yield session
             except Exception:
