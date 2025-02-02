@@ -12,8 +12,8 @@ class AuthController:
     http_bearer = HTTPBearer(auto_error=False)
     oauth2_scheme = OAuth2PasswordBearer(tokenUrl='login')
     
-    def __init__(self, auth_use_case: AuthUseCaseInterface):
-        self.auth_use_case = auth_use_case
+    def __init__(self, auth_usecase: AuthUseCaseInterface):
+        self.auth_usecase = auth_usecase
         self.router = APIRouter(dependencies=[Depends(self.http_bearer)])
         
         self.router.add_api_route(
@@ -50,7 +50,7 @@ class AuthController:
 
     @handle_http_exception    
     async def register(self, user: UserRegisterRequest) -> UserRegisterResponse:
-        await self.auth_use_case.register(
+        await self.auth_usecase.register(
             username=user.username,
             role=user.role,
             email=user.email,
@@ -63,7 +63,7 @@ class AuthController:
         self,
         login_scheme: UserLoginRequest = Form()
     ) -> JWTTokenResponse:
-        user_tokens = await self.auth_use_case.login(username=login_scheme.username, password=login_scheme.password)
+        user_tokens = await self.auth_usecase.login(username=login_scheme.username, password=login_scheme.password)
         return JWTTokenResponse(
             access_token=user_tokens.access_token,
             refresh_token=user_tokens.refresh_token,
@@ -71,10 +71,10 @@ class AuthController:
     
     @handle_http_exception
     async def auth_refresh_token(self, jwt_token: str) -> JWTTokenResponse:
-       access_token = await self.auth_use_case.generate_access_token_from_refresh(jwt_token)
+       access_token = await self.auth_usecase.generate_access_token_from_refresh(jwt_token)
        return JWTTokenResponse(access_token=access_token)
     
     @handle_http_exception
     async def get_user_data(self, jwt_token: str=Depends(oauth2_scheme)) -> UserDataResponse:
-        user_info = await self.auth_use_case.get_current_user_info(jwt_token)
+        user_info = await self.auth_usecase.get_current_user_info(jwt_token)
         return user_info

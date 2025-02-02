@@ -18,11 +18,9 @@ class AuthUseCase(AuthUseCaseInterface):
         self,
         auth_service: AuthServiceInterface,
         jwt_service: JWTServiceInterface,
-        password_security: PasswordSecurityInterface
     ):
         self.auth_service = auth_service
         self.jwt_service = jwt_service
-        self.password_security = password_security
     
     async def register(self, username: str, role: str, email: str, password: bytes):
         """
