@@ -1,8 +1,11 @@
-class AuthException(Exception):
+class ApplicationException(Exception):
+    pass
+
+class AuthException(ApplicationException):
     """ Исключение для ошибок аутентификации """
     pass
 
-class RegistrationException(Exception):
+class RegistrationException(ApplicationException):
     """ Исключение для ошибок регистрации """
     pass
 
@@ -14,5 +17,5 @@ class UserNotFoundException(AuthException):
     """ Исключение если пользователь не найден """
     pass
 
-class TokenProcessingException(AuthException):
+class TokenProcessingException(ApplicationException):
     pass
