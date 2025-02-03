@@ -15,8 +15,8 @@ class JWTServiceInterface(ABC):
     async def create_reset_token(
         self,
         payload: dict,
-        token_type: str = "reset",
-        expire_time_in_minutes: int = 10,
+        token_type: str = config_manager.jwt.RESET_TOKEN_TYPE,
+        expire_time_in_minutes: int = config_manager.jwt.reset_token_expire_time_minute,
     ) -> str:
         raise NotImplementedError
     
@@ -24,8 +24,8 @@ class JWTServiceInterface(ABC):
     async def create_access_token(
         self,
         payload: dict,
-        token_type: str = "access",
-        expire_time_in_minutes: int = 15,
+        token_type: str = config_manager.jwt.ACCESS_TOKEN_TYPE,
+        expire_time_in_minutes: int = config_manager.jwt.access_token_expire_time_minute,
     ) -> str:
         raise NotImplementedError
     
@@ -33,8 +33,8 @@ class JWTServiceInterface(ABC):
     async def create_refresh_token(
         self,
         payload: dict,
-        token_type: str = "refresh",
-        expire_time_in_days: int = 20,
+        token_type: str = config_manager.jwt.REFRESH_TOKEN_TYPE,
+        expire_time_in_days: int = config_manager.jwt.refresh_token_expire_time_day,
     ) -> str:
         raise NotImplementedError
     
