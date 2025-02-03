@@ -1,10 +1,10 @@
 from domain.interface.services.auth_service import AuthServiceInterface
 from domain.interface.services.jwt_service import JWTServiceInterface
-from domain.interface.usecases.auth_use_case import AuthUseCaseInterface
+from domain.interface.usecases.auth_usecase import AuthUseCaseInterface
 from domain.entities.user import User
 from application.interface.security.password_security import PasswordSecurityInterface
 from application.exceptions import (
-    AlreadyExistsException,
+    ApplicationException,
     AuthException,
     UserNotFoundException,
     RegistrationException,
@@ -65,7 +65,7 @@ class AuthUseCase(AuthUseCaseInterface):
             payload = {"sub": subject}
             access_token = await self.jwt_service.create_access_token(payload)
             return access_token
-        except AuthException as exception:
+        except ApplicationException as exception:
             raise TokenProcessingException(f"Failed to generate access token from refresh token: {str(exception)}")
     
     async def forgot_password(self, email: str):
@@ -74,16 +74,20 @@ class AuthUseCase(AuthUseCaseInterface):
             user = await self.auth_service.get_user_by_email(email)
             payload = {"sub": user.username}
             reset_token = self.jwt_service.create_reset_token(payload)
+            #TODO: Добавить отправку ссылку для сброса на почту
             return reset_token
+        except UserNotFoundException:
+            raise UserNotFoundException("User not found")
         except Exception as exception:
-            raise TokenProcessingException(f"Failed to generate token: {str(exception)}")
+            raise ApplicationException(f"Failed to generate token: {str(exception)}")
     
     async def reset_password(self, jwt_token: str, new_password: bytes):
         """ Сбросывает пароль через reset-токен """
         try:
             await self.jwt_service.validate_token_type(jwt_token=jwt_token, token_type=config_manager.jwt.RESET_TOKEN_TYPE)
             subject = await self.jwt_service.get_token_subject(jwt_token)
-            await self.auth_service.update_password(subject, new_password)
-            
-        except Exception:
-            return None          
+            await self.auth_service.update_password(subject, new_password)  
+        except UserNotFoundException:
+            raise UserNotFoundException("User not found for password reset.")
+        except Exception as exception:
+            raise ApplicationException(f"Unexpected error during password reset: {str(exception)}")      
