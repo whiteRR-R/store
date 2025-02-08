@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class ProductRepository(ABC):
+class ProductRepositoryInterface(ABC):
     @abstractmethod
     async def create(self):
         raise NotImplementedError
