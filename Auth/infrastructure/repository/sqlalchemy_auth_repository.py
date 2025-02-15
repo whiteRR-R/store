@@ -50,5 +50,5 @@ class SqlAlchemyAuthRepository(SqlAlchemyAuthRepositoryInterface):
         )
         
         if result.rowcount == 0:
-            raise NoResultFound(f"User with id {user.id} not found.")
+            raise NoResultFound(f"User with id {user.username} not found.")
 
