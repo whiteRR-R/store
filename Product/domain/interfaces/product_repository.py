@@ -19,7 +19,6 @@ class ProductRepositoryInterface(ABC):
     async def find_by_name(self, name: str):
         raise NotImplementedError
 
-    
     @abstractmethod
     async def find_by_category(self, category: str):
         raise NotImplementedError
