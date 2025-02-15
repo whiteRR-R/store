@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase
-
+from contextlib import asynccontextmanager
 
 class Base(DeclarativeBase):
     """Базовый класс для всех моделей SQLAlchemy"""
@@ -21,6 +21,7 @@ class Database:
     def session_factory(self):
         return self._session_factory
     
+    @asynccontextmanager
     async def get_session(self):
         async with self._session_factory() as session:    
             try:
