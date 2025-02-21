@@ -8,7 +8,7 @@ class AuthServiceInterface(ABC):
         raise NotImplementedError
     
     @abstractmethod
-    async def existing_username_and_email(self, username: str, email: str) -> str:
+    async def existing_username_or_email(self, username: str, email: str) -> str:
         raise NotImplementedError
 
     @abstractmethod
