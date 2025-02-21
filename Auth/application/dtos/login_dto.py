@@ -1,6 +1,6 @@
-from pydantic import BaseModel
+from dataclasses import dataclass
 
-
-class UserLoginRequest(BaseModel):
+@dataclass(frozen=True)
+class UserLoginDTO:
     username: str
     password: str

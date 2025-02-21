@@ -1,8 +1,8 @@
-from pydantic import BaseModel
+from dataclasses import dataclass
 
-
-class UserDataResponse(BaseModel):
+@dataclass(frozen=True)
+class UserDTO:
     username: str
-    role: str
     email: str
-    
+    password: str
+    role: str = 'user'
