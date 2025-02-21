@@ -1,5 +1,5 @@
 from domain.interface.services.jwt_service import JWTServiceInterface
-from application.dtos.jwt_token_dto import JWTTokens
+from application.dtos.jwt_token_dto import JWTTokensDTO
 from application.interface.security.jwt_security import JWTSecurityInterface
 from infrastructure.exceptions import InvalidTokenException, InvalidTokenTypeException
 from jwt.exceptions import InvalidTokenError
@@ -56,7 +56,7 @@ class JWTService(JWTServiceInterface):
         payload = {"sub":subject}
         access_token = await self.create_access_token(payload)
         refresh_token = await self.create_refresh_token(payload)
-        return JWTTokens(access_token=access_token, refresh_token=refresh_token)
+        return JWTTokensDTO(access_token=access_token, refresh_token=refresh_token)
     
     async def validate_token_type(self, jwt_token: str, token_type: str):
         """ Проверяет, соответствует ли тип токена ожидаемому, и возвращает subject токена. """
