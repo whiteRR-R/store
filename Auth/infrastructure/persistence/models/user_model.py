@@ -1,7 +1,4 @@
 from domain.entities.user import User
-from domain.valueobject.role import Role
-from domain.valueobject.email import Email
-from domain.valueobject.username import Username
 from infrastructure.persistence.database import Base
 from sqlalchemy.orm import mapped_column, Mapped
 from sqlalchemy import Integer, String, LargeBinary
