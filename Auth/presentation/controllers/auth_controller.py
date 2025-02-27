@@ -1,14 +1,16 @@
 from fastapi import APIRouter, status, HTTPException, Depends, Form
 from fastapi.security import OAuth2PasswordBearer, HTTPBearer
 from domain.interface.usecases.auth_usecase import AuthUseCaseInterface
-from application.dtos.register_dto import UserRegisterRequest, UserRegisterResponse
-from application.dtos.login_dto import UserLoginRequest
-from application.dtos.jwt_token_dto import JWTTokenResponse
-from application.dtos.user_dto import UserDataResponse
-from application.dtos.forgot_password_dto import ForgotPasswordRequest, ForgotPasswordResponse
-from application.dtos.reset_password_dto import ResetPasswordRequest, ResetPasswordResponse
+from application.dtos.login_dto import UserLoginDTO
+from application.dtos.jwt_token_dto import JWTTokenDTO
+from application.dtos.user_dto import UserDTO
+from application.dtos.forgot_password_dto import ForgotPasswordDTO
+from application.dtos.reset_password_dto import ResetPasswordDTO
+from presentation.responses.jwt_token_response import JWTTokenResponse
+from presentation.responses.forgot_password_response import ForgotPasswordResponse
+from presentation.responses.reset_password_response import ResetPasswordResponse
+from presentation.responses.user_data_response import UserDataResponse
 from presentation.decorators.http_exception import handle_http_exception
-
 
 class AuthController:
     http_bearer = HTTPBearer(auto_error=False)
@@ -23,8 +25,9 @@ class AuthController:
             self.register,
             methods=["POST"],
             status_code=status.HTTP_201_CREATED,
-            response_model=UserRegisterResponse
+            
         )
+        
         self.router.add_api_route(
             "/login",
             self.login,
@@ -46,7 +49,7 @@ class AuthController:
             self.reset_password,
             methods=["PATCH"],
             status_code=status.HTTP_200_OK,
-            response_model=ResetPasswordResponse
+            response_model=ResetPasswordResponse,
         )
         
         self.router.add_api_route(
@@ -67,38 +70,29 @@ class AuthController:
         )
 
     @handle_http_exception    
-    async def register(self, user: UserRegisterRequest) -> UserRegisterResponse:
-        await self.auth_usecase.register(
-            username=user.username,
-            role=user.role,
-            email=user.email,
-            password=user.password
-        )
-        return UserRegisterResponse()
+    async def register(self, user_data: UserDTO):
+        await self.auth_usecase.register(user_data)
     
     @handle_http_exception
-    async def login(
-        self,
-        login_scheme: UserLoginRequest = Form()
-    ) -> JWTTokenResponse:
-        user_tokens = await self.auth_usecase.login(username=login_scheme.username, password=login_scheme.password)
+    async def login(self, login_scheme: UserLoginDTO = Form()) -> JWTTokenResponse:
+        user_tokens = await self.auth_usecase.login(UserLoginDTO)
         return JWTTokenResponse(
             access_token=user_tokens.access_token,
             refresh_token=user_tokens.refresh_token,
         )
     
     @handle_http_exception
-    async def forgot_password(self, email: ForgotPasswordRequest = Form()) -> ForgotPasswordResponse:
-        reset_token = await self.auth_usecase.forgot_password(email)
-        return ForgotPasswordResponse(email=email, reset_token=reset_token)
+    async def forgot_password(self, forgot_dto: ForgotPasswordDTO = Form()) -> ForgotPasswordResponse:
+        reset_token = await self.auth_usecase.forgot_password(ForgotPasswordDTO)
+        return ForgotPasswordResponse(email=forgot_dto.email, reset_token=reset_token)
     
     @handle_http_exception
-    async def reset_password(self, reset_scheme: ResetPasswordRequest) -> ResetPasswordResponse:
-        await self.auth_usecase.reset_password(reset_scheme.reset_token, reset_scheme.new_password)
-        return ResetPasswordResponse("Password successfully resetted")
+    async def reset_password(self, reset_dto: ResetPasswordDTO) -> ResetPasswordResponse:
+        await self.auth_usecase.reset_password(reset_dto)
+        return ResetPasswordResponse(message="Password successfully resetted")
         
     @handle_http_exception
-    async def auth_refresh_token(self, jwt_token: str) -> JWTTokenResponse:
+    async def auth_refresh_token(self, jwt_token: JWTTokenDTO) -> JWTTokenResponse:
        access_token = await self.auth_usecase.generate_access_token_from_refresh(jwt_token)
        return JWTTokenResponse(access_token=access_token)
     
