@@ -1,6 +1,7 @@
 from domain.interface.uow.base_uow import BaseUnitOfWork
 from domain.interface.services.auth_service import AuthServiceInterface
 from domain.interface.services.jwt_service import JWTServiceInterface
+from domain.interface.repository.auth_repository import AuthRepositoryInterface
 from application.dtos.login_dto import UserLoginDTO
 from application.dtos.user_dto import UserDTO
 from application.helpers.dtos import user_dto_to_user_entity
@@ -13,10 +14,12 @@ class AuthService(AuthServiceInterface):
     def __init__(
         self, 
         unit_of_work: BaseUnitOfWork,
+        auth_repository: AuthRepositoryInterface,
         password_security: PasswordSecurityInterface,
         jwt_service:JWTServiceInterface,
     ):
         self.unit_of_work = unit_of_work 
+        self.auth_repository = auth_repository
         self.password_security = password_security
         self.jwt_service = jwt_service
     
@@ -36,7 +39,7 @@ class AuthService(AuthServiceInterface):
 
     async def verify_user_credentials(self, user_credentials: UserLoginDTO):
         """Проверяет учетные данные пользователя."""
-        existing_user = await self.unit_of_work.repository.find_by_username(user_credentials.username)
+        existing_user = await self.auth_repository.find_by_username(user_credentials.username)
         password_bytes = user_credentials.password.encode()
         if not existing_user:
             raise AuthException("User not found")
@@ -46,30 +49,22 @@ class AuthService(AuthServiceInterface):
     
     async def _existing_username_or_email(self, username: str, email: str) -> str:
         """Проверяет, существует ли уже пользователь с таким username или email."""
-        if await self.unit_of_work.repository.find_by_username(username):
+        if await self.auth_repository.find_by_username(username):
             raise AlreadyExistsException("Username already exception")
-        if await self.unit_of_work.repository.find_by_email(email):
+        if await self.auth_repository.find_by_email(email):
             raise AlreadyExistsException("Email already exception")
         return None
     
     async def get_user_by_username(self, username: str):
         """Получает пользователя по username или вызывает исключение."""
-        user = await self.unit_of_work.repository.find_by_username(username)
+        user = await self.auth_repository.find_by_username(username)
         if user is None:
             raise UserNotFoundException("User not found or invalid credentials")
         return user
      
     async def get_user_by_email(self, email: str):
         """Получает пользователя по email или вызывает исключение."""
-        user = await self.unit_of_work.repository.find_by_email(email)
+        user = await self.auth_repository.find_by_email(email)
         if user is None:
             raise UserNotFoundException("User not found or invalid credentials")
         return user
-    
-    # async def update_password(self, username: str, new_password: str):
-    #     user = await self.get_user_by_username(username)
-    #     hashed_password = self.password_security.get_hash_password(new_password)
-    #     await self.unit_of_work.register_dirty(updated_user)
-    #     await self.commit()
-            
-        
