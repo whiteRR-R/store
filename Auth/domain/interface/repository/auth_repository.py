@@ -3,11 +3,7 @@ from domain.entities.user import User
 from domain.interface.repository.base_repository import IBaseRepository
 
 
-class SqlAlchemyAuthRepositoryInterface(IBaseRepository, ABC):
-    @abstractmethod
-    async def create(self, user: User):
-        raise NotImplementedError
-    
+class AuthRepositoryInterface(IBaseRepository, ABC):    
     @abstractmethod
     async def find_by_username(self, username: str):
         raise NotImplementedError
