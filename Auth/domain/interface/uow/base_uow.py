@@ -3,12 +3,6 @@ from abc import ABC, abstractmethod
 
 
 class BaseUnitOfWork(ABC):  
-
-    @property
-    @abstractmethod
-    def repository(self) -> IBaseRepository:
-        raise NotImplementedError
-
     @abstractmethod
     async def register_new(self, obj):
         raise NotImplementedError
