@@ -5,4 +5,8 @@ from dataclasses import dataclass
 class JWTTokensDTO:
     access_token: str | bytes
     refresh_token: str | bytes
-    
+
+
+@dataclass(frozen=True)
+class JWTTokenDTO:
+    token: str
