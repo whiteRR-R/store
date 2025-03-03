@@ -10,7 +10,9 @@ from presentation.responses.jwt_token_response import JWTTokenResponse
 from presentation.responses.forgot_password_response import ForgotPasswordResponse
 from presentation.responses.reset_password_response import ResetPasswordResponse
 from presentation.responses.user_data_response import UserDataResponse
+from presentation.responses.register_response import RegisterResponse
 from presentation.decorators.http_exception import handle_http_exception
+
 
 class AuthController:
     http_bearer = HTTPBearer(auto_error=False)
@@ -25,7 +27,7 @@ class AuthController:
             self.register,
             methods=["POST"],
             status_code=status.HTTP_201_CREATED,
-            
+            response_model=RegisterResponse
         )
         
         self.router.add_api_route(
@@ -47,7 +49,7 @@ class AuthController:
         self.router.add_api_route(
             "/reset_password",
             self.reset_password,
-            methods=["PATCH"],
+            methods=["PUT"],
             status_code=status.HTTP_200_OK,
             response_model=ResetPasswordResponse,
         )
@@ -70,11 +72,12 @@ class AuthController:
         )
 
     @handle_http_exception    
-    async def register(self, user_data: UserDTO):
-        await self.auth_usecase.register(user_data)
+    async def register(self, user_dto: UserDTO) -> RegisterResponse:
+        await self.auth_usecase.register(user_dto)
+        return RegisterResponse(message="User successfully registered")
     
     @handle_http_exception
-    async def login(self, login_scheme: UserLoginDTO = Form()) -> JWTTokenResponse:
+    async def login(self, login_dto: UserLoginDTO = Form()) -> JWTTokenResponse:
         user_tokens = await self.auth_usecase.login(UserLoginDTO)
         return JWTTokenResponse(
             access_token=user_tokens.access_token,
@@ -92,8 +95,8 @@ class AuthController:
         return ResetPasswordResponse(message="Password successfully resetted")
         
     @handle_http_exception
-    async def auth_refresh_token(self, jwt_token: JWTTokenDTO) -> JWTTokenResponse:
-       access_token = await self.auth_usecase.generate_access_token_from_refresh(jwt_token)
+    async def auth_refresh_token(self, jwt_dto: JWTTokenDTO) -> JWTTokenResponse:
+       access_token = await self.auth_usecase.generate_access_token_from_refresh(jwt_dto)
        return JWTTokenResponse(access_token=access_token)
     
     @handle_http_exception
