@@ -19,3 +19,11 @@ class UserModel(Base):
         self.role = user.role
         self.email = user.email
         self.hashed_password = user.hash_password
+
+    def to_entity(self) -> User:
+        return User(
+            username=self.username,
+            role=self.role,
+            email=self.email,
+            hash_password=self.hashed_password
+        )
