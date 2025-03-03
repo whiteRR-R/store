@@ -1,7 +1,6 @@
-from dataclasses import dataclass
+from pydantic import BaseModel
 
 
-@dataclass(frozen=True)
-class ResetPasswordDTO:
+class ResetPasswordDTO(BaseModel):
     reset_token: str
     new_password: bytes

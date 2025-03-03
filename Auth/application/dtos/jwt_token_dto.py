@@ -1,12 +1,10 @@
-from dataclasses import dataclass
+from pydantic import BaseModel
 
 
-@dataclass(frozen=True)
-class JWTTokensDTO:
+class JWTTokensDTO(BaseModel):
     access_token: str | bytes
     refresh_token: str | bytes
 
 
-@dataclass(frozen=True)
-class JWTTokenDTO:
+class JWTTokenDTO(BaseModel):
     token: str
