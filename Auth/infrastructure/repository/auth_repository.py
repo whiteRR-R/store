@@ -12,18 +12,18 @@ class AuthRepository(AuthRepositoryInterface):
     def __init__(self, session: AsyncSession):
         self.session = session
         
-    async def find_by_username(self, username: str) -> Optional[UserModel]:
+    async def find_by_username(self, username: str) -> Optional[User]:
         """ Находит пользователя по его имени (username). """
         stmt = await self.session.execute(
             select(UserModel).where(UserModel.username == username)
         )
         user = stmt.scalar_one_or_none()
-        return user
+        return user.to_entity() if user else None
     
-    async def find_by_email(self, email: str) -> Optional[UserModel]:
+    async def find_by_email(self, email: str) -> Optional[User]:
         """ Находит пользователя по его почте (email). """
         stmt = await self.session.execute(
             select(UserModel).where(UserModel.email == email)
         )
         user = stmt.scalar_one_or_none()
-        return user
+        return user.to_entity() if user else None
