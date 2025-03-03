@@ -32,7 +32,7 @@ class AuthUseCase(AuthUseCaseInterface):
         и если нет, создает нового пользователя.
         """
         try:
-            await self.auth_service.create_user(UserDTO)
+            await self.auth_service.create_user(user_data)
         except RegistrationException as exception:
             raise RegistrationException(f"Registration failed: {str(exception)}")
         
