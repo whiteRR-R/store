@@ -78,7 +78,7 @@ class AuthController:
     
     @handle_http_exception
     async def login(self, login_dto: UserLoginDTO = Form()) -> JWTTokenResponse:
-        user_tokens = await self.auth_usecase.login(UserLoginDTO)
+        user_tokens = await self.auth_usecase.login(login_dto)
         return JWTTokenResponse(
             access_token=user_tokens.access_token,
             refresh_token=user_tokens.refresh_token,
@@ -86,7 +86,7 @@ class AuthController:
     
     @handle_http_exception
     async def forgot_password(self, forgot_dto: ForgotPasswordDTO = Form()) -> ForgotPasswordResponse:
-        reset_token = await self.auth_usecase.forgot_password(ForgotPasswordDTO)
+        reset_token = await self.auth_usecase.forgot_password(forgot_dto)
         return ForgotPasswordResponse(email=forgot_dto.email, reset_token=reset_token)
     
     @handle_http_exception
