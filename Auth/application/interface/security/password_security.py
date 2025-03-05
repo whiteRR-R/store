@@ -1,11 +1,8 @@
-from abc import ABC,abstractmethod
+from typing import Protocol
 
-
-class PasswordSecurityInterface(ABC):
-    @abstractmethod
+class PasswordSecurityProtocol(Protocol):
     def get_hash_password(self, password: bytes) -> bytes:
-        raise NotImplementedError
+        ...
     
-    @abstractmethod
     def verify_password(self, password: bytes, stored_hash: bytes) -> bool:
-        raise NotImplementedError
+        ...

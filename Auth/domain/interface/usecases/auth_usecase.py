@@ -1,29 +1,21 @@
-from abc import ABC, abstractmethod
+from typing import Protocol
 
 
-class AuthUseCaseInterface(ABC):
-    @abstractmethod
-    async def register(self, username: str, role: str, email: str, password: str):
-        raise NotImplementedError
-    
-    @abstractmethod
-    async def login(self, username: str, password: str):
-        raise NotImplementedError
-    
-    @abstractmethod
-    async def get_current_user_info(self, jwt_token: str):
-        raise NotImplementedError
-    
-    @abstractmethod
-    async def generate_access_token_from_refresh(self, jwt_token: str):
-        raise NotImplementedError
-    
-    @abstractmethod
-    async def forgot_password(self, email: str):
-        raise NotImplementedError
-    
-    @abstractmethod
-    async def reset_password(self, jwt_token: str, new_password: bytes):
-        raise NotImplementedError
-    
-    
+class AuthUseCaseProtocol(Protocol):
+    async def register(self, username: str, role: str, email: str, password: str) -> None:
+        ...
+
+    async def login(self, username: str, password: str) -> None:
+        ...
+
+    async def get_current_user_info(self, jwt_token: str) -> None:
+        ...
+
+    async def generate_access_token_from_refresh(self, jwt_token: str) -> None:
+        ...
+
+    async def forgot_password(self, email: str) -> None:
+        ...
+
+    async def reset_password(self, jwt_token: str, new_password: bytes) -> None:
+        ...
