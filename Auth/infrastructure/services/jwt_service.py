@@ -1,4 +1,3 @@
-from domain.interface.services.jwt_service import JWTServiceInterface
 from application.dtos.jwt_token_dto import JWTTokensDTO
 from application.interface.security.jwt_security import JWTSecurityInterface
 from infrastructure.exceptions import InvalidTokenException, InvalidTokenTypeException
@@ -7,7 +6,7 @@ from config import config_manager
 from datetime import timedelta
 
 
-class JWTService(JWTServiceInterface):
+class JWTService:
     def __init__(self, jwt_security: JWTSecurityInterface):
         self.jwt_security = jwt_security
     

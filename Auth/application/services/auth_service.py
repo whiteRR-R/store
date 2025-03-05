@@ -1,25 +1,24 @@
 from domain.entities.user import User
-from domain.interface.uow.base_uow import BaseUnitOfWork
-from domain.interface.services.auth_service import AuthServiceInterface
-from domain.interface.services.jwt_service import JWTServiceInterface
-from domain.interface.repository.auth_repository import AuthRepositoryInterface
+from domain.interface.uow.uow import UnitOfWorkProtocol
+from domain.interface.services.jwt_service import JWTServiceProtocol
+from domain.interface.repository.auth_repository import AuthRepositoryProtocol
 from application.dtos.login_dto import UserLoginDTO
 from application.dtos.user_dto import UserDTO
 from application.dtos.reset_password_dto import ResetPasswordDTO
 from application.helpers.dtos import user_dto_to_user_entity
-from application.interface.security.password_security import PasswordSecurityInterface
+from application.interface.security.password_security import PasswordSecurityProtocol
 from application.exceptions import AlreadyExistsException, AuthException, UserNotFoundException
 from typing import Optional
 
 
-class AuthService(AuthServiceInterface):
+class AuthService:
     """Сервис для управления регистрацией и аутентификацией пользователей."""
     def __init__(
         self, 
-        unit_of_work: BaseUnitOfWork,
-        auth_repository: AuthRepositoryInterface,
-        password_security: PasswordSecurityInterface,
-        jwt_service:JWTServiceInterface,
+        unit_of_work: UnitOfWorkProtocol,
+        auth_repository: AuthRepositoryProtocol,
+        password_security: PasswordSecurityProtocol,
+        jwt_service: JWTServiceProtocol,
     ):
         self.unit_of_work = unit_of_work 
         self.auth_repository = auth_repository

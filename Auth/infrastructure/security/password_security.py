@@ -1,8 +1,7 @@
 import bcrypt
-from application.interface.security.password_security import PasswordSecurityInterface
 
 
-class PasswordSecurity(PasswordSecurityInterface):
+class PasswordSecurity:
     """Сервис для хэширования паролей и проверки пароля."""
     
     def get_hash_password(self, password: bytes) -> bytes:

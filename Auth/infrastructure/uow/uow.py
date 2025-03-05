@@ -1,9 +1,8 @@
-from domain.interface.uow.base_uow import BaseUnitOfWork
 from infrastructure.repository.auth_repository import AuthRepository
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
-class UnitOfWork(BaseUnitOfWork):
+class UnitOfWork:
     """Реализация Unit of Work для SQLAlchemy."""
     def __init__(self, session: AsyncSession):
         self.session = session

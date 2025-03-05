@@ -1,5 +1,4 @@
 from domain.entities.user import User
-from domain.interface.repository.auth_repository import AuthRepositoryInterface
 from infrastructure.persistence.models.user_model import UserModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import NoResultFound
@@ -7,7 +6,7 @@ from sqlalchemy import select, update
 from typing import Optional
 
 
-class AuthRepository(AuthRepositoryInterface):
+class AuthRepository:
     """ Инициализация Sqlalchemy Auth Repository репозитория. """
     def __init__(self, session: AsyncSession):
         self.session = session

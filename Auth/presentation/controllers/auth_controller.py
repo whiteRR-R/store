@@ -1,6 +1,6 @@
 from fastapi import APIRouter, status, HTTPException, Depends, Form
 from fastapi.security import OAuth2PasswordBearer, HTTPBearer
-from domain.interface.usecases.auth_usecase import AuthUseCaseInterface
+from domain.interface.usecases.auth_usecase import AuthUseCaseProtocol
 from application.dtos.login_dto import UserLoginDTO
 from application.dtos.jwt_token_dto import JWTTokenDTO
 from application.dtos.user_dto import UserDTO
@@ -18,7 +18,7 @@ class AuthController:
     http_bearer = HTTPBearer(auto_error=False)
     oauth2_scheme = OAuth2PasswordBearer(tokenUrl='login')
     
-    def __init__(self, auth_usecase: AuthUseCaseInterface):
+    def __init__(self, auth_usecase: AuthUseCaseProtocol):
         self.auth_usecase = auth_usecase
         self.router = APIRouter(dependencies=[Depends(self.http_bearer)])
         

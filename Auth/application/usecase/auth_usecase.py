@@ -1,7 +1,5 @@
-from domain.interface.services.auth_service import AuthServiceInterface
-from domain.interface.services.jwt_service import JWTServiceInterface
-from domain.interface.usecases.auth_usecase import AuthUseCaseInterface
-from application.interface.security.password_security import PasswordSecurityInterface
+from domain.interface.services.auth_service import AuthServiceProtocol
+from domain.interface.services.jwt_service import JWTServiceProtocol
 from application.dtos.user_dto import UserDTO
 from application.dtos.login_dto import UserLoginDTO
 from application.dtos.jwt_token_dto import JWTTokenDTO
@@ -17,11 +15,11 @@ from application.exceptions import (
 from config import config_manager
 
 
-class AuthUseCase(AuthUseCaseInterface):
+class AuthUseCase:
     def __init__(
         self,
-        auth_service: AuthServiceInterface,
-        jwt_service: JWTServiceInterface,
+        auth_service: AuthServiceProtocol,
+        jwt_service: JWTServiceProtocol,
     ):
         self.auth_service = auth_service
         self.jwt_service = jwt_service
