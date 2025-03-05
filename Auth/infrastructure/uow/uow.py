@@ -1,12 +1,13 @@
 from infrastructure.repository.auth_repository import AuthRepository
 from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Any, Dict, Type
 
 
 class UnitOfWork:
     """Реализация Unit of Work для SQLAlchemy."""
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession, mappers: Dict[Type, Any]):
         self.session = session
-        self.mappers = {}
+        self.mappers = mappers
         self.new_objects = []
         self.dirty_objects = []
         self.deleted_objects = []

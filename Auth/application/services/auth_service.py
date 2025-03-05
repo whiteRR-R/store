@@ -1,5 +1,5 @@
 from domain.entities.user import User
-from domain.interface.uow.uow import UnitOfWorkProtocol
+from domain.interface.uow.base_uow import UnitOfWorkProtocol
 from domain.interface.services.jwt_service import JWTServiceProtocol
 from domain.interface.repository.auth_repository import AuthRepositoryProtocol
 from application.dtos.login_dto import UserLoginDTO
