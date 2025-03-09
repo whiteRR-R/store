@@ -90,16 +90,16 @@ class AuthController:
         return ForgotPasswordResponse(email=forgot_dto.email, reset_token=reset_token)
     
     @handle_http_exception
-    async def reset_password(self, reset_dto: ResetPasswordDTO) -> ResetPasswordResponse:
+    async def reset_password(self, reset_dto: ResetPasswordDTO = Form()) -> ResetPasswordResponse:
         await self.auth_usecase.reset_password(reset_dto)
         return ResetPasswordResponse(message="Password successfully resetted")
         
     @handle_http_exception
-    async def auth_refresh_token(self, jwt_dto: JWTTokenDTO) -> JWTTokenResponse:
+    async def auth_refresh_token(self, jwt_dto: JWTTokenDTO = Form()) -> JWTTokenResponse:
        access_token = await self.auth_usecase.generate_access_token_from_refresh(jwt_dto)
        return JWTTokenResponse(access_token=access_token)
     
     @handle_http_exception
-    async def get_user_data(self, jwt_token: str=Depends(oauth2_scheme)) -> UserDataResponse:
+    async def get_user_data(self, jwt_token: str = Depends(oauth2_scheme)) -> UserDataResponse:
         user_info = await self.auth_usecase.get_current_user_info(jwt_token)
         return user_info
