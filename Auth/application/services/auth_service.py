@@ -45,7 +45,7 @@ class AuthService:
         password_bytes = user_credentials.password.encode()
         if not existing_user:
             raise AuthException("User not found")
-        if not self.password_security.verify_password(password_bytes, existing_user.hashed_password):
+        if not self.password_security.verify_password(password_bytes, existing_user.hash_password):
             raise AuthException("Password was not correct")
         return existing_user
     
@@ -74,7 +74,8 @@ class AuthService:
     async def update_password(self, username: str, new_password: bytes):
         """Обновляет пароль пользователя."""
         user = await self.get_user_by_username(username)
-        hashed_password = self.password_security.get_hash_password(new_password)
+        password_bytes = new_password.encode()
+        hashed_password = self.password_security.get_hash_password(password_bytes)
         user.update_password(hashed_password)
         await self.unit_of_work.register_dirty(user)
         await self.unit_of_work.commit()
