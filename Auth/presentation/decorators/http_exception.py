@@ -1,5 +1,6 @@
 from fastapi import HTTPException, status
 from application.exceptions import *
+from infrastructure.exceptions import *
 from functools import wraps
 
 def handle_http_exception(func):
@@ -13,4 +14,6 @@ def handle_http_exception(func):
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(exception))
         except TokenProcessingException as exception:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(exception))
+        except InfrastructureException as exception:
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(exception))
     return wrapper

@@ -31,7 +31,7 @@ class AuthUseCase:
         """
         try:
             await self.auth_service.create_user(user_data)
-        except RegistrationException as exception:
+        except ApplicationException as exception:
             raise RegistrationException(f"Registration failed: {str(exception)}")
         
     async def login(self, user_credentials: UserLoginDTO):
@@ -42,7 +42,7 @@ class AuthUseCase:
             await self.auth_service.verify_user_credentials(user_credentials)
             jwt_tokens = await self.jwt_service.generate_jwt_tokens(user_credentials.username)
             return jwt_tokens
-        except AuthException as exception:
+        except ApplicationException as exception:
             raise AuthException(f"Authentication failed: {str(exception)}")
             
     async def forgot_password(self, forgot_dto: ForgotPasswordDTO):
@@ -76,7 +76,7 @@ class AuthUseCase:
             subject_name = await self.jwt_service.get_token_subject(jwt_token)
             user = await self.auth_service.get_user_by_username(subject_name)    
             return user
-        except AuthException as exception:
+        except ApplicationException as exception:
             raise UserNotFoundException(f"User not found: {str(exception)}")
     
     async def generate_access_token_from_refresh(self, jwt_dto: JWTTokenDTO):
