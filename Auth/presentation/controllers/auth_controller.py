@@ -25,6 +25,7 @@ class AuthController:
         self.router.add_api_route(
             "/register",
             self.register,
+            summary="Register new user",
             methods=["POST"],
             status_code=status.HTTP_201_CREATED,
             response_model=RegisterResponse
@@ -33,6 +34,7 @@ class AuthController:
         self.router.add_api_route(
             "/login",
             self.login,
+            summary="Login user",
             methods=["POST"],
             status_code=status.HTTP_201_CREATED,
             response_model=JWTTokenResponse
@@ -41,6 +43,7 @@ class AuthController:
         self.router.add_api_route(
             "/forgot_password",
             self.forgot_password,
+            summary="Forgot password",
             methods=["POST"],
             status_code=status.HTTP_201_CREATED,
             response_model=ForgotPasswordResponse
@@ -49,6 +52,7 @@ class AuthController:
         self.router.add_api_route(
             "/reset_password",
             self.reset_password,
+            summary="Reset password",
             methods=["PUT"],
             status_code=status.HTTP_200_OK,
             response_model=ResetPasswordResponse,
@@ -57,6 +61,7 @@ class AuthController:
         self.router.add_api_route(
             "/refresh",
             self.auth_refresh_token,
+            summary="Refresh token",
             methods=["POST"],
             status_code=status.HTTP_201_CREATED,
             response_model=JWTTokenResponse,
@@ -66,6 +71,7 @@ class AuthController:
         self.router.add_api_route(
             "/me",
             self.get_user_data,
+            summary="Get user data",
             methods=["GET"],
             status_code=status.HTTP_200_OK,
             response_model=UserDataResponse
