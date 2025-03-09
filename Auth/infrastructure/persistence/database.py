@@ -19,7 +19,7 @@ class Database:
     
     @property
     def session_factory(self):
-        return self._session_factory
+        return self._session_factory()
     
     @asynccontextmanager
     async def get_session(self):
