@@ -3,4 +3,5 @@ class InvalidTokenException(Exception):
     pass
 
 class InvalidTokenTypeException(Exception):
+    """ Исключение для ошибок типа токена """
     pass

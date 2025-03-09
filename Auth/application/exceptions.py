@@ -18,4 +18,5 @@ class UserNotFoundException(AuthException):
     pass
 
 class TokenProcessingException(ApplicationException):
+    """ Исключение для ошибок обработки токенов """
     pass
