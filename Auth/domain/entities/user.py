@@ -21,7 +21,7 @@ class User:
         )
 
     def update_password(self, new_hash_password: bytes):
-        self.hash_password = new_hash_password
+        self._hash_password = new_hash_password
         
     @property
     def username(self):
@@ -38,3 +38,8 @@ class User:
     @property
     def hash_password(self):
         return self._hash_password
+    
+    def __repr__(self):
+        return (
+            f"User(username={self.username}, role={self.role}, email={self.email}, hash_password={self.hash_password})"
+        )
