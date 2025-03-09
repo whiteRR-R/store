@@ -50,7 +50,7 @@ class AuthUseCase:
         try:
             user = await self.auth_service.get_user_by_email(forgot_dto.email)
             payload = {"sub": user.username}
-            reset_token = self.jwt_service.create_reset_token(payload)
+            reset_token = await self.jwt_service.create_reset_token(payload)
             #TODO: Добавить отправку ссылку для сброса на почту
             return reset_token
         except UserNotFoundException:
@@ -61,19 +61,19 @@ class AuthUseCase:
     async def reset_password(self, reset_dto: ResetPasswordDTO):
         """ Сбросывает пароль через reset-токен """
         try:
-            await self.jwt_service.validate_token_type(jwt_token=ResetPasswordDTO.jwt_token, token_type=config_manager.jwt.RESET_TOKEN_TYPE)
-            username = await self.jwt_service.get_token_subject(ResetPasswordDTO.jwt_token)
-            await self.auth_service.update_password(username, ResetPasswordDTO.new_password)  
+            await self.jwt_service.validate_token_type(jwt_token=reset_dto.reset_token, token_type=config_manager.jwt.RESET_TOKEN_TYPE)
+            username = await self.jwt_service.get_token_subject(reset_dto.reset_token)
+            await self.auth_service.update_password(username, reset_dto.new_password)  
         except UserNotFoundException:
             raise UserNotFoundException("User not found for password reset.")
         except Exception as exception:
             raise ApplicationException(f"Unexpected error during password reset: {str(exception)}") 
              
-    async def get_current_user_info(self, jwt_dto: JWTTokenDTO):
+    async def get_current_user_info(self, jwt_token: str):
         """ Возврашает информацию текущего пользователя """
         try:
-            await self.jwt_service.validate_token_type(jwt_token=jwt_dto.token, token_type=config_manager.jwt.RESET_TOKEN_TYPE)
-            subject_name = await self.jwt_service.get_token_subject(jwt_dto.token)
+            await self.jwt_service.validate_token_type(jwt_token=jwt_token, token_type=config_manager.jwt.ACCESS_TOKEN_TYPE)
+            subject_name = await self.jwt_service.get_token_subject(jwt_token)
             user = await self.auth_service.get_user_by_username(subject_name)    
             return user
         except AuthException as exception:
