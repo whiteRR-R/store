@@ -4,15 +4,16 @@ from domain.entities.user import User
 from infrastructure.persistence.models.user_model import UserModel
 
 
-
 class UserDataMapper:
     def __init__(self, session: AsyncSession):
       self.session = session
       
     async def to_model(self, user: User):
+        """ Преобразует доменную модель в модель SQLAlchemy """
         return UserModel(user)
     
     async def to_entity(self, user_model: UserModel):
+        """ Преобразует модель SQLAlchemy в доменную модель """
         return User.create(
             username=user_model.username,
             email=user_model.email,
@@ -21,10 +22,12 @@ class UserDataMapper:
         )
     
     async def add(self, user: User):
+        """ Добавляет пользователя в базу данных """
         user_model = await self.to_model(user)
         self.session.add(user_model)
     
     async def update(self, user: User):
+        """ Обновляет пользователя в базе данных """
         user_model = await self.to_model(user)
         stmt = (
             update(UserModel)
@@ -39,5 +42,6 @@ class UserDataMapper:
         await self.session.execute(stmt)
         
     async def delete(self, user: User):
+        """ Удаляет пользователя из базы данных """
         user_model = await self.to_model(user)
         await self.session.delete(user_model)

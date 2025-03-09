@@ -1,10 +1,11 @@
 import jwt
 from config import config_manager
 from datetime import timedelta, datetime, timezone
-from application.interface.security.jwt_security import JWTSecurityInterface
+from application.interface.security.jwt_security import JWTSecurityProtocol
 
 
-class JWTSecurity(JWTSecurityInterface):
+class JWTSecurity(JWTSecurityProtocol):
+    """Сервис для работы с JWT токенами"""
     def encode_jwt(
         self,
         payload: dict,
@@ -12,6 +13,7 @@ class JWTSecurity(JWTSecurityInterface):
         private_key: str = config_manager.jwt.PRIVATE_KEY.read_text(),
         algorithm: str = config_manager.jwt.ALGORITHM
         ):
+        """Кодирует JWT токен"""
         
         to_encode = payload.copy()
         now = datetime.now(timezone.utc)
@@ -27,7 +29,6 @@ class JWTSecurity(JWTSecurityInterface):
         )
         encoded = jwt.encode(payload=to_encode, key=private_key, algorithm=algorithm)
         return encoded
-        
     
     def decode_jwt(
         self,
@@ -35,7 +36,6 @@ class JWTSecurity(JWTSecurityInterface):
         public_key: str = config_manager.jwt.PUBLIC_KEY.read_text(),
         algoritm: str = config_manager.jwt.ALGORITHM,
         ):
-        
+        """Декодирует JWT токен"""  
         decoded = jwt.decode(jwt=jwt_token, key=public_key, algorithms=[algoritm])
         return decoded
-        

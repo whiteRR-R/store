@@ -1,5 +1,5 @@
 from application.dtos.jwt_token_dto import JWTTokensDTO
-from application.interface.security.jwt_security import JWTSecurityInterface
+from application.interface.security.jwt_security import JWTSecurityProtocol
 from infrastructure.exceptions import InvalidTokenException, InvalidTokenTypeException
 from jwt.exceptions import InvalidTokenError
 from config import config_manager
@@ -7,7 +7,8 @@ from datetime import timedelta
 
 
 class JWTService:
-    def __init__(self, jwt_security: JWTSecurityInterface):
+    """ Сервис для работы с JWT токенами """
+    def __init__(self, jwt_security: JWTSecurityProtocol):
         self.jwt_security = jwt_security
     
     async def _create_token(self, payload: dict, token_type: str, expire_timedelta: timedelta):

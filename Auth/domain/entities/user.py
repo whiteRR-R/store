@@ -13,6 +13,7 @@ class User:
     
     @classmethod
     def create(cls, username: str, role: str, email: str, hash_password: bytes):
+        """ Создает нового пользователя """
         return cls(
             username=Username(username),
             role=Role(role),
@@ -21,6 +22,7 @@ class User:
         )
 
     def update_password(self, new_hash_password: bytes):
+        """ Обновляет пароль пользователя """
         self._hash_password = new_hash_password
         
     @property
@@ -41,5 +43,5 @@ class User:
     
     def __repr__(self):
         return (
-            f"User(username={self.username}, role={self.role}, email={self.email}, hash_password={self.hash_password})"
+            f"User(username={self.username}, role={self.role}, email={self.email}"
         )

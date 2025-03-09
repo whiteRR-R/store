@@ -3,6 +3,7 @@ from domain.entities.user import User
 
 
 def user_dto_to_user_entity(user_dto: UserDTO) -> User:
+    """ Преобразует DTO пользователя в доменную сущность пользователя """
     username = user_dto.username
     email = user_dto.email
     role = user_dto.role

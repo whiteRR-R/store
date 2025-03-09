@@ -1,13 +1,12 @@
-from abc import ABC, abstractmethod
-from datetime import  timedelta
+from typing import Protocol
+from datetime import timedelta
 
-
-class JWTSecurityInterface(ABC):
-    @abstractmethod
+class JWTSecurityProtocol(Protocol):
     def encode_jwt(self, payload: dict, expire_timedelta: timedelta | None) -> str:
-        raise NotImplementedError
+        """ Генерирует JWT токен """
+        pass
     
-    @abstractmethod
     def decode_jwt(self, jwt_token: str):
-        raise NotImplementedError
+        """ Декодирует JWT токен """
+        pass
     

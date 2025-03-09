@@ -1,4 +1,4 @@
-from infrastructure.repository.auth_repository import AuthRepository
+from infrastructure.exceptions import UnitOfWorkException
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Any, Dict, Type
 
@@ -32,14 +32,16 @@ class UnitOfWork:
                 await self.mappers[type(object)].update(object)
             await self.session.commit()
             await self.clear()
-        except Exception:
+        except Exception as exception:
             await self.rollback()
-    
+            raise UnitOfWorkException(f"Failed to commit: {str(exception)}")
+
     async def rollback(self):
         """Откатывает текущую транзакцию."""
         await self.session.rollback()
 
     async def clear(self):
+        """Очищает списки объектов."""
         self.new_objects.clear()
         self.dirty_objects.clear()
         self.deleted_objects.clear()

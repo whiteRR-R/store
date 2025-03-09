@@ -1,6 +1,8 @@
+from infrastructure.exceptions import DatabaseException
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase
 from contextlib import asynccontextmanager
+
 
 class Base(DeclarativeBase):
     """Базовый класс для всех моделей SQLAlchemy"""
@@ -19,6 +21,7 @@ class Database:
     
     @property
     def session_factory(self):
+        """Возвращает фабрику сессий"""
         return self._session_factory()
     
     @asynccontextmanager
@@ -26,7 +29,8 @@ class Database:
         async with self._session_factory() as session:    
             try:
                 yield session
-            except Exception:
+            except Exception as exception:
                 await session.rollback()
+                raise DatabaseException(f"Database error: {str(exception)}")
             finally:
                 await session.close()
