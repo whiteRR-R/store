@@ -3,11 +3,11 @@ from domain.entities.user import User
 from presentation.controllers.auth_controller import AuthController
 from application.usecase.auth_usecase import AuthUseCase
 from application.services.auth_service import AuthService
-from infrastructure.data_mapper.user_datamapper import UserDataMapper
-from infrastructure.repository.auth_repository import AuthRepository
+from infrastructure.persistence.data_mapper.user_datamapper import UserDataMapper
+from infrastructure.persistence.repository.auth_repository import AuthRepository
 from infrastructure.persistence.database import Database
 from infrastructure.services.jwt_service import JWTService
-from infrastructure.uow.uow import UnitOfWork
+from infrastructure.persistence.uow.uow import UnitOfWork
 from infrastructure.security.jwt_security import JWTSecurity
 from infrastructure.security.password_security import PasswordSecurity
 from config import config_manager
