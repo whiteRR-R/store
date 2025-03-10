@@ -8,6 +8,7 @@ class Base(DeclarativeBase):
     """Базовый класс для всех моделей SQLAlchemy"""
     pass
 
+
 class Database:
     """Класс для управления подключением к базе данных sqlalchemy"""
     def __init__(self, database_url: str):
