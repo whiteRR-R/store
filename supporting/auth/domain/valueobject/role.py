@@ -1,3 +1,4 @@
+from exceptions import InvalidRoleException
 from dataclasses import dataclass
 
 
@@ -15,11 +16,11 @@ class Role:
     def _validate_role(self):
         """Проверка, что role соответствует правилам"""
         if not self.role:
-            raise ValueError("Role cannot be an empty string.")
+            raise InvalidRoleException("Role cannot be an empty string.")
         if ' ' in self.role:
-            raise ValueError("Role cannot contain spaces.")
+            raise InvalidRoleException("Role cannot contain spaces.")
         if len(self.role) <= 3:
-            raise ValueError(f"Role '{self.role}' must be more than 3 characters")
+            raise InvalidRoleException(f"Role '{self.role}' must be more than 3 characters")
         if not self.role.isalnum():
-            raise ValueError(f"Role '{self.role}' can only contain alphanumeric characters.")    
+            raise InvalidRoleException(f"Role '{self.role}' can only contain alphanumeric characters.")    
     

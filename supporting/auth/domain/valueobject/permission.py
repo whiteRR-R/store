@@ -1,3 +1,4 @@
+from exceptions import InvalidPermissionException
 from dataclasses import dataclass
 
 
@@ -16,11 +17,11 @@ class Permission:
     def _validate_permission(self):
         """Проверка, что role соответствует правилам"""
         if not self.role:
-            raise ValueError("Role cannot be an empty string.")
+            raise InvalidPermissionException("Role cannot be an empty string.")
         if ' ' in self.role:
-            raise ValueError("Role cannot contain spaces.")
+            raise InvalidPermissionException("Role cannot contain spaces.")
         if len(self.role) <= 3:
-            raise ValueError(f"Role '{self.role}' must be more than 3 characters")
+            raise InvalidPermissionException(f"Role '{self.role}' must be more than 3 characters")
         if not self.role.isalnum():
-            raise ValueError(f"Role '{self.role}' can only contain alphanumeric characters.")    
+            raise InvalidPermissionException(f"Role '{self.role}' can only contain alphanumeric characters.")    
     

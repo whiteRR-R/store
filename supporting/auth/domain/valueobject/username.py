@@ -1,3 +1,4 @@
+from exceptions import InvalidUsernameException
 from dataclasses import dataclass
 
 
@@ -15,11 +16,11 @@ class Username:
     def _validate_username(self):
         """Проверка, что username соответствует правилам"""
         if not self.username:
-            raise ValueError("Username cannot be an empty string.")
+            raise InvalidUsernameException("Username cannot be an empty string.")
         if ' ' in self.username:
-            raise ValueError("Username cannot contain spaces.")
+            raise InvalidUsernameException("Username cannot contain spaces.")
         if len(self.username) < 3 or len(self.username) > 20:
-            raise ValueError(f"Username '{self.username}' must be between 3 and 20 characters.")
+            raise InvalidUsernameException(f"Username '{self.username}' must be between 3 and 20 characters.")
         if not self.username.isalnum():
-            raise ValueError(f"Username '{self.username}' can only contain alphanumeric characters.")
+            raise InvalidUsernameException(f"Username '{self.username}' can only contain alphanumeric characters.")
 
