@@ -8,7 +8,6 @@ from infrastructure.persistence.repository.auth_repository import AuthRepository
 from infrastructure.persistence.database import Database
 from infrastructure.services.jwt_service import JWTService
 from infrastructure.persistence.uow.uow import UnitOfWork
-from infrastructure.security.jwt_security import JWTSecurity
 from infrastructure.security.password_security import PasswordSecurity
 from config import config_manager
 
@@ -25,10 +24,9 @@ class Container(containers.DeclarativeContainer):
     unit_of_work = providers.Factory(UnitOfWork, session=session, mappers=mappers)
     
 
-    jwt_security = providers.Singleton(JWTSecurity)
     password_security = providers.Singleton(PasswordSecurity)
 
-    jwt_service = providers.Factory(JWTService, jwt_security=jwt_security)
+    jwt_service = providers.Singleton(JWTService)
     auth_service = providers.Factory(
         AuthService,
         auth_repository=auth_repository,
