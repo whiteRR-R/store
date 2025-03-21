@@ -1,4 +1,4 @@
-from exceptions import InvalidRoleException
+from domain.exceptions import InvalidRoleException
 from dataclasses import dataclass
 
 

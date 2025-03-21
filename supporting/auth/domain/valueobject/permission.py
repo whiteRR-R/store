@@ -1,4 +1,4 @@
-from exceptions import InvalidPermissionException
+from domain.exceptions import InvalidPermissionException
 from dataclasses import dataclass
 
 

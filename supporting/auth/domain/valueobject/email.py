@@ -1,3 +1,4 @@
+from domain.exceptions import InvalidEmailException
 from dataclasses import dataclass
 import re
 
@@ -17,5 +18,5 @@ class Email:
         """Проверка, что email соответствует стандартному формату"""
         email_regex = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
         if not re.match(email_regex, self.email):
-            raise ValueError(f"Invalid email format: {self.email}")
+            raise InvalidEmailException(f"Invalid email format: {self.email}")
 

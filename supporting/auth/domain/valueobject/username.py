@@ -1,4 +1,4 @@
-from exceptions import InvalidUsernameException
+from domain.exceptions import InvalidUsernameException
 from dataclasses import dataclass
 
 
