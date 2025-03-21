@@ -7,7 +7,12 @@ from application.dtos.user_dto import UserDTO
 from application.dtos.reset_password_dto import ResetPasswordDTO
 from application.helpers.dtos import user_dto_to_user_entity
 from application.interface.security.password_security import PasswordSecurityProtocol
-from application.exceptions import AlreadyExistsException, AuthException, UserNotFoundException
+from application.exceptions import (
+    UsernameAlreadyExistsException,
+    EmailAlreadyExistsException,
+    UserNotFoundException,
+    InvalidCredentialsException,
+)
 from typing import Optional
 
 
@@ -42,20 +47,22 @@ class AuthService:
     async def verify_user_credentials(self, user_credentials: UserLoginDTO) -> User:
         """Проверяет учетные данные пользователя."""
         existing_user = await self.auth_repository.find_by_username(user_credentials.username)
-        password_bytes = user_credentials.password.encode()
         if not existing_user:
-            raise AuthException("User not found")
-        if not self.password_security.verify_password(password_bytes, existing_user.hash_password):
-            raise AuthException("Password was not correct")
+            raise UserNotFoundException(user_credentials.username)
+        if not self.password_security.verify_password(
+            user_credentials.password.encode(), 
+            existing_user.hash_password
+        ):
+            raise InvalidCredentialsException()
         return existing_user
+
     
     async def _existing_username_or_email(self, username: str, email: str) -> str:
         """Проверяет, существует ли уже пользователь с таким username или email."""
         if await self.auth_repository.find_by_username(username):
-            raise AlreadyExistsException("Username already exception")
+            raise UsernameAlreadyExistsException(username)
         if await self.auth_repository.find_by_email(email):
-            raise AlreadyExistsException("Email already exception")
-        return None
+            raise EmailAlreadyExistsException(email)
     
     async def get_user_by_username(self, username: str) -> Optional[User]:
         """Получает пользователя по username или вызывает исключение."""
