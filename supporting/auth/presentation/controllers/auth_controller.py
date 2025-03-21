@@ -11,7 +11,6 @@ from presentation.responses.forgot_password_response import ForgotPasswordRespon
 from presentation.responses.reset_password_response import ResetPasswordResponse
 from presentation.responses.user_data_response import UserDataResponse
 from presentation.responses.register_response import RegisterResponse
-from presentation.decorators.http_exception import handle_http_exception
 
 
 class AuthController:
@@ -77,12 +76,12 @@ class AuthController:
             response_model=UserDataResponse
         )
 
-    @handle_http_exception    
+        
     async def register(self, user_dto: UserDTO) -> RegisterResponse:
         await self.auth_usecase.register(user_dto)
         return RegisterResponse(message="User successfully registered")
     
-    @handle_http_exception
+    
     async def login(self, login_dto: UserLoginDTO = Form()) -> JWTTokenResponse:
         user_tokens = await self.auth_usecase.login(login_dto)
         return JWTTokenResponse(
@@ -90,22 +89,22 @@ class AuthController:
             refresh_token=user_tokens.refresh_token,
         )
     
-    @handle_http_exception
+    
     async def forgot_password(self, forgot_dto: ForgotPasswordDTO = Form()) -> ForgotPasswordResponse:
         reset_token = await self.auth_usecase.forgot_password(forgot_dto)
         return ForgotPasswordResponse(email=forgot_dto.email, reset_token=reset_token)
     
-    @handle_http_exception
+    
     async def reset_password(self, reset_dto: ResetPasswordDTO = Form()) -> ResetPasswordResponse:
         await self.auth_usecase.reset_password(reset_dto)
         return ResetPasswordResponse(message="Password successfully resetted")
         
-    @handle_http_exception
+    
     async def auth_refresh_token(self, jwt_dto: JWTTokenDTO = Form()) -> JWTTokenResponse:
        access_token = await self.auth_usecase.generate_access_token_from_refresh(jwt_dto)
        return JWTTokenResponse(access_token=access_token)
     
-    @handle_http_exception
+    
     async def get_user_data(self, jwt_token: str = Depends(oauth2_scheme)) -> UserDataResponse:
         user_info = await self.auth_usecase.get_current_user_info(jwt_token)
         return user_info
