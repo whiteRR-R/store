@@ -9,10 +9,12 @@ class Category:
         self._name = name
         self._description = description
     
-    def update_name(self, new_name: str):
+    def update_name(self, new_name: str) -> None:
+        """Update the name of the category."""
         self._name = new_name
     
-    def update_description(self, new_description: str):
+    def update_description(self, new_description: str) -> None:
+        """Update the description of the category."""
         self._description = new_description
         
     @property

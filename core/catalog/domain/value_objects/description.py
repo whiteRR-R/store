@@ -8,6 +8,7 @@ from exceptions import (
 
 @dataclass(frozen=True)
 class Description:
+    """Value object representing a category description."""
     description: str
 
     def __post_init__(self):

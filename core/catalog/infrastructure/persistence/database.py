@@ -9,10 +9,12 @@ class SQLAlchemyDatabase:
         self._session_maker = async_sessionmaker(self._engine, expire_on_commit=False)
 
     async def get_session(self):
+        """Get a new session for database operations."""
         async with self._session_maker() as session:
             yield session
 
     async def close(self):
+        """Close the database connection."""
         await self._engine.dispose()
 
 

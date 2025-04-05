@@ -7,6 +7,7 @@ from exceptions import (
 
 @dataclass(frozen=True)
 class CategoryName:
+    """Value object representing a category name."""
     name: str
     
     def __post_init__(self):

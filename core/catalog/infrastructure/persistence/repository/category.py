@@ -10,10 +10,12 @@ class CategoryRepository:
         self._mapper  = CategoryDataMapper()
 
     async def add(self, category: Category):
+        """Add a new category to the repository."""
         category_model = self._mapper.entity_to_model(category)
         self._session.add(category_model)
     
     async def get_all(self) -> list[Category]:
+        """Retrieve all categories from the repository."""
         categories = await self._session.execute(
             select(CategoryModel)
         )
