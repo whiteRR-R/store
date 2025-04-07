@@ -9,7 +9,7 @@ from config import config_manager
 
 
 class Container(containers.Container):
-    database = providers.Singleton(SQLAlchemyDatabase, URL=config_manager.database.DATABASE_URL)
+    database = providers.Singleton(SQLAlchemyDatabase, URL=config_manager.database.URL)
     session = providers.Resource(database.provided.session_factory)
     print(session)
     category_repository = providers.Singleton(
