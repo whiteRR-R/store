@@ -15,11 +15,15 @@ class CategoryRepository:
         self._session.add(category_model)
         await self._session.commit()
     
-    async def get_all(self) -> list[Category]:
+    async def get_all(self) -> list[dict]:
         """Retrieve all categories from the repository."""
         categories = await self._session.execute(
             select(CategoryModel)
         )
-        return [self._mapper.model_to_entity(category) for category in categories.scalars().all()]
-
+        categories_as_dict = [
+            self._mapper.model_to_dict(category_model)
+            for category_model in categories.scalars().all()
+        ]
+        return categories_as_dict
+        
 

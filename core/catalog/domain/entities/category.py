@@ -1,11 +1,10 @@
-from uuid import uuid4
+from uuid import uuid4, UUID
 from domain.value_objects.catalog_name import CategoryName
 from domain.value_objects.description import Description
 
 
 class Category:
     def __init__(self, name: CategoryName, description: Description):
-        self._catalog_id = uuid4()
         self._name = name
         self._description = description
     
@@ -17,10 +16,6 @@ class Category:
         """Update the description of the category."""
         self._description = new_description
         
-    @property
-    def category_id(self):
-        return self._catalog_id
-    
     @property
     def name(self):
         return self._name
