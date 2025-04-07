@@ -1,0 +1,47 @@
+from application.interfaces.event import EventProtocol
+from aio_pika import connect_robust, Message, ExchangeType
+from config import config_manager
+import json
+
+
+class RabbitMQEventBus:
+    def __init__(self, host: str, exchange_name: str, queue_name: str) -> None:
+        self.host = host
+        self.exchange_name = exchange_name
+        self.queue_name = queue_name
+        self.connection = None
+        self.channel = None
+        self.exchange = None
+        self.queue = None
+
+    async def connect(self) -> None:
+        """Establishes a connection to RabbitMQ."""
+        self.connection = await connect_robust(config_manager.rabbitmq.URL)
+        self.channel = await self.connection.channel()
+        self.exchange = await self.channel.declare_exchange(
+            self.exchange_name,
+            ExchangeType.FANOUT,
+            durable=True
+        )
+        self.queue = await self.channel.declare_queue(self.queue_name, durable=True)
+        await self.queue.bind(self.exchange)
+
+    async def publish(self, event: EventProtocol) -> None:
+        """Publishes an event to RabbitMQ."""
+        await self.connect()
+        if not self.exchange:
+            raise RuntimeError("RabbitMQ connection is not initialized. Call connect() first.")
+        
+        body = json.dumps(event.to_dict()).encode()
+        message = Message(body=body)
+
+        await self.exchange.publish(
+            message,
+            routing_key="",
+        )
+        print(f"Published event to RabbitMQ: {event}")
+
+    async def close(self) -> None:
+        """Closes RabbitMQ connection."""
+        if self.connection:
+            await self.connection.close()
