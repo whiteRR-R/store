@@ -2,7 +2,7 @@ from domain.entities.category import Category
 from infrastructure.persistence.datamapper.category_mapper import CategoryDataMapper
 from infrastructure.persistence.models.category import CategoryModel
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import select
+from sqlalchemy import select
 
 class CategoryRepository:
     def __init__(self, session: AsyncSession):
@@ -13,6 +13,7 @@ class CategoryRepository:
         """Add a new category to the repository."""
         category_model = self._mapper.entity_to_model(category)
         self._session.add(category_model)
+        await self._session.commit()
     
     async def get_all(self) -> list[Category]:
         """Retrieve all categories from the repository."""
