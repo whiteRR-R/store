@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from exceptions import (
+from domain.exceptions import (
     EmptyException,
     TooLongException,
     InvalidTypeException,
