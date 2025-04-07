@@ -6,7 +6,7 @@ class CategoryCreateRequest(BaseModel):
     description: str
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "name": "Electronics",
                 "description": "All electronic items",

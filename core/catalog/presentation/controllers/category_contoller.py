@@ -29,4 +29,5 @@ class CategoryController:
     async def get_all_categories(self) -> CategoriesResponse:
         """Retrieve all categories."""
         categories = await self.category_service.get_all_categories()
-        return categories
+        categories_response = CategoriesResponse(categories=categories)
+        return categories_response
