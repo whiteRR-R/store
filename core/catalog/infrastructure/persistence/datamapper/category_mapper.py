@@ -8,7 +8,6 @@ class CategoryDataMapper:
     def model_to_entity(self, category_model: CategoryModel) -> Category:
         """Convert a CategoryModel to a Category entity."""
         return Category(
-            id=category_model.id,
             name=CategoryName(category_model.name),
             description=Description(category_model.description),
         )
@@ -20,3 +19,11 @@ class CategoryDataMapper:
             name=category.name,
             description=category.description,
         )
+
+    def model_to_dict(self, category_model: CategoryModel) -> dict:
+        """Convert a CategoryModel to a dictionary."""
+        return {
+            "id": str(category_model.id),
+            "name": category_model.name,
+            "description": category_model.description,
+        }
