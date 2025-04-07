@@ -5,11 +5,11 @@ class CategoriesResponse(BaseModel):
     categories: list[dict]
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "categories": [
-                    {"id": 1, "name": "Electronics", "description": "All electronic items"},
-                    {"id": 2, "name": "Books", "description": "All kinds of books"},
+                    {"id": "e842076c-1ceb-4306-a5a6-565e411f7b87", "name": "Electronics", "description": "All electronic items"},
+                    {"id": "a1234567-89ab-cdef-0123-456789abcdef", "name": "Books", "description": "All kinds of books"},
                 ]
             }
         }
