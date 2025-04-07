@@ -1,5 +1,10 @@
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import DeclarativeBase
+
+
+class Base(DeclarativeBase):
+    """Base class for SQLAlchemy models."""
+    pass
 
 
 class SQLAlchemyDatabase:
@@ -7,6 +12,11 @@ class SQLAlchemyDatabase:
         self._URL = URL
         self._engine = create_async_engine(self._URL, echo=True)
         self._session_maker = async_sessionmaker(self._engine, expire_on_commit=False)
+    
+    @property
+    def session_factory(self):
+        """Return the session factory for creating sessions."""
+        return self._session_maker()
 
     async def get_session(self):
         """Get a new session for database operations."""
