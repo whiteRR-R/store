@@ -23,9 +23,10 @@ if config.config_file_name is not None:
 
 from config import config_manager
 from infrastructure.persistence.database import Base
+from infrastructure.persistence.models.category import CategoryModel
 
 target_metadata = Base.metadata
-config.set_main_option("sqlalchemy.url", config_manager.database.DATABASE_URL)
+config.set_main_option("sqlalchemy.url", config_manager.database.URL)
 
 
 def run_migrations_offline() -> None:
