@@ -9,11 +9,11 @@ class Category:
         self._name = name
         self._description = description
     
-    def update_name(self, new_name: str) -> None:
+    def update_name(self, new_name: CategoryName) -> None:
         """Update the name of the category."""
         self._name = new_name
     
-    def update_description(self, new_description: str) -> None:
+    def update_description(self, new_description: Description) -> None:
         """Update the description of the category."""
         self._description = new_description
         
@@ -23,11 +23,11 @@ class Category:
     
     @property
     def name(self):
-        return self._name.value
+        return self._name
     
     @property
     def description(self):
-        return self._description.value
+        return self._description
 
     def __repr__(self):
         return f"Catalog(catalog_id={self.catalog_id}, name={self.name}, description={self.description})"
