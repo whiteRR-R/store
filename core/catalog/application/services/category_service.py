@@ -16,8 +16,8 @@ class CategoryService:
     async def add_category(self, name: str, description: str):
         """Add a new category."""
         try:
-            category = Category(name=name, description=description)
-            event = CategoryCreateEvent(category_id=category.category_id, name=name)
+            category = Category.create(name=name, description=description)
+            event = CategoryCreateEvent(category_id=category.category_id, name=category.name)
             await self.event_bus.publish(event)
             await self.category_repository.add(category)
         except Exception as e:
