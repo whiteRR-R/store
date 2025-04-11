@@ -7,6 +7,16 @@ class Category:
     def __init__(self, name: CategoryName, description: Description):
         self._name = name
         self._description = description
+        
+    @classmethod
+    def create(cls, name: str, description: str):
+        name_vo = CategoryName(name)
+        description_vo = Description(description)
+        
+        return cls(
+            name=name_vo,
+            description=description_vo
+        )
     
     def update_name(self, new_name: CategoryName) -> None:
         """Update the name of the category."""
