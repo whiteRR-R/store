@@ -1,5 +1,7 @@
 from application.interfaces.event import EventProtocol
 from aio_pika import connect_robust, Message, ExchangeType
+from aio_pika.abc import AbstractRobustConnection, AbstractChannel, AbstractQueue, AbstractExchange
+from typing import Optional
 from config import config_manager
 import json
 
@@ -9,10 +11,10 @@ class RabbitMQEventBus:
         self.host = host
         self.exchange_name = exchange_name
         self.queue_name = queue_name
-        self.connection = None
-        self.channel = None
-        self.exchange = None
-        self.queue = None
+        self.connection: Optional[AbstractRobustConnection] = None
+        self.channel: Optional[AbstractChannel] = None
+        self.exchange: Optional[AbstractExchange] = None
+        self.queue: Optional[AbstractQueue] = None
 
     async def connect(self) -> None:
         """Establishes a connection to RabbitMQ."""
@@ -28,7 +30,6 @@ class RabbitMQEventBus:
 
     async def publish(self, event: EventProtocol) -> None:
         """Publishes an event to RabbitMQ."""
-        await self.connect()
         if not self.exchange:
             raise RuntimeError("RabbitMQ connection is not initialized. Call connect() first.")
         
