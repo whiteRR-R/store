@@ -1,24 +1,40 @@
-import os
-from pathlib import Path
-from dotenv import load_dotenv
-from pydantic import BaseModel
-from pydantic_settings import BaseSettings
-
-load_dotenv()
-BASE_DIR = Path(__file__).resolve().parent
-
-class DatabaseSettings(BaseModel):
-    URL: str = os.getenv("CATEGORY_DB_URL")
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class RabbitMQSettings(BaseModel):
-    HOST: str = os.getenv("RABBITMQ_HOST")
-    URL: str = os.getenv("RABBITMQ_URL")
-    EXCHANGE_NAME: str = os.getenv("RABBITMQ_EXCHANGE_NAME")
-    QUEUE_NAME: str = os.getenv("RABBITMQ_QUEUE_NAME")
+class DatabaseSettings(BaseSettings):
+    NAME: str
+    HOST: str
+    PORT: int
+    USER: str
+    PASS: str
+    URL: str
+    
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        env_prefix="CATEGORY_DB_",
+        extra="ignore",
+    )
 
-class ConfigManager(BaseSettings):
-    database: DatabaseSettings = DatabaseSettings()
-    rabbitmq: RabbitMQSettings = RabbitMQSettings()
+
+class RabbitMQSettings(BaseSettings):
+    HOST: str
+    EXCHANGE_NAME: str
+    QUEUE_NAME: str
+    URL: str
+    
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        env_prefix="RABBITMQ_",
+        extra="ignore",
+    )
+
+
+class ConfigManager:
+    def __init__(self):
+        self.database = DatabaseSettings()
+        self.rabbitmq = RabbitMQSettings()
+
 
 config_manager = ConfigManager()
