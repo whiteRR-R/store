@@ -1,7 +1,8 @@
-from typing import Protocol
+from typing import Protocol, Any
+from application.interfaces.event import EventProtocol
 
 
 class EventBusPublisherProtocol(Protocol):
-    def publish(self, event: str) -> None:
+    async def publish(self, event: EventProtocol) -> None:
         """Publish an event to the event bus."""
         pass
