@@ -1,10 +1,11 @@
-import uuid
+from uuid import UUID
 from typing import Any
+
 
 class CategoryCreateEvent:
     """Event triggered when a new category is created."""
 
-    def __init__(self, category_id: uuid, name: str) -> None:
+    def __init__(self, category_id: UUID, name: str) -> None:
         self.category_id = category_id.hex
         self.name = name
     
