@@ -7,6 +7,10 @@ class CategoryRepositoryProtocol(Protocol):
         """Add a new category to the repository."""
         pass
     
+    async def get_by_name(self, name: str) -> Category | None:
+        """Retrieve a category by its name."""
+        pass
+    
     async def get_all(self) -> list[Category]:
         """Retrieve all categories from the repository."""
         pass
