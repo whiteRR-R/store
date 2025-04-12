@@ -14,6 +14,16 @@ class CategoryRepository:
         category_model = self._mapper.entity_to_model(category)
         self._session.add(category_model)
         await self._session.commit()
+        
+    async def get_by_name(self, name: str) -> Category | None:
+        """Retrieve a category by its name."""
+        category = await self._session.execute(
+            select(CategoryModel).where(CategoryModel.name == name)
+        )
+        category_model = category.scalars().first()
+        if category_model:
+            return self._mapper.model_to_entity(category_model)
+        return None
     
     async def get_all(self) -> list[dict]:
         """Retrieve all categories from the repository."""
