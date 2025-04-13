@@ -1,10 +1,12 @@
 
+from domain.value_objects.product_attribute import ProductAttribute
+from infrastructure.persistence.database import Base
 from sqlalchemy import String, DECIMAL, Integer, ForeignKey, ARRAY
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import Any, List, TYPE_CHECKING
-from uuid import UUID
-from domain.value_objects.product_attribute import ProductAttribute
-from infrastructure.persistence.database import Base
+from sqlalchemy import UUID
+import uuid
+
 
 if TYPE_CHECKING:
     from infrastructure.persistence.models.brand_model import BrandModel
@@ -14,8 +16,8 @@ if TYPE_CHECKING:
 class ProductModel(Base):
     __tablename__ = "product"
     
-    id: Mapped[UUID] = mapped_column(UUID, primary_key=True)
-    brand_id: Mapped[UUID] = mapped_column(ForeignKey("brand.id"), nullable=False)
+    id: Mapped[uuid.UUID] = mapped_column(UUID, primary_key=True)
+    brand_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("brand.id"), nullable=False)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str] = mapped_column(String(255), nullable=False)
     price: Mapped[int] = mapped_column(Integer, nullable=False)
