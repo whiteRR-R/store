@@ -8,12 +8,12 @@ from domain.exceptions import (
 @dataclass(frozen=True)
 class CategoryName:
     """Value object representing a category name."""
-    name: str
+    value: str
     
     def __post_init__(self):
-        if not self.name.strip():
+        if not self.value.strip():
             raise EmptyException("Catalog name cannot be empty or whitespace only")
-        if len(self.name) > 100:
+        if len(self.value) > 100:
             raise TooLongException("Catalog name cannot exceed 100 characters")
-        if self.name.isdigit():
+        if self.value.isdigit():
             raise InvalidTypeException("Catalog name must be a string")

@@ -9,12 +9,12 @@ from domain.exceptions import (
 @dataclass(frozen=True)
 class Description:
     """Value object representing a category description."""
-    description: str
+    value: str
 
     def __post_init__(self):
-        if not self.description.strip():
+        if not self.value.strip():
             raise EmptyException("Description cannot be empty or whitespace only")
-        if len(self.description) > 500:
+        if len(self.value) > 500:
             raise TooLongException("Description cannot exceed 500 characters")
-        if self.description.isdigit():
+        if self.value.isdigit():
             raise InvalidTypeException("Description must be a string")
