@@ -6,9 +6,9 @@ from config import config_manager
 import json
 
 
-class RabbitMQEventBus:
-    def __init__(self, host: str, exchange_name: str, queue_name: str) -> None:
-        self.host = host
+class PublisherEventBus:
+    def __init__(self, url: str, exchange_name: str, queue_name: str) -> None:
+        self.url = url
         self.exchange_name = exchange_name
         self.queue_name = queue_name
         self.connection: Optional[AbstractRobustConnection] = None
@@ -18,7 +18,8 @@ class RabbitMQEventBus:
 
     async def connect(self) -> None:
         """Establishes a connection to RabbitMQ."""
-        self.connection = await connect_robust(config_manager.rabbitmq.URL)
+        print(f"Connecting to RabbitMQ at {self.url}...")
+        self.connection = await connect_robust(self.url)
         self.channel = await self.connection.channel()
         self.exchange = await self.channel.declare_exchange(
             self.exchange_name,
@@ -29,6 +30,7 @@ class RabbitMQEventBus:
         await self.queue.bind(self.exchange)
 
     async def publish(self, event: EventProtocol) -> None:
+        await self.connect()
         """Publishes an event to RabbitMQ."""
         if not self.exchange:
             raise RuntimeError("RabbitMQ connection is not initialized. Call connect() first.")
