@@ -1,13 +1,13 @@
 from infrastructure.persistence.database import Base
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import String, Integer, UUID
-from uuid import uuid4
+import uuid
 
 
 class CategoryModel(Base):
     __tablename__ = "categories"
 
-    id: Mapped[UUID] = mapped_column(UUID, primary_key=True, default=uuid4)
+    id: Mapped[uuid.UUID] = mapped_column(UUID, primary_key=True, default=uuid.uuid4())
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str] = mapped_column(String(255), nullable=True)
 
