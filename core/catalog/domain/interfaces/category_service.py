@@ -2,7 +2,7 @@ from typing import Protocol
 from domain.entities.category import Category
 
 class CategoryServiceProtocol(Protocol):
-    async def add_category(self, name: str) -> None:
+    async def add_category(self, name: str, description: str) -> None:
         """Add a new category."""
         pass
 
