@@ -5,6 +5,7 @@ from domain.value_objects.description import Description
 
 class Category:
     def __init__(self, name: CategoryName, description: Description):
+        self._category_id = uuid4()
         self._name = name
         self._description = description
         
@@ -28,11 +29,15 @@ class Category:
         
     @property
     def name(self):
-        return self._name
+        return self._name.value
     
     @property
     def description(self):
-        return self._description
+        return self._description.value
+
+    @property
+    def category_id(self) -> UUID:
+        return self._category_id
 
     def __repr__(self):
         return f"Catalog(catalog_id={self.catalog_id}, name={self.name}, description={self.description})"
