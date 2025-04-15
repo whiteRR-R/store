@@ -30,7 +30,6 @@ class PublisherEventBus:
         await self.queue.bind(self.exchange)
 
     async def publish(self, event: EventProtocol) -> None:
-        await self.connect()
         """Publishes an event to RabbitMQ."""
         if not self.exchange:
             raise RuntimeError("RabbitMQ connection is not initialized. Call connect() first.")
