@@ -1,9 +1,11 @@
 
+from domain.entities.product import Product
 from domain.value_objects.product_attribute import ProductAttribute
 from infrastructure.persistence.database import Base
 from sqlalchemy import String, DECIMAL, Integer, ForeignKey, ARRAY
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from typing import Any, List, TYPE_CHECKING
+from typing import Any, List, Dict, TYPE_CHECKING
 from sqlalchemy import UUID
 import uuid
 
@@ -21,7 +23,7 @@ class ProductModel(Base):
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str] = mapped_column(String(255), nullable=False)
     price: Mapped[int] = mapped_column(Integer, nullable=False)
-    attributes: Mapped[List[ProductAttribute]] = mapped_column(ARRAY(String(255)))
+    attributes: Mapped[Dict[str, str]] = mapped_column(JSONB, nullable=False)
     
     # Relationships many-to-one
     brand: Mapped["BrandModel"] = relationship("BrandModel", back_populates="products")
@@ -33,3 +35,11 @@ class ProductModel(Base):
         back_populates="products",
         lazy="joined",
     )
+
+    def __init__(self, product: Product):
+        self.id = product.id
+        self.brand_id = product.brand_id
+        self.name = product.name
+        self.description = product.description
+        self.price = product.price
+        self.attributes = {k: v.value for k, v in product.attributes.items()}
