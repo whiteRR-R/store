@@ -13,3 +13,11 @@ services:
     ports:
       - "${CATEGORY_DB_PORT}:${CATEGORY_DB_PORT}"
     command: -p ${CATEGORY_DB_PORT}
+
+    networks:
+      - backend
+
+networks:
+  backend:
+    external: true
+
