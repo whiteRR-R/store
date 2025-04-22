@@ -8,7 +8,7 @@ class DatabaseSettings(BaseSettings):
     PORT: int
     USER: str
     PASS: str
-    URL: PostgresDsn
+    URL: str
     
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -19,10 +19,11 @@ class DatabaseSettings(BaseSettings):
 
 
 class RabbitMQSettings(BaseSettings):
+    USER: str
+    PASSWORD: str
     HOST: str
-    EXCHANGE_NAME: str
-    QUEUE_NAME: str
-    URL: AmqpDsn
+    PORT: int
+    URL: str
     
     model_config = SettingsConfigDict(
         env_file=".env",
