@@ -1,0 +1,19 @@
+version: '3.9'
+
+services:
+  category_db:
+    image: postgres:latest
+    container_name: product_db
+    environment:
+      - POSTGRES_USER=${PRODUCT_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${PRODUCT_POSTGRES_PASS}
+      - POSTGRES_DB=${PRODUCT_POSTGRES_NAME}
+    volumes:
+      - ./postgres_data/category:/var/lib/postgresql/data
+    ports:
+      - "${PRODUCT_POSTGRES_PORT}:${PRODUCT_POSTGRES_PORT}"
+    command: -p ${PRODUCT_POSTGRES_PORT}
+  
+  networks:
+    backend:
+      external: true
