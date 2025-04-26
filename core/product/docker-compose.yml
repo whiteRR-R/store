@@ -13,7 +13,10 @@ services:
     ports:
       - "${PRODUCT_POSTGRES_PORT}:${PRODUCT_POSTGRES_PORT}"
     command: -p ${PRODUCT_POSTGRES_PORT}
+
+    networks:
+      - backend
   
-  networks:
-    backend:
-      external: true
+networks:
+  backend:
+    external: true
