@@ -1,10 +1,11 @@
 from domain.value_objects.category_name import CategoryName
-import uuid
+from typing import Optional
+from uuid import uuid4, UUID
 
 
 class Category:
-    def __init__(self, category_name: CategoryName):
-        self.id = uuid.uuid4()
+    def __init__(self, category_name: CategoryName, id: Optional[UUID] = None):
+        self.id = id or uuid4()
         self._name = category_name
 
     def update_name(self, new_name: CategoryName) -> None:
