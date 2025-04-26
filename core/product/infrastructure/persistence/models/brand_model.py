@@ -18,5 +18,3 @@ class BrandModel(Base):
         "ProductModel", back_populates="brand", cascade="all, delete"
     )
     
-
-
