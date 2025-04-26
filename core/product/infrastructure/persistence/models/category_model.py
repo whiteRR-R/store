@@ -1,6 +1,7 @@
 from sqlalchemy import String, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from infrastructure.persistence.database import Base
+from infrastructure.persistence.models.association_models import AssociationProductCategoryModel
 from typing import List, Any, TYPE_CHECKING
 import uuid
 
@@ -17,7 +18,7 @@ class CategoryModel(Base):
     # Relationships many-to-many
     products: Mapped[List["ProductModel"]] = relationship(
         "ProductModel",
-        secondary="association_product_category",
+        secondary=AssociationProductCategoryModel.__table__,
         back_populates="categories"
     )
     
