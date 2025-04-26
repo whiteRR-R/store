@@ -19,9 +19,13 @@ if config.config_file_name is not None:
 # add your model's MetaData object here
 # for 'autogenerate' support
 from infrastructure.persistence.database import Base
+from infrastructure.persistence.models.product_model import ProductModel
+from infrastructure.persistence.models.category_model import CategoryModel
+from infrastructure.persistence.models.brand_model import BrandModel
+from infrastructure.persistence.models.association_models import AssociationProductCategoryModel
 from config import config_manager
 target_metadata = Base.metadata
-config.set_main_option("sqlalchemy.url", config_manager.database.DATABASE_URL)
+config.set_main_option("sqlalchemy.url", config_manager.database.URL)
 
 
 def run_migrations_offline() -> None:
