@@ -3,7 +3,8 @@ from aio_pika import connect_robust, Message, ExchangeType
 from aio_pika.abc import AbstractRobustConnection, AbstractChannel, AbstractExchange, AbstractQueue
 import json
 
-EventType = TypeVar("EventType")
+
+EventType = TypeVar("EventType", bound=str)
 
 
 class EventBusSubscriber(Generic[EventType]):
