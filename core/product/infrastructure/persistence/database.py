@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
@@ -18,6 +19,7 @@ class Database:
             bind=self._engine
         )
     
+    @asynccontextmanager
     async def get_session(self):
         async with self._session_factory() as session:
             try:
@@ -26,4 +28,3 @@ class Database:
                 await session.rollback()
             finally:
                 await session.close()
-        
