@@ -24,6 +24,8 @@ class RabbitMQSettings(BaseSettings):
     HOST: str
     PORT: int
     URL: str
+    EXCHANGE_NAME: str
+    QUEUE_NAME: str
     
     model_config = SettingsConfigDict(
         env_file=".env",
