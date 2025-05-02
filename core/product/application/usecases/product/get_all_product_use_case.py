@@ -1,4 +1,4 @@
-from domain.interfaces.product_repository import ProductRepositoryProtocol
+from domain.interfaces.repositories.product_repository import ProductRepositoryProtocol
 from domain.aggregates.product import ProductRoot
 from typing import List
 

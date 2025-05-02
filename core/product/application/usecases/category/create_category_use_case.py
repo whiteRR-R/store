@@ -1,5 +1,4 @@
-from domain.entities.category import Category
-from domain.interfaces.category_repository import CategoryRepositoryProtocol
+from domain.interfaces.repositories.category_repository import CategoryRepositoryProtocol
 from application.dtos.category_dto import CategoryDTO
 from application.factories.category_factory import CategoryFactory
 

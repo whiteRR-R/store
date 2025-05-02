@@ -1,5 +1,5 @@
 from domain.entities.category import Category
-from domain.interfaces.category_repository import CategoryRepositoryProtocol
+from domain.interfaces.repositories.category_repository import CategoryRepositoryProtocol
 from typing import List
 
 

@@ -1,4 +1,4 @@
-from domain.interfaces.category_repository import CategoryRepositoryProtocol
+from domain.interfaces.repositories.category_repository import CategoryRepositoryProtocol
 from application.exceptions import DataNotFoundException
 from uuid import UUID
 
