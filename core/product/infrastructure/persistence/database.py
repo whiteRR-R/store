@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+from infrastructure.exceptions import RollbackException
 
 
 class Base(DeclarativeBase):
@@ -26,5 +27,6 @@ class Database:
                 yield session
             except Exception:
                 await session.rollback()
+                raise RollbackException("Transaction rollbacked")
             finally:
                 await session.close()
