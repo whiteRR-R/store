@@ -10,7 +10,7 @@ class Base(DeclarativeBase):
 
 
 class Database:
-    """Класс для управления подключением к базе данных sqlalchemy"""
+    """Class for managing the database connection and session"""
     def __init__(self, database_url: str):
         self._database_url = database_url
         self._engine = create_async_engine(
@@ -22,11 +22,11 @@ class Database:
     
     @asynccontextmanager
     async def get_session(self):
-        async with self._session_factory() as session:
-            try:
-                yield session
-            except Exception:
-                await session.rollback()
-                raise RollbackException("Transaction rollbacked")
-            finally:
-                await session.close()
+        session = self._session_factory()
+        try:
+            yield session
+        except Exception:
+            await session.rollback()
+            raise RollbackException("Transaction rollbacked")
+        finally:
+            await session.close()
