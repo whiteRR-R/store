@@ -66,19 +66,19 @@ class ProductRoot:
     
     @property
     def name(self):
-        return self._name.value
+        return self._name
 
     @property
     def brand(self):
-        return self._brand._name
+        return self._brand
     
     @property
     def description(self):
-        return self._description.value
+        return self._description
     
     @property
     def price(self):
-        return self._price.value
+        return self._price
     
     @property
     def categories(self) -> List[Category]:
