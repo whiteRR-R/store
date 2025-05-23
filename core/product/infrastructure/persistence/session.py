@@ -1,4 +1,6 @@
-from database import Database
+from infrastructure.persistence.database import Database
+from sqlalchemy.ext.asyncio import AsyncSession
+
 
 async def provide_session(db: Database) -> AsyncSession: # type: ignore
     """Provides a session for the database"""
