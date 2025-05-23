@@ -9,7 +9,7 @@ class CategoryCreateHandler:
         self.category_repository = category_repository
 
     async def handle(self, event: CategoryCreateEvent):
-        category = CategoryFactory.create_entity(
+        category = CategoryFactory.from_params(
             category_id=UUID(event.category_id),
             category_name=event.category_name
         )
