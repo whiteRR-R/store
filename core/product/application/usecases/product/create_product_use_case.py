@@ -27,6 +27,6 @@ class CreateProductUseCase:
         categories = await self.category_repository.get_by_ids(category_ids)
         if not brand or not categories:
             raise DataNotFoundException("Brand or Categories not found")
-        product = ProductFactory.create_from_dto(product_dto, brand, categories)
+        product = ProductFactory.from_dto(product_dto, brand, categories)
         await self.product_repository.create(product)
 

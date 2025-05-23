@@ -8,6 +8,6 @@ class CreateCategoryUseCase:
         self.category_repository = category_repository
     
     async def execute(self, category_dto: CategoryDTO) -> None:
-        category = CategoryFactory.create_from_dto(category_dto)
+        category = CategoryFactory.from_dto(category_dto)
         await self.category_repository.create(category)
 
