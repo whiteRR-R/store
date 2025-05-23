@@ -10,7 +10,7 @@ class BrandDataMapper:
         """
         return BrandModel(
             id=brand._id,
-            name=brand.name,
+            name=brand.name.value,
         )
     
     def model_to_entity(self, brand_model: BrandModel) -> Brand:
