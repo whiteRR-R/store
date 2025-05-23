@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from uuid import UUID
-from typing import List
+from typing import List, Optional
 
 
 class AttributeDTO(BaseModel):
@@ -8,7 +8,8 @@ class AttributeDTO(BaseModel):
     value: str
 
 
-class CreateProductDTO(BaseModel):
+class ProductDTO(BaseModel):
+    id: Optional[str] = None
     name: str
     brand_id: UUID
     description: str
@@ -16,9 +17,5 @@ class CreateProductDTO(BaseModel):
     category_ids: List[UUID]
     attributes: List[AttributeDTO]
 
-
-class UpdateProductDTO(BaseModel):
-    name: str
-    description: str
-    price: int
-
+class CreateProductDTO(ProductDTO):
+    ...
