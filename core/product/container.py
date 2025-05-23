@@ -10,7 +10,8 @@ from infrastructure.event_bus.subscriber import EventBusSubscriber
 from infrastructure.persistence.repository.brand_repository import BrandRepository
 from infrastructure.persistence.repository.category_repository import CategoryRepository
 from infrastructure.persistence.repository.product_repository import ProductRepository
-from infrastructure.persistence.database import Database, provide_session
+from infrastructure.persistence.database import Database
+from infrastructure.persistence.session import provide_session
 from dependency_injector import containers, providers
 
 from config import config_manager
