@@ -35,7 +35,6 @@ class ProductRepository:
         )
         product = stmt.scalars().one_or_none()
         return self.mapper.model_to_entity(product) if product else None
-        
     
     async def get_all(self) -> List[ProductRoot]:
         stmt = await self.session.execute(select(ProductModel))
