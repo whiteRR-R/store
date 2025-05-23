@@ -5,7 +5,7 @@ from uuid import uuid4, UUID
 
 class Category:
     def __init__(self, category_name: CategoryName, id: Optional[UUID] = None):
-        self.id = id or uuid4()
+        self._id = id or uuid4()
         self._name = category_name
 
     def update_name(self, new_name: CategoryName) -> None:
@@ -15,5 +15,9 @@ class Category:
     def name(self) -> CategoryName:
         return self._name
     
+    @property
+    def id(self) -> UUID:
+        return self._id
+    
     def __repr__(self):
-        return f"Category(id={self.id}, name={self._name})"
+        return f"Category(id={self._id}, name={self._name})"
