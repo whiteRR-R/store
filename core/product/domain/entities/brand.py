@@ -15,5 +15,9 @@ class Brand:
     def name(self) -> BrandName:
         return self._name
     
+    @property
+    def id(self) -> UUID:
+        return self._id
+    
     def __repr__(self):
         return f"Brand(id={self._id}, name={self._name})"
