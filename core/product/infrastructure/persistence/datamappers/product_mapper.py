@@ -40,10 +40,10 @@ class ProductDataMapper:
             ProductAttribute(key, value) for key, value in product_model.attributes.items()
         ]
         categories = [
-            CategoryFactory.create_entity(category_id=category.id, category_name=category.name)
+            CategoryFactory.from_params(category_id=category.id, category_name=category.name)
             for category in product_model.categories
         ]
-        brand = BrandFactory.create(
+        brand = BrandFactory.from_params(
             id=product_model.brand.id,
             brand_name=product_model.brand.name
         )
