@@ -21,6 +21,6 @@ class BrandFactory:
     @staticmethod
     def to_dto(brand: Brand):
         return BrandDTO(
-            id=brand.id.hex,
+            id=brand.id,
             name=brand.name.value
         )
