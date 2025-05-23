@@ -6,9 +6,9 @@ from uuid import UUID
 
 class BrandFactory:
     @staticmethod
-    def from_params(id: UUID, brand_name: str):
+    def from_params(brand_id: UUID, brand_name: str):
         return Brand(
-            id=id,
+            id=brand_id,
             brand_name=BrandName(brand_name)
         )
 

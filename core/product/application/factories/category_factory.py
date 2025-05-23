@@ -23,6 +23,6 @@ class CategoryFactory:
     @staticmethod
     def to_dto(category: Category) -> CategoryDTO:
         return CategoryDTO(
-            id=category._id.hex,
+            id=category.id.hex,
             name=category.name.value
         )
