@@ -1,6 +1,6 @@
 from domain.entities.brand import Brand
 from domain.value_objects.brand_name import BrandName
-from application.dtos.brand_dto import CreateBrandDTO
+from application.dtos.brand_dto import BrandDTO, CreateBrandDTO
 from uuid import UUID
 
 
@@ -20,7 +20,7 @@ class BrandFactory:
 
     @staticmethod
     def to_dto(brand: Brand):
-        return CreateBrandDTO(
+        return BrandDTO(
             id=brand.id.hex,
             name=brand.name.value
         )
