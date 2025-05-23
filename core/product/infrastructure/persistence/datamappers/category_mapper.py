@@ -1,5 +1,7 @@
 from domain.entities.category import Category
+from application.factories.category_factory import CategoryFactory
 from infrastructure.persistence.models.category_model import CategoryModel
+
 
 
 class CategoryDataMapper:
@@ -8,7 +10,7 @@ class CategoryDataMapper:
         Converts a model object to an entity object.
         """
         return CategoryModel(
-            id=category.id,
+            id=category._id,
             name=category.name,
         )
 
@@ -16,7 +18,7 @@ class CategoryDataMapper:
         """
         Converts an entity object to a model object.
         """
-        return Category(
-            id=category_model.id,
-            name=category_model.name,
+        return CategoryFactory.from_params(
+            category_id=category_model.id,
+            category_name=category_model.name,
         )

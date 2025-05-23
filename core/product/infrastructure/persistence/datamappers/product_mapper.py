@@ -44,7 +44,7 @@ class ProductDataMapper:
             for category in product_model.categories
         ]
         brand = BrandFactory.from_params(
-            id=product_model.brand.id,
+            brand_id=product_model.brand.id,
             brand_name=product_model.brand.name
         )
         
