@@ -14,7 +14,6 @@ from infrastructure.persistence.repository.brand_repository import BrandReposito
 from infrastructure.persistence.repository.category_repository import CategoryRepository
 from infrastructure.persistence.repository.product_repository import ProductRepository
 from infrastructure.persistence.database import Database
-from infrastructure.persistence.session import provide_session
 from dependency_injector import containers, providers
 
 from config import config_manager
@@ -29,12 +28,11 @@ class Container(containers.DeclarativeContainer):
     )
     # Database
     database = providers.Singleton(Database, database_url=config_manager.database.URL)
-    session = providers.Resource(provide_session, db=database)
     
     # Repository
-    brand_repository = providers.Factory(BrandRepository, session=session)
-    category_repository = providers.Factory(CategoryRepository, session=session)
-    product_repository = providers.Factory(ProductRepository, session=session)
+    brand_repository = providers.Factory(BrandRepository, session=providers.Dependency())
+    category_repository = providers.Factory(CategoryRepository, session=providers.Dependency())
+    product_repository = providers.Factory(ProductRepository, session=providers.Dependency())
     
     # Event Bus
     event_bus_subscriber = providers.Singleton( 
