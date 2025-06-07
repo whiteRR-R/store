@@ -28,7 +28,7 @@ class Container(containers.DeclarativeContainer):
     )
 
     database = providers.Singleton(Database, database_url=config_manager.database.URL)
-    session = providers.Factory(lambda database: database.get_session(), database) 
+    session = providers.Factory(database.provided.get_session)
 
     brand_repository = providers.Factory(BrandRepository, session_context_manager=session)
     category_repository = providers.Factory(CategoryRepository, session_context_manager=session)
