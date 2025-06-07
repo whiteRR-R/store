@@ -22,11 +22,11 @@ class Database:
     
     @asynccontextmanager
     async def get_session(self):
-        session = self._session_factory()
-        try:
-            yield session
-        except Exception:
-            await session.rollback()
-            raise RollbackException("Transaction rollbacked")
-        finally:
-            await session.close()
+        async with self._session_factory() as session:
+            try:
+                yield session
+            except Exception:
+                await session.rollback()
+                raise RollbackException("Transaction rollbacked")
+            finally:
+                await session.close()
