@@ -4,7 +4,7 @@ from typing import Protocol
 
 
 class ProductRepositoryProtocol(Protocol):
-    async def create(self, product: ProductRoot) -> None:
+    async def add(self, product: ProductRoot) -> None:
         """
         Adds a new product to the repository.
         """
