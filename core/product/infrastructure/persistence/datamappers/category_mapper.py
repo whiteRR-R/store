@@ -10,7 +10,7 @@ class CategoryDataMapper:
         Converts a model object to an entity object.
         """
         return CategoryModel(
-            id=category._id,
+            id=category.id,
             name=category.name,
         )
 
