@@ -4,7 +4,7 @@ from uuid import UUID
 
 
 class BrandRepositoryProtocol(Protocol):
-    async def create(self, brand: Brand) -> None:
+    async def add(self, brand: Brand) -> None:
         """
         Adds a new brand to the repository.
         """
