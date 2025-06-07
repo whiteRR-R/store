@@ -12,12 +12,12 @@ class Category:
         self._name = new_name
     
     @property
-    def name(self) -> CategoryName:
-        return self._name
+    def name(self) -> str:
+        return self._name.value
     
     @property
     def id(self) -> UUID:
         return self._id
     
     def __repr__(self):
-        return f"Category(id={self._id}, name={self._name})"
+        return f"Category(id={self.id}, name={self.name})"
