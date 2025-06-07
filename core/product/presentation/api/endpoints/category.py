@@ -1,0 +1,45 @@
+from uuid import UUID
+from fastapi import APIRouter, Depends, status
+from dependency_injector.wiring import inject, Provide
+from application.dtos.category_dto import CreateCategoryDTO, CategoryDTO
+from application.interfaces.usecases.category_use_cases import (
+    CreateCategoryUseCaseProtocol,
+    GetAllCategoriesUseCaseProtocol,
+    DeleteCategoryUseCaseProtocol,
+)
+from container import Container
+
+
+router = APIRouter(tags=["categories"])
+
+
+@router.post("/categories", status_code=status.HTTP_201_CREATED)
+@inject
+async def create_category(
+    category: CreateCategoryDTO,
+    use_case: CreateCategoryUseCaseProtocol = Depends(
+        Provide[Container.create_category_use_case]
+    ),
+) -> None:
+    await use_case.execute(category_dto=category)
+
+
+@router.get("/categories", response_model=list[CategoryDTO], status_code=status.HTTP_200_OK)
+@inject
+async def get_all_categories(
+    use_case: GetAllCategoriesUseCaseProtocol = Depends(
+        Provide[Container.get_all_category_use_case]
+    ),
+) -> list[CategoryDTO]:
+    return await use_case.execute()
+
+
+@router.delete("/categories/{category_id}", status_code=status.HTTP_204_NO_CONTENT)
+@inject
+async def delete_category(
+    category_id: UUID,
+    use_case: DeleteCategoryUseCaseProtocol = Depends(
+        Provide[Container.delete_category_use_case]
+    ),
+) -> None:
+    await use_case.execute(category_id=category_id)
