@@ -1,10 +1,10 @@
 from typing import List, Protocol
-from application.dtos.category_dto import CategoryDTO
+from application.dtos.category_dto import CreateCategoryDTO, CategoryDTO
 from uuid import UUID
 
 
 class CreateCategoryUseCaseProtocol(Protocol):
-    async def execute(self, category_dto: CategoryDTO) -> None:
+    async def execute(self, category_dto: CreateCategoryDTO) -> None:
         """Create a new category."""
         pass
 
