@@ -21,3 +21,9 @@ class BrandRepositoryProtocol(Protocol):
         Gets a brand by its ID.
         """
         ...
+
+    async def delete(self, brand: Brand) -> None:
+        """
+        Deletes a brand from the repository.
+        """
+        ...
