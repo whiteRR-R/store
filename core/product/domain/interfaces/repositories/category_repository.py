@@ -4,7 +4,7 @@ from uuid import UUID
 
 
 class CategoryRepositoryProtocol(Protocol):
-    async def create(self, category: Category) -> None:
+    async def add(self, category: Category) -> None:
         """
         Adds a new category to the repository.
         """
