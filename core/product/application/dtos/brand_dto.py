@@ -1,10 +1,10 @@
-import uuid
+from uuid import UUID
 from pydantic import BaseModel
 from typing import Optional
 
 
 class BrandDTO(BaseModel):
-    id: uuid.UUID
+    id: UUID
     name: str
 
 
