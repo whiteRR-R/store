@@ -24,6 +24,7 @@ class Container(containers.DeclarativeContainer):
         modules=[
             "presentation.api.endpoints.product",
             "presentation.api.endpoints.brand",
+            "presentation.api.endpoints.category",
         ]
     )
 
