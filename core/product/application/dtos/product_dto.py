@@ -4,12 +4,11 @@ from typing import List, Optional
 
 
 class AttributeDTO(BaseModel):
-    name: str
+    key: str
     value: str
 
 
-class ProductDTO(BaseModel):
-    id: Optional[str] = None
+class CreateProductDTO(BaseModel):
     name: str
     brand_id: UUID
     description: str
@@ -17,5 +16,16 @@ class ProductDTO(BaseModel):
     category_ids: List[UUID]
     attributes: List[AttributeDTO]
 
-class CreateProductDTO(ProductDTO):
+
+class ProductDTO(CreateProductDTO):
+    id: UUID
+    name: str
+    brand_id: UUID
+    description: str
+    price: int
+    category_ids: List[UUID]
+    attributes: List[AttributeDTO]
+
+
+class UpdateProductDTO(ProductDTO):
     ...
