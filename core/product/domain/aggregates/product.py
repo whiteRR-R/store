@@ -6,7 +6,7 @@ from domain.value_objects.product_attribute import ProductAttribute
 from domain.value_objects.product_description import ProductDescription
 from domain.value_objects.product_price import ProductPrice
 from domain.exceptions import AlreadyExistException, NotFoundException
-from typing import List, Optional, Tuple, MutableSequence
+from typing import List, Optional, Dict, MutableSequence
 from uuid import uuid4, UUID
 
 
@@ -65,19 +65,19 @@ class ProductRoot:
         return self._id
     
     @property
-    def name(self):
+    def name(self) -> ProductName:
         return self._name
 
     @property
-    def brand(self):
+    def brand(self) -> Brand:
         return self._brand
     
     @property
-    def description(self):
+    def description(self) -> ProductDescription:
         return self._description
     
     @property
-    def price(self):
+    def price(self) -> ProductPrice:
         return self._price
     
     @property
@@ -85,8 +85,8 @@ class ProductRoot:
         return [category for category in self._categories]
     
     @property
-    def attributes(self) -> List[ProductAttribute]:
-        return [attribute for attribute in self._attributes]
+    def attributes(self) -> Dict[str, str]:
+        return {attribute.key: attribute.value for attribute in self._attributes}
     
     # @property
     # def images(self) -> Tuple[ProductImage]:
@@ -97,7 +97,7 @@ class ProductRoot:
             f"<Product: {self.name}, "
             f"Brand: {self.brand}, "
             f"Price: {self.price}, "
-            f"Categories: {(category.name for category in self.categories)}>"
+            f"Categories: {self.categories}"
         )
         
     
