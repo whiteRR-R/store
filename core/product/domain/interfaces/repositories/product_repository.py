@@ -16,6 +16,12 @@ class ProductRepositoryProtocol(Protocol):
         """
         ...
     
+    async def update(self, product: ProductRoot) -> None:
+        """
+        Updates an existing product in the repository.
+        """
+        ...
+    
     async def get_all(self) -> list[ProductRoot]:
         """
         Retrieves all products from the repository.
@@ -27,4 +33,5 @@ class ProductRepositoryProtocol(Protocol):
         Gets a product by its ID.
         """
         ...
+    
         
