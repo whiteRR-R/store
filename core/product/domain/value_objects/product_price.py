@@ -4,8 +4,8 @@ from domain.exceptions import InvalidValueException
 
 @dataclass(frozen=True)
 class ProductPrice:
-    price: int
+    value: int
 
     def __post_init__(self):
-        if self.price <= 0:
+        if self.value <= 0:
             raise InvalidValueException("Product price must be a positive integer.")
