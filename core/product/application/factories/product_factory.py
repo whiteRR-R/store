@@ -19,7 +19,7 @@ class ProductFactory:
     ) -> ProductRoot:
         
         attributes = [
-            ProductAttribute(attr.name, attr.value) for attr in dto.attributes
+            ProductAttribute(attr.key, attr.value) for attr in dto.attributes
         ]
         
         return ProductRoot(
@@ -34,14 +34,14 @@ class ProductFactory:
     @staticmethod
     def to_dto(product: ProductRoot) -> ProductDTO:
         return ProductDTO(
-            id=product.id.hex,
-            name=product.name,
+            id=product.id,
+            name=product.name.value,
             brand_id=product.brand.id,
-            description=product.description,
+            description=product.description.value,
             price=product.price.value,
             category_ids=[category.id for category in product.categories],
             attributes=[
-                AttributeDTO(name=attr.key, value=attr.value)
-                for attr in product.attributes
-            ],   
+                AttributeDTO(key=key, value=value)
+                for key, value in product.attributes.items()
+            ],
         )
