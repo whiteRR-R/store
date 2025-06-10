@@ -24,5 +24,5 @@ class CategoryFactory:
     def to_dto(category: Category) -> CategoryDTO:
         return CategoryDTO(
             id=category.id,
-            name=category.name.value
+            name=category.name
         )
