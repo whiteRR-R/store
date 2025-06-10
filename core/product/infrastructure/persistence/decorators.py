@@ -1,4 +1,5 @@
 import functools
+from infrastructure.exceptions import RollbackException
 
 
 def transaction(method):
@@ -8,5 +9,5 @@ def transaction(method):
             try:
                 return await method(self, session, *args, **kwargs)
             except Exception as e:
-                raise (f"Rolling back transaction due to: {e}")
+                raise RollbackException(f"Rolling back transaction due to: {e}")
     return wrapper
