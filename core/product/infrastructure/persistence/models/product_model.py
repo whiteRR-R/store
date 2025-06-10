@@ -2,7 +2,7 @@ from infrastructure.persistence.database import Base
 from sqlalchemy import String, Integer
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from typing import Iterable, Dict, TYPE_CHECKING
+from typing import List, Dict, TYPE_CHECKING
 from sqlalchemy import UUID, ForeignKey
 from infrastructure.persistence.models.association_models import AssociationProductCategoryModel
 import uuid
@@ -27,7 +27,7 @@ class ProductModel(Base):
     brand: Mapped["BrandModel"] = relationship("BrandModel", back_populates="products")
 
     # Relationships many-to-many
-    categories: Mapped[Iterable["CategoryModel"]] = relationship(
+    categories: Mapped[List["CategoryModel"]] = relationship(
         "CategoryModel",
         secondary=AssociationProductCategoryModel.__table__,
         back_populates="products",
