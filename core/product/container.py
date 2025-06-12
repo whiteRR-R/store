@@ -8,6 +8,8 @@ from application.usecases.product.create_product_use_case import CreateProductUs
 from application.usecases.product.get_all_product_use_case import GetAllProductUseCase
 from application.usecases.product.get_by_id_product_use_case import GetByIdProductUseCase
 from application.usecases.product.delete_product_use_case import DeleteProductUseCase
+from application.usecases.product.add_product_attribute_use_case import AddProductAttributeUseCase
+from application.usecases.product.delete_product_attribute_use_case import DeleteProductAttributeUseCase
 from application.usecases.category.create_category_use_case import CreateCategoryUseCase
 from application.usecases.category.get_all_category_use_case import GetAllCategoryUseCase
 from application.usecases.category.delete_category_use_case import DeleteCategoryUseCase
@@ -99,4 +101,14 @@ class Container(containers.DeclarativeContainer):
     delete_brand_use_case = providers.Factory(
         DeleteBrandUseCase,
         brand_repository=brand_repository,
+    )
+
+    add_product_attribute_use_case = providers.Factory(
+        AddProductAttributeUseCase,
+        product_repository=product_repository,
+    )
+
+    delete_product_attribute_use_case = providers.Factory(
+        DeleteProductAttributeUseCase,
+        product_repository=product_repository,
     )
