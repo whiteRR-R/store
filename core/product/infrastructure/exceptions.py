@@ -10,3 +10,7 @@ class DatabaseConnectionError(InfrastructureException):
 class RollbackException(InfrastructureException):
     """Exception raised when a transaction rollback is required."""
     pass
+
+class NotFoundException(InfrastructureException):
+    """Exception raised when an entity is not found."""
+    pass
