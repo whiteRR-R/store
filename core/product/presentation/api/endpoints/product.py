@@ -2,10 +2,11 @@ from typing import List
 from uuid import UUID
 from fastapi import APIRouter, Depends, status
 from dependency_injector.wiring import Provide, inject
-from application.dtos.product_dto import CreateProductDTO, ProductDTO
+from application.dtos.product_dto import CreateProductDTO, ProductDTO, AttributeDTO
 from application.interfaces.usecases.product_use_cases import (
     CreateProductUseCaseProtocol, GetAllProductsUseCaseProtocol,
-    GetProductByIdUseCaseProtocol, DeleteProductUseCaseProtocol
+    GetProductByIdUseCaseProtocol, DeleteProductUseCaseProtocol,
+    AddProductAttributeUseCaseProtocol, DeleteProductAttributeUseCaseProtocol,
 )
 from container import Container
 
@@ -68,3 +69,33 @@ async def delete_product_by_id(
     ),
 ):
     await use_case.execute(product_id=product_id)
+
+
+@router.patch(
+    "/products/{product_id}/attributes",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+@inject
+async def add_product_attribute(
+    product_id: UUID,
+    attribute_dto: AttributeDTO,
+    use_case: AddProductAttributeUseCaseProtocol = Depends(
+        Provide[Container.add_product_attribute_use_case]
+    ),
+):
+    await use_case.execute(product_id=product_id, attribute_dto=attribute_dto)
+
+
+@router.delete(
+    "/products/{product_id}/attributes",
+    status_code=status.HTTP_200_OK,
+)
+@inject
+async def remove_product_attribute(
+    product_id: UUID,
+    attribute_dto: AttributeDTO,
+    use_case: DeleteProductAttributeUseCaseProtocol = Depends(
+        Provide[Container.delete_product_attribute_use_case]
+    ),
+):
+    await use_case.execute(product_id=product_id, attribute_dto=attribute_dto)
