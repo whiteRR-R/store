@@ -5,7 +5,7 @@ from domain.value_objects.product_image import ProductImage
 from domain.value_objects.product_attribute import ProductAttribute
 from domain.value_objects.product_description import ProductDescription
 from domain.value_objects.product_price import ProductPrice
-from domain.exceptions import AlreadyExistException, NotFoundException
+from domain.exceptions import AlreadyExistException, NotFoundException, InvalidOperationException
 from typing import List, Optional, Dict, MutableSequence
 from uuid import uuid4, UUID
 
@@ -36,22 +36,26 @@ class ProductRoot:
     
     def add_attribute(self, attribute: ProductAttribute) -> None:
         if attribute in self._attributes:
-            raise AlreadyExistException("Attribute already exist")
+            raise AlreadyExistException(f"Attribute: {attribute} already exist")
         self._attributes.append(attribute)
     
     def remove_attribute(self, attribute: ProductAttribute) -> None:
+        if len(self._attributes) == 0:
+            raise InvalidOperationException("Need to add attribute first")
         if attribute not in self._attributes:
-            raise NotFoundException("Attribute does not exist")
+            raise NotFoundException(f"Attribute: {attribute} does not exist")
         self._attributes.remove(attribute)
     
     def add_category(self, category: Category) -> None:
         if category in self._categories:
-            raise AlreadyExistException("Category already exist")
+            raise AlreadyExistException(f"Category: {category} already exist")
         self._categories.append(category)
     
     def remove_category(self, category: Category) -> None:
+        if len(self._categories) == 0:
+            raise InvalidOperationException("Need to add category first")
         if category not in self._categories:
-            raise NotFoundException("Category does not exist")
+            raise NotFoundException(f"Category: {category} does not exist")
         self._categories.remove(category)
     
     def update_description(self, description: ProductDescription) -> None:
