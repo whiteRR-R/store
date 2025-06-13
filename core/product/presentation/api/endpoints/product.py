@@ -2,11 +2,16 @@ from typing import List
 from uuid import UUID
 from fastapi import APIRouter, Depends, status
 from dependency_injector.wiring import Provide, inject
-from application.dtos.product_dto import CreateProductDTO, ProductDTO, AttributeDTO
+from application.dtos.product_dto import (
+    CreateProductDTO,
+    ProductDTO,
+    AttributeDTO,
+    )
 from application.interfaces.usecases.product_use_cases import (
     CreateProductUseCaseProtocol, GetAllProductsUseCaseProtocol,
     GetProductByIdUseCaseProtocol, DeleteProductUseCaseProtocol,
     AddProductAttributeUseCaseProtocol, DeleteProductAttributeUseCaseProtocol,
+    UpdateProductDescriptionUseCaseProtocol, UpdateProductPriceUseCaseProtocol
 )
 from container import Container
 
@@ -57,23 +62,9 @@ async def get_product_by_id(
     return await use_case.execute(product_id=product_id)
 
 
-@router.delete(
-    "/products/{product_id}",
-    status_code=status.HTTP_204_NO_CONTENT,
-)
-@inject
-async def delete_product_by_id(
-    product_id: UUID,
-    use_case: DeleteProductUseCaseProtocol = Depends(
-        Provide[Container.delete_product_use_case]
-    ),
-):
-    await use_case.execute(product_id=product_id)
-
-
 @router.patch(
     "/products/{product_id}/attributes",
-    status_code=status.HTTP_204_NO_CONTENT,
+    status_code=status.HTTP_200_OK,
 )
 @inject
 async def add_product_attribute(
@@ -84,6 +75,50 @@ async def add_product_attribute(
     ),
 ):
     await use_case.execute(product_id=product_id, attribute_dto=attribute_dto)
+
+
+@router.patch(
+    "/products/{product_id}/description",
+    status_code=status.HTTP_200_OK,
+)
+@inject
+async def update_product_description(
+    product_id: UUID,
+    description: str,
+    use_case: UpdateProductDescriptionUseCaseProtocol = Depends(
+        Provide[Container.update_product_description_use_case]
+    ),
+):    
+    await use_case.execute(product_id=product_id, description=description)
+
+
+@router.patch(
+    "/products/{product_id}/price",
+    status_code=status.HTTP_200_OK
+)
+@inject
+async def update_product_price(
+    product_id: UUID,
+    price: int,
+    use_case: UpdateProductPriceUseCaseProtocol = Depends(
+        Provide[Container.update_product_price_use_case]
+    )
+):
+    await use_case.execute(product_id=product_id, price=price)
+
+
+@router.delete(
+    "/products/{product_id}",
+    status_code=status.HTTP_200_OK,
+)
+@inject
+async def delete_product_by_id(
+    product_id: UUID,
+    use_case: DeleteProductUseCaseProtocol = Depends(
+        Provide[Container.delete_product_use_case]
+    ),
+):
+    await use_case.execute(product_id=product_id)
 
 
 @router.delete(
