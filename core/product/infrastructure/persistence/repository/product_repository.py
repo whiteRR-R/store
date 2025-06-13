@@ -9,7 +9,7 @@ from infrastructure.persistence.models.brand_model import BrandModel
 from infrastructure.persistence.models.product_model import ProductModel
 from infrastructure.persistence.datamappers.product_mapper import ProductDataMapper
 from infrastructure.persistence.decorators import transaction
-from infrastructure.exceptions import DataNotFoundException
+from infrastructure.exceptions import NotFoundException
 
 
 class ProductRepository:
@@ -28,7 +28,7 @@ class ProductRepository:
         categories = stmt.scalars().all()
 
         if len(categories) != len(category_ids):
-            raise DataNotFoundException("Some categories do not exist")
+            raise NotFoundException("Some categories do not exist")
         return list(categories)
 
     @transaction
@@ -37,7 +37,7 @@ class ProductRepository:
         brand = await self._get_existing_brand(session, product.brand.id)
         categories = await self._get_existing_categories(session, [category.id for category in product.categories])
         if not brand or not categories:
-            raise DataNotFoundException("Brand or categories do not exist")
+            raise NotFoundException("Brand or categories do not exist")
         product_model.brand = brand
         product_model.categories = categories
         session.add(product_model)
