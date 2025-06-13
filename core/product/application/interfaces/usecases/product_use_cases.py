@@ -1,6 +1,9 @@
-from typing import List, Protocol
-from application.dtos.product_dto import AttributeDTO, ProductDTO, CreateProductDTO
 from uuid import UUID
+from typing import List, Protocol
+from application.dtos.product_dto import (
+    AttributeDTO, ProductDTO,
+    CreateProductDTO
+)
 
 
 class CreateProductUseCaseProtocol(Protocol):
@@ -32,3 +35,14 @@ class DeleteProductAttributeUseCaseProtocol(Protocol):
     async def execute(self, product_id: UUID, attribute_dto: AttributeDTO) -> None:
         """Delete an attribute from a product."""
         pass
+
+class UpdateProductDescriptionUseCaseProtocol(Protocol):
+    async def execute(self, product_id: UUID, description: str) -> None:
+        """Update the description of a product."""
+        pass
+
+class UpdateProductPriceUseCaseProtocol(Protocol):
+    async def execute(self, product_id: UUID, price: int) -> None:
+        """Update the price of a product."""
+        pass
+    
