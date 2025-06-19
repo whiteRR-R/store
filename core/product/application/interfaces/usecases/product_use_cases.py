@@ -2,7 +2,7 @@ from uuid import UUID
 from typing import List, Protocol
 from application.dtos.product_dto import (
     AttributeDTO, ProductDTO,
-    CreateProductDTO
+    CreateProductDTO, Image
 )
 
 
@@ -46,3 +46,7 @@ class UpdateProductPriceUseCaseProtocol(Protocol):
         """Update the price of a product."""
         pass
     
+class AddProductImageUseCaseProtocol(Protocol):
+    async def execute(self, product_id: UUID, images: List[Image]) -> None:
+        """Update the price of a product."""
+        pass
