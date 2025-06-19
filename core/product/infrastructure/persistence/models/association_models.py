@@ -7,5 +7,5 @@ import uuid
 class AssociationProductCategoryModel(Base):
     __tablename__ = "association_product_category"
     
-    product_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("product.id"), primary_key=True)
+    product_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("product.id", ondelete="CASCADE"), primary_key=True)
     category_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("category.id"), primary_key=True)
