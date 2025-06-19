@@ -1,12 +1,13 @@
 from typing import List, Optional, AsyncContextManager, Sequence
 from uuid import UUID
 from sqlalchemy import select, delete
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 from domain.aggregates.product import ProductRoot
 from infrastructure.persistence.models.category_model import CategoryModel
 from infrastructure.persistence.models.brand_model import BrandModel
 from infrastructure.persistence.models.product_model import ProductModel
+from infrastructure.persistence.models.image_model import ProductImageModel
 from infrastructure.persistence.datamappers.product_mapper import ProductDataMapper
 from infrastructure.persistence.decorators import transaction
 from infrastructure.exceptions import NotFoundException
@@ -58,6 +59,7 @@ class ProductRepository:
             .options(
                 joinedload(ProductModel.brand),
                 joinedload(ProductModel.categories),
+                selectinload(ProductModel.images),
             )
         )
         product_model = stmt.unique().scalars().one_or_none()
@@ -71,10 +73,15 @@ class ProductRepository:
             product_model.price = product.price.value
             product_model.attributes = product.attributes
             product_model.brand = brand
-            
+
             product_model.categories.clear()
             product_model.categories.extend(categories)
-        await session.commit()
+
+            product_model.images.clear()
+            product_model.images.extend(
+                [ProductImageModel(url=image_urls) for image_urls in product.images]
+            )
+            await session.commit()
 
     @transaction
     async def get_by_id(self, session: AsyncSession, product_id: UUID) -> Optional[ProductRoot]:
@@ -83,7 +90,8 @@ class ProductRepository:
             .where(ProductModel.id == product_id)
             .options(
                 joinedload(ProductModel.brand),
-                joinedload(ProductModel.categories)
+                joinedload(ProductModel.categories),
+                selectinload(ProductModel.images)
             )
         )
         product = stmt.unique().scalars().first()
@@ -94,7 +102,8 @@ class ProductRepository:
         stmt = await session.execute(
             select(ProductModel).options(
                 joinedload(ProductModel.brand),
-                joinedload(ProductModel.categories)
+                joinedload(ProductModel.categories),
+                selectinload(ProductModel.images)
             )
         )
         products = stmt.unique().scalars().all()
