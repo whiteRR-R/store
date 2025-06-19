@@ -1,6 +1,8 @@
 from dependency_injector import containers, providers
+from application.usecases.product.add_product_image_use_case import AddProductImageUseCase
 from config import config_manager
 from infrastructure.persistence.database import Database
+from infrastructure.storage.s3_storage import S3ImageStorage
 from infrastructure.persistence.repository.brand_repository import BrandRepository
 from infrastructure.persistence.repository.category_repository import CategoryRepository
 from infrastructure.persistence.repository.product_repository import ProductRepository
@@ -32,6 +34,13 @@ class Container(containers.DeclarativeContainer):
         ]
     )
 
+    s3_storage = providers.Factory(
+        S3ImageStorage,
+        bucket_name=config_manager.s3.BUCKET_NAME,  
+        endpoint_url=config_manager.s3.ENDPOINT_URL,
+        acccess_key=config_manager.s3.AWS_ACCESS_KEY_ID,
+        secret_key=config_manager.s3.AWS_SECRET_ACCESS_KEY
+    )
     database = providers.Singleton(Database, database_url=config_manager.database.URL)
     session = providers.Factory(database.provided.get_session)
 
@@ -58,6 +67,7 @@ class Container(containers.DeclarativeContainer):
         product_repository=product_repository,
         category_repository=category_repository,
         brand_repository=brand_repository,
+        s3_storage=s3_storage
     )
     
     get_all_product_use_case = providers.Factory(
@@ -121,4 +131,10 @@ class Container(containers.DeclarativeContainer):
     update_product_price_use_case = providers.Factory(
         UpdateProductPriceUseCase,
         product_repository=product_repository
+    )
+
+    add_product_image_use_case = providers.Factory(
+        AddProductImageUseCase,
+        product_repository=product_repository,
+        s3_storage=s3_storage
     )
