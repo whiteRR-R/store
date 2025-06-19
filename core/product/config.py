@@ -34,10 +34,25 @@ class RabbitMQSettings(BaseSettings):
     )
 
 
+class S3Settings(BaseSettings):
+    BUCKET_NAME: str
+    ENDPOINT_URL: str
+    AWS_ACCESS_KEY_ID: str 
+    AWS_SECRET_ACCESS_KEY: str 
+    
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        env_prefix="S3_",
+        extra="ignore",
+    )
+
+
 class ConfigManager:
     def __init__(self):
         self.database = DatabaseSettings()
         self.rabbitmq = RabbitMQSettings()
+        self.s3 = S3Settings()
 
 
 config_manager = ConfigManager()
