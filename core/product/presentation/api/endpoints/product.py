@@ -1,17 +1,19 @@
 from typing import List
 from uuid import UUID
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, File, UploadFile, Form
 from dependency_injector.wiring import Provide, inject
 from application.dtos.product_dto import (
     CreateProductDTO,
     ProductDTO,
+    Image,
     AttributeDTO,
     )
 from application.interfaces.usecases.product_use_cases import (
     CreateProductUseCaseProtocol, GetAllProductsUseCaseProtocol,
     GetProductByIdUseCaseProtocol, DeleteProductUseCaseProtocol,
     AddProductAttributeUseCaseProtocol, DeleteProductAttributeUseCaseProtocol,
-    UpdateProductDescriptionUseCaseProtocol, UpdateProductPriceUseCaseProtocol
+    UpdateProductDescriptionUseCaseProtocol, UpdateProductPriceUseCaseProtocol,
+    AddProductImageUseCaseProtocol,
 )
 from container import Container
 
@@ -32,6 +34,19 @@ async def create_product(
 ):
     await use_case.execute(product_dto=product_dto)
 
+
+@router.post("/products/{product_id}/images")
+@inject
+async def add_product_image(
+    product_id: UUID,
+    images: List[UploadFile] = File(...),
+    use_case: AddProductImageUseCaseProtocol = Depends(
+        Provide[Container.add_product_image_use_case]
+    )
+):
+    image_dto = [Image(file=image.file, filename=image.filename or "") for image in images]
+    await use_case.execute(product_id=product_id, images=image_dto)
+    
 
 @router.get(
     "/products/",
