@@ -5,15 +5,14 @@ from domain.value_objects.product_price import ProductPrice
 from domain.value_objects.product_attribute import ProductAttribute
 from domain.entities.category import Category
 from domain.entities.brand import Brand
-from application.dtos.product_dto import ProductDTO
-from application.dtos.product_dto import AttributeDTO
+from application.dtos.product_dto import CreateProductDTO, AttributeDTO, ProductDTO
 from typing import List
 
 
 class ProductFactory:
     @staticmethod
     def from_dto(
-        dto: ProductDTO,
+        dto: CreateProductDTO,
         brand: Brand,
         categories: List[Category]
     ) -> ProductRoot:
@@ -29,10 +28,11 @@ class ProductFactory:
             price=ProductPrice(dto.price),
             categories=categories,
             attributes=attributes,
+            images=[]
         )
 
     @staticmethod
-    def to_dto(product: ProductRoot) -> ProductDTO:
+    def to_dto(product: ProductRoot):
         return ProductDTO(
             id=product.id,
             name=product.name.value,
@@ -44,4 +44,5 @@ class ProductFactory:
                 AttributeDTO(key=key, value=value)
                 for key, value in product.attributes.items()
             ],
+            images=[image for image in product.images]
         )
