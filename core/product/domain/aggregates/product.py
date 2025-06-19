@@ -3,6 +3,7 @@ from domain.entities.brand import Brand
 from domain.value_objects.product_name import ProductName
 from domain.value_objects.product_image import ProductImage
 from domain.value_objects.product_attribute import ProductAttribute
+from domain.value_objects.product_image import ProductImage
 from domain.value_objects.product_description import ProductDescription
 from domain.value_objects.product_price import ProductPrice
 from domain.exceptions import AlreadyExistException, NotFoundException, InvalidOperationException
@@ -19,8 +20,8 @@ class ProductRoot:
         price: ProductPrice, 
         categories: MutableSequence[Category],
         attributes: MutableSequence[ProductAttribute],
+        images: MutableSequence[ProductImage],
         id: Optional[UUID] = None,
-        # images: MutableSequence[ProductImage],
     ) -> None:
         self._id = id or uuid4()
         self._name = name
@@ -29,10 +30,10 @@ class ProductRoot:
         self._price = price
         self._categories = categories
         self._attributes = attributes
-        # self._images = images  
+        self._images = images  
         
-    # def add_image(self, image: ProductImage) -> None:
-    #     self._images.append(image)
+    def add_image(self, image: ProductImage) -> None:
+        self._images.append(image)
     
     def add_attribute(self, attribute: ProductAttribute) -> None:
         if attribute in self._attributes:
@@ -92,9 +93,9 @@ class ProductRoot:
     def attributes(self) -> Dict[str, str]:
         return {attribute.key: attribute.value for attribute in self._attributes}
     
-    # @property
-    # def images(self) -> Tuple[ProductImage]:
-    #     return (image for image in self._images)
+    @property
+    def images(self) -> List[str]:
+        return [image.url for image in self._images]
     
     def __repr__(self) -> str:
         return (
