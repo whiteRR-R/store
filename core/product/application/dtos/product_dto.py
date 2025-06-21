@@ -9,9 +9,13 @@ class AttributeDTO:
     value: str
 
 @dataclass
-class Image:
+class ImageDTO:
     file: BinaryIO
     filename: str
+
+@dataclass
+class DeleteImageDTO:
+    url: str
 
 @dataclass
 class CreateProductDTO:
