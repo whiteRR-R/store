@@ -35,13 +35,18 @@ class ProductRoot:
     def add_image(self, image: ProductImage) -> None:
         self._images.append(image)
     
+    def remove_image(self, image: ProductImage) -> None:
+        if len(self._images) <= 1:
+            raise InvalidOperationException("Need to add image first")
+        self._images.remove(image)
+
     def add_attribute(self, attribute: ProductAttribute) -> None:
         if attribute in self._attributes:
             raise AlreadyExistException(f"Attribute: {attribute} already exist")
         self._attributes.append(attribute)
     
     def remove_attribute(self, attribute: ProductAttribute) -> None:
-        if len(self._attributes) == 0:
+        if len(self._attributes) <= 1:
             raise InvalidOperationException("Need to add attribute first")
         if attribute not in self._attributes:
             raise NotFoundException(f"Attribute: {attribute} does not exist")
@@ -53,7 +58,7 @@ class ProductRoot:
         self._categories.append(category)
     
     def remove_category(self, category: Category) -> None:
-        if len(self._categories) == 0:
+        if len(self._categories) <= 1:
             raise InvalidOperationException("Need to add category first")
         if category not in self._categories:
             raise NotFoundException(f"Category: {category} does not exist")
@@ -104,5 +109,3 @@ class ProductRoot:
             f"Price: {self.price}, "
             f"Categories: {self.categories}"
         )
-        
-    
