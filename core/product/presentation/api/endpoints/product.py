@@ -4,8 +4,9 @@ from fastapi import APIRouter, Depends, status, File, UploadFile, Form
 from dependency_injector.wiring import Provide, inject
 from application.dtos.product_dto import (
     CreateProductDTO,
+    DeleteImageDTO,
     ProductDTO,
-    Image,
+    ImageDTO,
     AttributeDTO,
     )
 from application.interfaces.usecases.product_use_cases import (
@@ -13,7 +14,7 @@ from application.interfaces.usecases.product_use_cases import (
     GetProductByIdUseCaseProtocol, DeleteProductUseCaseProtocol,
     AddProductAttributeUseCaseProtocol, DeleteProductAttributeUseCaseProtocol,
     UpdateProductDescriptionUseCaseProtocol, UpdateProductPriceUseCaseProtocol,
-    AddProductImageUseCaseProtocol,
+    AddProductImageUseCaseProtocol, DeleteProductImageUseCaseProtocol,
 )
 from container import Container
 
@@ -44,7 +45,7 @@ async def add_product_image(
         Provide[Container.add_product_image_use_case]
     )
 ):
-    image_dto = [Image(file=image.file, filename=image.filename or "") for image in images]
+    image_dto = [ImageDTO(file=image.file, filename=image.filename or "") for image in images]
     await use_case.execute(product_id=product_id, images=image_dto)
     
 
@@ -149,3 +150,17 @@ async def remove_product_attribute(
     ),
 ):
     await use_case.execute(product_id=product_id, attribute_dto=attribute_dto)
+
+@router.delete(
+    "products/{product_id}/image",
+    status_code=status.HTTP_204_NO_CONTENT
+)
+@inject
+async def remove_product_image(
+    product_id: UUID,
+    image_dto: DeleteImageDTO,
+    use_case: DeleteProductImageUseCaseProtocol = Depends(
+        Provide[Container.delete_product_image_use_case]
+    )
+):
+    await use_case.execute(product_id=product_id, image=image_dto)
