@@ -5,3 +5,7 @@ class S3ImageStorageProtocol(Protocol):
     async def upload(self, staging_path: BinaryIO, file_name: str) -> str:
         """Upload image"""
         pass
+    
+    async def delete(self, key: str) -> str:
+        """Delete image"""
+        pass
