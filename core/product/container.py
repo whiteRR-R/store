@@ -1,5 +1,6 @@
 from dependency_injector import containers, providers
 from application.usecases.product.add_product_image_use_case import AddProductImageUseCase
+from application.usecases.product.delete_product_image_use_case import DeleteProductImageUseCase
 from config import config_manager
 from infrastructure.persistence.database import Database
 from infrastructure.storage.s3_storage import S3ImageStorage
@@ -135,6 +136,12 @@ class Container(containers.DeclarativeContainer):
 
     add_product_image_use_case = providers.Factory(
         AddProductImageUseCase,
+        product_repository=product_repository,
+        s3_storage=s3_storage
+    )
+
+    delete_product_image_use_case = providers.Factory(
+        DeleteProductImageUseCase,
         product_repository=product_repository,
         s3_storage=s3_storage
     )
