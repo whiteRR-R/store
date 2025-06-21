@@ -3,7 +3,7 @@ from typing import List
 from domain.interfaces.repositories.product_repository import ProductRepositoryProtocol
 from domain.interfaces.storages.s3_image_storage import S3ImageStorageProtocol
 from domain.value_objects.product_image import ProductImage
-from application.dtos.product_dto import Image
+from application.dtos.product_dto import ImageDTO
 from application.exceptions import DataNotFoundException
 
 
@@ -13,7 +13,7 @@ class AddProductImageUseCase:
         self.product_repository = product_repository
         self.s3_storage = s3_storage
         
-    async def execute(self, product_id: UUID, images: List[Image]):
+    async def execute(self, product_id: UUID, images: List[ImageDTO]):
         product = await self.product_repository.get_by_id(product_id)
         
         if not product:
