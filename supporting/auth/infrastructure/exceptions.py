@@ -17,3 +17,7 @@ class InvalidTokenException(InfrastructureException):
 class InvalidTokenTypeException(InfrastructureException):
     """ Исключение для ошибок типа токена """
     pass
+
+class RollbackException(InfrastructureException):
+    """ Исключение для отката транзакции """
+    pass
