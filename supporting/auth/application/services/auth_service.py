@@ -19,12 +19,10 @@ class AuthService:
     """Сервис для управления регистрацией и аутентификацией пользователей."""
     def __init__(
         self, 
-        unit_of_work: UnitOfWorkProtocol,
         auth_repository: AuthRepositoryProtocol,
         password_security: PasswordSecurityProtocol,
         jwt_service: JWTServiceProtocol,
     ):
-        self.unit_of_work = unit_of_work 
         self.auth_repository = auth_repository
         self.password_security = password_security
         self.jwt_service = jwt_service
@@ -39,17 +37,15 @@ class AuthService:
     
     async def create_user(self, user_dto: UserDTO):
         """Создает нового пользователя, предварительно проверяя существует ли такой пользователь."""
-        async with self.unit_of_work as uow:
-            await self._existing_username_or_email(username=user_dto.username, email=user_dto.email)
-            hashed_password = self.password_security.get_hash_password(user_dto.password)
-            new_user = UserFactory.create(
-                user_dto.username,
-                user_dto.role,
-                user_dto.email,
-                hashed_password
-            )
-            await uow.register_new(new_user)
-            await uow.commit()
+        await self._existing_username_or_email(username=user_dto.username, email=user_dto.email)
+        hashed_password = self.password_security.get_hash_password(user_dto.password)
+        new_user = UserFactory.create(
+            user_dto.username,
+            user_dto.role,
+            user_dto.email,
+            hashed_password
+        )
+        await self.auth_repository.add(new_user)
 
     async def verify_user_credentials(self, user_credentials: UserLoginDTO) -> User:
         """Проверяет учетные данные пользователя."""
@@ -79,20 +75,16 @@ class AuthService:
 
     async def update_password(self, username: str, new_password: bytes):
         """Обновляет пароль пользователя."""
-        async with self.unit_of_work as uow:
-            user = await self.get_user_by_username(username)
-            if user is None:
-                raise UserNotFoundException(f"User with username '{username}' not found.")
-            hashed_password = self.password_security.get_hash_password(new_password)
-            user.update_password(hashed_password)
-            await uow.register_dirty(user)
-            await uow.commit()
+        user = await self.get_user_by_username(username)
+        if user is None:
+            raise UserNotFoundException(f"User with username '{username}' not found.")
+        hashed_password = self.password_security.get_hash_password(new_password)
+        user.update_password(hashed_password)
+        await self.auth_repository.update(user)
 
     async def delete_user(self, username: str):
         """Удаляет пользователя по username."""
-        async with self.unit_of_work as uow:
-            user = await self.get_user_by_username(username)
-            if user is None:
-                raise UserNotFoundException(f"User with username '{username}' not found.")
-            await uow.register_deleted(user)
-            await uow.commit()
+        user = await self.get_user_by_username(username)
+        if user is None:
+            raise UserNotFoundException(f"User with username '{username}' not found.")
+        await self.auth_repository.delete(user)
