@@ -78,9 +78,9 @@ async def get_product_by_id(
     return await use_case.execute(product_id=product_id)
 
 
-@router.patch(
+@router.post(
     "/products/{product_id}/attributes",
-    status_code=status.HTTP_200_OK,
+    status_code=status.HTTP_201_CREATED,
 )
 @inject
 async def add_product_attribute(
