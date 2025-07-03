@@ -31,3 +31,7 @@ class AuthServiceProtocol(Protocol):
     async def update_password(self, username: str, new_password: bytes) -> None:
         """ Обновляет пароль пользователя. """
         ...
+    
+    async def delete_user(self, username: str) -> None:
+        """ Удаляет пользователя по username. """
+        ...
