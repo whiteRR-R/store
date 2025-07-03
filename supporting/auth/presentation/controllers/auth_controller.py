@@ -40,6 +40,14 @@ class AuthController:
         )
         
         self.router.add_api_route(
+            "/delete",
+            self.delete,
+            summary="Delete user",
+            methods=["DELETE"],
+            status_code=status.HTTP_200_OK,
+        )
+
+        self.router.add_api_route(
             "/forgot_password",
             self.forgot_password,
             summary="Forgot password",
@@ -64,7 +72,7 @@ class AuthController:
             methods=["POST"],
             status_code=status.HTTP_201_CREATED,
             response_model=JWTTokenResponse,
-            response_model_exclude_none=True
+            response_model_exclude_none=True,
         )
         
         self.router.add_api_route(
@@ -86,9 +94,8 @@ class AuthController:
         user_tokens = await self.auth_usecase.login(login_dto)
         return JWTTokenResponse(
             access_token=user_tokens.access_token,
-            refresh_token=user_tokens.refresh_token,
+            refresh_token=user_tokens.refresh_token
         )
-    
     
     async def forgot_password(self, forgot_dto: ForgotPasswordDTO = Form()) -> ForgotPasswordResponse:
         reset_token = await self.auth_usecase.forgot_password(forgot_dto)
@@ -107,4 +114,11 @@ class AuthController:
     
     async def get_user_data(self, jwt_token: str = Depends(oauth2_scheme)) -> UserDataResponse:
         user_info = await self.auth_usecase.get_current_user_info(jwt_token)
-        return user_info
+        return UserDataResponse(username=user_info.username, email=user_info.email, role=user_info.role)
+    
+    async def delete(self, jwt_token: str = Depends(oauth2_scheme)):
+        try:
+            await self.auth_usecase.delete(jwt_token)
+            return {"message": "User successfully logged out"}
+        except Exception as e:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
