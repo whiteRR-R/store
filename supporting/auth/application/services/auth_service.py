@@ -29,18 +29,27 @@ class AuthService:
         self.password_security = password_security
         self.jwt_service = jwt_service
     
+    async def _existing_username_or_email(self, username: str, email: str) -> bool:
+        """Проверяет, существует ли уже пользователь с таким username или email."""
+        if await self.auth_repository.get_by_username(username) is None:
+            raise UsernameAlreadyExistsException(username)
+        if await self.auth_repository.get_by_email(email) is None:
+            raise EmailAlreadyExistsException(email)
+        return True
+    
     async def create_user(self, user_dto: UserDTO):
         """Создает нового пользователя, предварительно проверяя существует ли такой пользователь."""
-        await self._existing_username_or_email(username=user_dto.username, email=user_dto.email)
-        hashed_password = self.password_security.get_hash_password(user_dto.password)
-        new_user = UserFactory.create(
-            user_dto.username,
-            user_dto.role,
-            user_dto.email,
-            hashed_password
-        )
-        await self.unit_of_work.register_new(new_user)
-        await self.unit_of_work.commit()
+        async with self.unit_of_work as uow:
+            await self._existing_username_or_email(username=user_dto.username, email=user_dto.email)
+            hashed_password = self.password_security.get_hash_password(user_dto.password)
+            new_user = UserFactory.create(
+                user_dto.username,
+                user_dto.role,
+                user_dto.email,
+                hashed_password
+            )
+            await uow.register_new(new_user)
+            await uow.commit()
 
     async def verify_user_credentials(self, user_credentials: UserLoginDTO) -> User:
         """Проверяет учетные данные пользователя."""
@@ -54,14 +63,6 @@ class AuthService:
             raise InvalidCredentialsException()
         return existing_user
 
-    async def _existing_username_or_email(self, username: str, email: str) -> bool:
-        """Проверяет, существует ли уже пользователь с таким username или email."""
-        if await self.auth_repository.get_by_username(username) is None:
-            raise UsernameAlreadyExistsException(username)
-        if await self.auth_repository.get_by_email(email) is None:
-            raise EmailAlreadyExistsException(email)
-        return True
-    
     async def get_user_by_username(self, username: str) -> Optional[User]:
         """Получает пользователя по username или вызывает исключение."""
         user = await self.auth_repository.get_by_username(username)
@@ -78,10 +79,20 @@ class AuthService:
 
     async def update_password(self, username: str, new_password: bytes):
         """Обновляет пароль пользователя."""
-        user = await self.get_user_by_username(username)
-        if user is None:
-            raise UserNotFoundException(username)
-        hashed_password = self.password_security.get_hash_password(new_password)
-        user.update_password(hashed_password)
-        await self.unit_of_work.register_dirty(user)
-        await self.unit_of_work.commit()
+        async with self.unit_of_work as uow:
+            user = await self.get_user_by_username(username)
+            if user is None:
+                raise UserNotFoundException(f"User with username '{username}' not found.")
+            hashed_password = self.password_security.get_hash_password(new_password)
+            user.update_password(hashed_password)
+            await uow.register_dirty(user)
+            await uow.commit()
+
+    async def delete_user(self, username: str):
+        """Удаляет пользователя по username."""
+        async with self.unit_of_work as uow:
+            user = await self.get_user_by_username(username)
+            if user is None:
+                raise UserNotFoundException(f"User with username '{username}' not found.")
+            await uow.register_deleted(user)
+            await uow.commit()
