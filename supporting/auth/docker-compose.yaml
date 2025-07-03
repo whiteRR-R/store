@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  auth_db:
+    image: postgres:latest
+    container_name: auth_db
+    environment:
+      - POSTGRES_USER=${AUTH_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${AUTH_POSTGRES_PASS}
+      - POSTGRES_DB=${AUTH_POSTGRES_NAME}
+    volumes:
+      - ./postgres_data/auth:/var/lib/postgresql/data
+    ports:
+      - "${AUTH_POSTGRES_PORT}:${AUTH_POSTGRES_PORT}"
+    command: -p ${AUTH_POSTGRES_PORT}
+
+    networks:
+      - backend
+  
+networks:
+  backend:
+    external: true
