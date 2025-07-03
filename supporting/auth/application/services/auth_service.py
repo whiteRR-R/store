@@ -26,14 +26,14 @@ class AuthService:
         self.auth_repository = auth_repository
         self.password_security = password_security
         self.jwt_service = jwt_service
-    
-    async def _existing_username_or_email(self, username: str, email: str) -> bool:
+
+    async def _existing_username_or_email(self, username: str, email: str) -> None:
         """Проверяет, существует ли уже пользователь с таким username или email."""
-        if await self.auth_repository.get_by_username(username) is None:
+        if await self.auth_repository.get_by_username(username):
             raise UsernameAlreadyExistsException(username)
-        if await self.auth_repository.get_by_email(email) is None:
+        if await self.auth_repository.get_by_email(email):
             raise EmailAlreadyExistsException(email)
-        return True
+        return None
     
     async def create_user(self, user_dto: UserDTO):
         """Создает нового пользователя, предварительно проверяя существует ли такой пользователь."""
