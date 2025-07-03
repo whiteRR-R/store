@@ -47,7 +47,21 @@ class AuthUseCase:
             raise InvalidCredentialsException()
         except InvalidCredentialsException:
             raise InvalidCredentialsException()
-            
+    
+    async def logout(self, jwt_token: str):
+        """ Логика выхода пользователя из системы. В данном случае просто проверяем валидность токена. """
+        try:
+            self.jwt_service.validate_token_type(
+                jwt_token=jwt_token, 
+                token_type=config_manager.jwt.ACCESS_TOKEN_TYPE
+            )
+            username = self.jwt_service.get_token_subject(jwt_token)
+            await self.auth_service.delete_user(username)
+        except UserNotFoundException:
+            raise UserNotFoundException(f"User with username '{username}' not found.")
+        except TokenProcessingException as e:
+            raise TokenProcessingException(f"Invalid access token: {str(e)}")
+
     async def forgot_password(self, forgot_dto: ForgotPasswordDTO):
         """ Генерирует reset-токен для сброса пароля """
         try:
