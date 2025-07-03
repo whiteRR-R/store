@@ -18,14 +18,14 @@ class SQLAlchemyAuthRepository:
     
     async def add(self, user: User) -> None:
         """Добавляет пользователя в базу данных."""
-        async with self.session as session:
+        async with self.session() as session:
             model = self.user_datamapper.from_entity(user)
             session.add(model)
             await session.commit()
 
     async def update(self, user: User) -> None:
         """Обновляет данные пользователя."""
-        async with self.session as session:
+        async with self.session() as session:
             stmt = (
                 update(UserModel)
                 .where(UserModel.username == user.username)
@@ -36,10 +36,11 @@ class SQLAlchemyAuthRepository:
                 )
             )
             await session.execute(stmt)
+            await session.commit()
 
     async def delete(self, username: str) -> None:
         """Удаляет пользователя по username."""
-        async with self.session as session:
+        async with self.session() as session:
             stmt = await session.execute(
                 select(UserModel).where(UserModel.username == username)
             )
@@ -47,18 +48,18 @@ class SQLAlchemyAuthRepository:
             if user:
                 await session.delete(user)
 
-    async def find_by_username(self, username: str) -> Optional[User]:
+    async def get_by_username(self, username: str) -> Optional[User]:
         """ Находит пользователя по его имени (username). """
-        async with self.session as session:
+        async with self.session() as session:
             stmt = await session.execute(
                 select(UserModel).where(UserModel.username == username)
             )
             user = stmt.scalar_one_or_none()
             return self.user_datamapper.to_entity(user) if user else None
 
-    async def find_by_email(self, email: str) -> Optional[User]:
+    async def get_by_email(self, email: str) -> Optional[User]:
         """ Находит пользователя по его почте (email). """
-        async with self.session as session:
+        async with self.session() as session:
             stmt = await session.execute(
             select(UserModel).where(UserModel.email == email)
         )
