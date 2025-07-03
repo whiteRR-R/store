@@ -9,7 +9,7 @@ load_dotenv()
 
 
 class DatabaseSettings(BaseModel):
-    DATABASE_URL: str = os.getenv("DATABASE_URL")
+    DATABASE_URL: str = os.getenv("AUTH_POSTGRES_URL")
 
 
 class JWTSettings(BaseModel):
