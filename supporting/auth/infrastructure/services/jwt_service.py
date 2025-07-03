@@ -9,8 +9,8 @@ import jwt
 class JWTService:
     """ Сервис для работы с JWT токенами """
     def __init__(self):
-        self._private_key: str = config_manager.jwt.PRIVATE_KEY.read_text(),
-        self._public_key: str = config_manager.jwt.PUBLIC_KEY.read_text(),
+        self._private_key: str = config_manager.jwt.PRIVATE_KEY.read_text()
+        self._public_key: str = config_manager.jwt.PUBLIC_KEY.read_text()
         self._algorithm: str = config_manager.jwt.ALGORITHM
         
     def _create_token(
@@ -84,18 +84,16 @@ class JWTService:
         return self._create_token(payload=payload, token_type=token_type, expire_timedelta=expire_timedelta)
     
     def generate_jwt_tokens(self, subject: str):
-        """ Генерует refresh и access токены и возвращает их"""
         payload = {"sub":subject}
         access_token = self.create_access_token(payload)
         refresh_token = self.create_refresh_token(payload)
         return JWTTokensDTO(access_token=access_token, refresh_token=refresh_token)
     
-    
-    def get_token_subject(self, jwt_token: str):
+    def get_token_subject(self, jwt_token: str) -> str:
         """ Возвращает имя пользователя из токена """
         try:
             token_data = self._decode_token(jwt_token)
-            return {"sub": token_data.get("sub")}
+            return token_data.get("sub")
         except InvalidTokenError:
             raise InvalidTokenException("Could not validate credentials")
             
