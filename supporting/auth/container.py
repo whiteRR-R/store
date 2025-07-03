@@ -4,7 +4,7 @@ from presentation.controllers.auth_controller import AuthController
 from application.usecase.auth_usecase import AuthUseCase
 from application.services.auth_service import AuthService
 from infrastructure.persistence.data_mapper.user_datamapper import UserDataMapper
-from infrastructure.persistence.repository.auth_repository import AuthRepository
+from infrastructure.persistence.repository.auth_repository import SQLAlchemyAuthRepository
 from infrastructure.persistence.database import Database
 from infrastructure.services.jwt_service import JWTService
 from infrastructure.persistence.uow.uow import UnitOfWork
@@ -14,14 +14,13 @@ from config import config_manager
 
 class Container(containers.DeclarativeContainer):
     database = providers.Singleton(Database, database_url=config_manager.database.DATABASE_URL)
+    session = providers.Factory(database.provided.get_session)
+    
 
-    session = providers.Resource(database.provided.session_factory)
+    auth_repository = providers.Factory(SQLAlchemyAuthRepository, session_context_manager=session)
+    mappers = providers.Dict({User: UserDataMapper})
     
-    auth_repository = providers.Factory(AuthRepository, session=session)
-    user_datamapper = providers.Factory(UserDataMapper, session=session)
-    mappers = providers.Dict({User: user_datamapper})
-    
-    unit_of_work = providers.Factory(UnitOfWork, session=session, mappers=mappers)
+    unit_of_work = providers.Factory(UnitOfWork, _session_factory=session, _mappers_classes=mappers)
     
 
     password_security = providers.Singleton(PasswordSecurity)
