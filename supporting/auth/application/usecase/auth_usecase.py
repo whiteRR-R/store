@@ -31,9 +31,9 @@ class AuthUseCase:
         """
         try:
             await self.auth_service.create_user(user_data)
-        except UsernameAlreadyExistsException as e:
+        except UsernameAlreadyExistsException:
             raise UsernameAlreadyExistsException(user_data.username)
-        except EmailAlreadyExistsException as e:
+        except EmailAlreadyExistsException:
             raise EmailAlreadyExistsException(user_data.email)
     
     async def login(self, user_credentials: UserLoginDTO):
@@ -52,6 +52,8 @@ class AuthUseCase:
         """ Генерирует reset-токен для сброса пароля """
         try:
             user = await self.auth_service.get_user_by_email(forgot_dto.email)
+            if not user:
+                raise UserNotFoundException(f"User with email '{forgot_dto.email}' not found.")
             reset_token = self.jwt_service.create_reset_token({"sub": user.username})
             # TODO: Добавить отправку ссылки для сброса на почту
             return reset_token
@@ -67,8 +69,8 @@ class AuthUseCase:
                 jwt_token=reset_dto.reset_token, 
                 token_type=config_manager.jwt.RESET_TOKEN_TYPE
             )
-            username = self.jwt_service.get_user_data(reset_dto.reset_token)
-            await self.auth_service.update_password(username, reset_dto.new_password)  
+            username = self.jwt_service.get_token_subject(reset_dto.reset_token)
+            await self.auth_service.update_password(username, reset_dto.new_password.encode())  
         except UserNotFoundException:
             raise UserNotFoundException(f"User '{username}' not found for password reset.")
         except TokenProcessingException as e:
