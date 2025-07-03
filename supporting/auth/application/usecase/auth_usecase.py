@@ -48,8 +48,8 @@ class AuthUseCase:
         except InvalidCredentialsException:
             raise InvalidCredentialsException()
     
-    async def logout(self, jwt_token: str):
-        """ Логика выхода пользователя из системы. В данном случае просто проверяем валидность токена. """
+    async def delete(self, jwt_token: str):
+        """ Удаляет пользователя по access-токену """
         try:
             self.jwt_service.validate_token_type(
                 jwt_token=jwt_token, 
