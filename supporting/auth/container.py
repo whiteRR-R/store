@@ -17,7 +17,7 @@ class Container(containers.DeclarativeContainer):
     session = providers.Factory(database.provided.get_session)
     
     user_datamapper = providers.Singleton(UserDataMapper)
-    auth_repository = providers.Factory(SQLAlchemyAuthRepository, session_context_manager=session, user_data_mapper=user_datamapper)    
+    auth_repository = providers.Factory(SQLAlchemyAuthRepository, session_context_manager=session, user_datamapper=user_datamapper)    
 
     password_security = providers.Singleton(PasswordSecurity)
 
