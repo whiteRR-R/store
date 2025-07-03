@@ -3,6 +3,7 @@ from domain.valueobject.email import Email
 from domain.valueobject.username import Username
 from domain.valueobject.permission import Permission
 
+
 class User:
     """Доменная модель пользователя"""
     def __init__(self, username: Username, role: Role, email: Email, hash_password: bytes):
@@ -10,16 +11,6 @@ class User:
         self._role = role
         self._email = email
         self._hash_password = hash_password  
-    
-    @classmethod
-    def create(cls, username: str, role: str, email: str, hash_password: bytes):
-        """ Создает нового пользователя """
-        return cls(
-            username=Username(username),
-            role=Role(role),
-            email=Email(email),
-            hash_password=hash_password
-        )
 
     def update_password(self, new_hash_password: bytes):
         """ Обновляет пароль пользователя """
