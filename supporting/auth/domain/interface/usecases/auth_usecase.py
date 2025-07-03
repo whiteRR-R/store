@@ -18,6 +18,10 @@ class AuthUseCaseProtocol(Protocol):
         """ Аутентифицирует пользователя и возвращает JWT токены. """
         ...
 
+    async def delete(self, jwt_token: str) -> None:
+        """ Удаляет пользователя по access-токену. """
+        ...
+
     async def get_current_user_info(self, jwt_token: str) -> UserDTO:
         """ Возвращает информацию текущего пользователя. """
         ...
