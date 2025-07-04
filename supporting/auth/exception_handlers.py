@@ -3,10 +3,7 @@ from fastapi.responses import JSONResponse
 
 from domain.exceptions import (
     DomainException,
-    InvalidRoleException,
-    InvalidEmailException,
-    InvalidUsernameException,
-    InvalidPermissionException,
+    ValidationError,
 )
 from application.exceptions import (
     AuthException,
@@ -24,32 +21,12 @@ async def domain_exception_handler(request: Request, exc: DomainException):
     )
 
 
-async def invalid_role_exception_handler(request: Request, exc: InvalidRoleException):
+async def validation_exception_handler(request: Request, exc: ValidationError):
     return JSONResponse(
         status_code=400,
-        content={"error": "Invalid role", "details": str(exc)},
+        content={"error": "Validation Error", "details": str(exc)},
     )
 
-
-async def invalid_email_exception_handler(request: Request, exc: InvalidEmailException):
-    return JSONResponse(
-        status_code=400,
-        content={"error": "Invalid email", "details": str(exc)},
-    )
-
-
-async def invalid_username_exception_handler(request: Request, exc: InvalidUsernameException):
-    return JSONResponse(
-        status_code=400,
-        content={"error": "Invalid username", "details": str(exc)},
-    )
-
-
-async def invalid_permission_exception_handler(request: Request, exc: InvalidPermissionException):
-    return JSONResponse(
-        status_code=403,
-        content={"error": "Invalid permission", "details": str(exc)},
-    )
 
 async def auth_exception_handler(request: Request, exc: AuthException):
     return JSONResponse(
