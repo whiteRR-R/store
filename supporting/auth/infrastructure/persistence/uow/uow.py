@@ -1,17 +1,35 @@
-from infrastructure.exceptions import UnitOfWorkException
+from typing import Any, Dict, Type, AsyncContextManager
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import Any, Dict, Type
+from infrastructure.exceptions import UnitOfWorkException
 
 
 class UnitOfWork:
     """Реализация Unit of Work для SQLAlchemy."""
-    def __init__(self, session: AsyncSession, mappers: Dict[Type, Any]):
-        self.session = session
-        self.mappers = mappers
+    def __init__(self, session_factory: AsyncContextManager[AsyncSession], mappers_classes: Dict[Type[Any], Type[Any]]):
+        self._session_factory = session_factory
+        self._mappers_classes = mappers_classes
+        self.session: AsyncSession | None = None
         self.new_objects = []
         self.dirty_objects = []
         self.deleted_objects = []
     
+    async def __aenter__(self):
+        """Вход в контекст Unit of Work."""
+        async with self._session_factory() as session:
+            self.session = session
+            self.mappers = {
+                entity: mapper(session)
+                for entity, mapper in self._mappers_classes.items()
+            }
+    
+    async def __aexit__(self, exc_type, exc_value, traceback):
+        """Выход из контекста Unit of Work."""
+        if exc_type is None:
+            await self.commit()
+        else:
+            await self.rollback()
+        await self.clear()
+        
     async def register_new(self, obj):
         self.new_objects.append(obj)
     

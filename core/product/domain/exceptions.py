@@ -13,3 +13,7 @@ class InvalidValueException(DomainException):
 class NotFoundException(DomainException):
     """Exception raised when an entity or value-object is not found in the domain."""
     pass
+
+class InvalidOperationException(DomainException):
+    """Exception raised when an operation is not vali"""
+    pass

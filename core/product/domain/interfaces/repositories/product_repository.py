@@ -4,7 +4,7 @@ from typing import Protocol
 
 
 class ProductRepositoryProtocol(Protocol):
-    async def create(self, product: ProductRoot) -> None:
+    async def add(self, product: ProductRoot) -> None:
         """
         Adds a new product to the repository.
         """
@@ -13,6 +13,12 @@ class ProductRepositoryProtocol(Protocol):
     async def delete(self, product: ProductRoot) -> None:
         """
         Deletes a product from the repository.
+        """
+        ...
+    
+    async def update(self, product: ProductRoot) -> None:
+        """
+        Updates an existing product in the repository.
         """
         ...
     
@@ -27,4 +33,5 @@ class ProductRepositoryProtocol(Protocol):
         Gets a product by its ID.
         """
         ...
+    
         

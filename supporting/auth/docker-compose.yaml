@@ -1,0 +1,46 @@
+services:
+  auth_db:
+    image: postgres:latest
+    container_name: auth_db
+    environment:
+      - POSTGRES_USER=${AUTH_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${AUTH_POSTGRES_PASS}
+      - POSTGRES_DB=${AUTH_POSTGRES_NAME}
+    volumes:
+      - ./postgres_data/auth:/var/lib/postgresql/data
+    ports:
+      - "${AUTH_POSTGRES_PORT}:${AUTH_POSTGRES_PORT}"
+    command: -p ${AUTH_POSTGRES_PORT}
+
+    networks:
+      - backend
+    
+  auth_redis:
+    image: redis:latest
+    container_name: auth_redis
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    ports:
+      - "${REDIS_PORT}:${REDIS_PORT}"
+    networks:
+      - backend
+  
+  auth_redisinsight:
+    image: redis/redisinsight:latest
+    container_name: auth_redisinsight
+    restart: always
+    depends_on:
+      - auth_redis
+    ports:
+      - "${REDIS_INSIGHT_PORT}:${REDIS_INSIGHT_PORT}"
+    volumes:
+      - redis-insight:/data
+    networks:
+      - backend
+  
+networks:
+  backend:
+    external: true
+
+volumes:
+  redis-insight:

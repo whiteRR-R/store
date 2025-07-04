@@ -1,4 +1,4 @@
-from domain.exceptions import InvalidRoleException
+from domain.exceptions import ValidationError
 from dataclasses import dataclass
 
 
@@ -16,11 +16,10 @@ class Role:
     def _validate_role(self):
         """Проверка, что role соответствует правилам"""
         if not self.role:
-            raise InvalidRoleException("Role cannot be an empty string.")
+            raise ValidationError("Role cannot be an empty string.")
         if ' ' in self.role:
-            raise InvalidRoleException("Role cannot contain spaces.")
+            raise ValidationError("Role cannot contain spaces.")
         if len(self.role) <= 3:
-            raise InvalidRoleException(f"Role '{self.role}' must be more than 3 characters")
+            raise ValidationError(f"Role '{self.role}' must be more than 3 characters")
         if not self.role.isalnum():
-            raise InvalidRoleException(f"Role '{self.role}' can only contain alphanumeric characters.")    
-    
+            raise ValidationError(f"Role '{self.role}' can only contain alphanumeric characters.")

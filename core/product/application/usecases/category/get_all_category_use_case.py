@@ -12,6 +12,4 @@ class GetAllCategoryUseCase:
     
     async def execute(self) -> List[CategoryDTO]:
         categories = await self.category_repository.get_all()
-        if not categories:
-            raise DataNotFoundException("No categories found")
         return [CategoryFactory.to_dto(category) for category in categories]

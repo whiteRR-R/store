@@ -4,14 +4,14 @@ from domain.exceptions import InvalidValueException
 
 @dataclass(frozen=True)
 class ProductDescription:
-    description: str
+    value: str
 
     def __post_init__(self):
-        if not self.description:
+        if not self.value:
             raise InvalidValueException("Product description cannot be empty.")
-        if len(self.description) < 10:
+        if len(self.value) < 10:
             raise InvalidValueException("Product description must be at least 10 characters long.")
-        if len(self.description) > 500:
+        if len(self.value) > 500:
             raise InvalidValueException("Product description must be at most 500 characters long.")
-        if not self.description[0].isalpha():
+        if not self.value[0].isalpha():
             raise InvalidValueException("Product description must start with a letter.")

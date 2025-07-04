@@ -15,8 +15,7 @@ class InvalidCredentialsException(AuthException):
 
 class UserNotFoundException(AuthException):
     """Исключение, если пользователь не найден."""
-    def __init__(self, identifier: str):
-        super().__init__(f"User with identifier '{identifier}' not found.")
+    pass
 
 
 class RegistrationException(ApplicationException):

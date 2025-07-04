@@ -13,4 +13,4 @@ class CategoryCreateHandler:
             category_id=UUID(event.category_id),
             category_name=event.category_name
         )
-        await self.category_repository.create(category)
+        await self.category_repository.add(category)

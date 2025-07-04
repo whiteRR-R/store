@@ -11,6 +11,4 @@ class GetAllProductUseCase:
         
     async def execute(self) -> List[ProductDTO]:
         products = await self.product_repository.get_all()
-        if not products:
-            raise DataNotFoundException("No products found")
         return [ProductFactory.to_dto(product) for product in products]
