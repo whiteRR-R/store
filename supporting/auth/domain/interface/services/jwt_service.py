@@ -1,5 +1,6 @@
 from typing import Protocol
 from datetime import timedelta
+from application.dtos.jwt_token_dto import JWTTokensDTO
 from config import config_manager
 
 
@@ -8,7 +9,7 @@ class JWTServiceProtocol(Protocol):
         """ Генерует токен для пользователя """
         ...
 
-    def _decode_token(self, jwt_token: str):
+    def decode_token(self, jwt_token: str):
         """ Декодитует токен """
         ...
 
@@ -38,7 +39,7 @@ class JWTServiceProtocol(Protocol):
     ) -> str:
         ...
 
-    def generate_jwt_tokens(self, subject: str):
+    def generate_jwt_tokens(self, subject: str) -> JWTTokensDTO:
         """ Генерует refresh и access токены и возвращает их"""
         ...
 
