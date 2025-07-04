@@ -79,7 +79,7 @@ class AuthService:
         if user is None:
             raise UserNotFoundException(f"User with username '{username}' not found.")
         hashed_password = self.password_security.get_hash_password(new_password)
-        user.update_password(hashed_password)
+        user.change_password(hashed_password)
         await self.auth_repository.update(user)
 
     async def delete_user(self, username: str):

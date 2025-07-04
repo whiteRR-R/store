@@ -12,9 +12,17 @@ class User:
         self._email = email
         self._hash_password = hash_password  
 
-    def update_password(self, new_hash_password: bytes):
+    def change_password(self, new_hash_password: bytes):
         """ Обновляет пароль пользователя """
         self._hash_password = new_hash_password
+    
+    def change_email(self, new_email: Email):
+        """ Обновляет email пользователя """
+        self._email = new_email
+    
+    def change_role(self, new_role: Role):
+        """ Обновляет роль пользователя """
+        self._role = new_role
         
     @property
     def username(self):
