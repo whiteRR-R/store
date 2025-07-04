@@ -1,3 +1,4 @@
+import uuid
 from config import config_manager
 from domain.valueobject.email import Email
 from domain.factories.user_factory import UserFactory
@@ -105,16 +106,16 @@ class AuthUseCase:
         user = await self.auth_repository.get_by_email(forgot_dto.email)
         if not user:
             raise UserNotFoundException(f"User with email '{forgot_dto.email}' not found.")
-        return self.jwt_service.create_reset_token({"sub": user.username})
+        reset_key = uuid.uuid4().hex
+        await self.redis_repository.set(key=f"reset_password:{reset_key}", value=user.username)
+        return reset_key
 
     async def reset_password(self, reset_dto: ResetPasswordDTO):
         """ Сбрасывает пароль пользователя по токену сброса """
         try:
-            self.jwt_service.validate_token_type(
-                jwt_token=reset_dto.reset_token,
-                token_type=config_manager.jwt.RESET_TOKEN_TYPE
-            )
-            username = self.jwt_service.get_token_subject(reset_dto.reset_token)
+            if not await self.redis_repository.exists(f"reset_password:{reset_dto.reset_key}"):
+                raise TokenProcessingException("Reset key not found in Redis")
+            username = await self.redis_repository.getdel(f"reset_password:{reset_dto.reset_key}")
             user = await self.auth_repository.get_by_username(username)
             if not user:
                 raise UserNotFoundException(username)
