@@ -4,6 +4,7 @@ from domain.exceptions import (
     DomainException,
     ValidationError
 )
+from presentation.controllers.auth_controller import router as auth_router
 from application.exceptions import (
     AuthException,
     RegistrationException,
@@ -32,8 +33,7 @@ class Application:
         
     def _configure_routes(self):
         """Настраивает маршруты приложения."""
-        auth_router = self.container.auth_controller()
-        self.app.include_router(router=auth_router.router, tags=["Auth"])
+        self.app.include_router(auth_router, tags=["auth"])
     
     def _registration_exception_handler(self):
         """Обработчик исключений"""
