@@ -1,6 +1,5 @@
 from dependency_injector import containers, providers
 from domain.entities.user import User
-from presentation.controllers.auth_controller import AuthController
 from application.usecase.auth_usecase import AuthUseCase
 from infrastructure.persistence.data_mapper.user_datamapper import UserDataMapper
 from infrastructure.persistence.redis_client import get_client
@@ -13,6 +12,10 @@ from config import config_manager
 
 
 class Container(containers.DeclarativeContainer):
+    wiring_config = containers.WiringConfiguration(
+        modules=["presentation.controllers.auth_controller"]
+    )
+    
     database = providers.Singleton(Database, database_url=config_manager.database.URL)
 
     
@@ -32,4 +35,3 @@ class Container(containers.DeclarativeContainer):
 
     jwt_service = providers.Singleton(JWTService)
     auth_usecase = providers.Factory(AuthUseCase, auth_repository=auth_repository, redis_repository=redis_repository, password_security=password_security, jwt_service=jwt_service)
-    auth_controller = providers.Factory(AuthController, auth_usecase=auth_usecase)
