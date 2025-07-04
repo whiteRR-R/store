@@ -2,6 +2,7 @@ from config import config_manager
 from domain.valueobject.email import Email
 from domain.factories.user_factory import UserFactory
 from domain.interface.repository.auth_repository import AuthRepositoryProtocol
+from domain.interface.repository.redis_repository import RedisRepositoryProtocol
 from domain.interface.services.jwt_service import JWTServiceProtocol
 from application.interface.security.password_security import PasswordSecurityProtocol
 from application.dtos.user_dto import UserDTO
@@ -23,10 +24,12 @@ class AuthUseCase:
     def __init__(
         self,
         auth_repository: AuthRepositoryProtocol,
+        redis_repository: RedisRepositoryProtocol,
         password_security: PasswordSecurityProtocol,
         jwt_service: JWTServiceProtocol,
     ):
         self.auth_repository = auth_repository
+        self.redis_repository = redis_repository
         self.password_security = password_security
         self.jwt_service = jwt_service
 
@@ -53,7 +56,14 @@ class AuthUseCase:
             raise InvalidCredentialsException()
         if not self.password_security.verify_password(user_credentials.password.encode(), user.hash_password):
             raise InvalidCredentialsException()
-        return self.jwt_service.generate_jwt_tokens(user.username)
+        jwt_tokens = self.jwt_service.generate_jwt_tokens(user.username)
+        refresh_token = self.jwt_service.decode_token(jwt_tokens.refresh_token)
+        refresh_jti = refresh_token.get("jti")
+        await self.redis_repository.set(
+            key=f"refresh_token:{refresh_jti}",
+            value=jwt_tokens.refresh_token,
+        )
+        return jwt_tokens
 
     async def delete(self, jwt_token: str):
         """ Удаляет пользователя по JWT токену """
@@ -135,7 +145,11 @@ class AuthUseCase:
                 jwt_token=jwt_dto.token,
                 token_type=config_manager.jwt.REFRESH_TOKEN_TYPE
             )
+            token_data = self.jwt_service.decode_token(jwt_dto.token)
+            jti = token_data.get("jti")
+            if not await self.redis_repository.exists(f"refresh_token:{jti}"):
+                raise TokenProcessingException("Refresh token not found in Redis")
             username = self.jwt_service.get_token_subject(jwt_dto.token)
-            return self.jwt_service.create_access_token(username)
+            return self.jwt_service.create_access_token({"sub": username})
         except TokenProcessingException as e:
             raise TokenProcessingException(f"Failed to generate access token: {str(e)}")
