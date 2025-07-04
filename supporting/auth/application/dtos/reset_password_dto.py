@@ -2,7 +2,7 @@ from pydantic import BaseModel, field_validator
 import re
 
 class ResetPasswordDTO(BaseModel):
-    reset_token: str
+    reset_key: str
     new_password: str
 
     @field_validator('new_password', mode='before')
