@@ -7,7 +7,7 @@ from domain.interface.services.jwt_service import JWTServiceProtocol
 from application.interface.security.password_security import PasswordSecurityProtocol
 from application.dtos.user_dto import UserDTO
 from application.dtos.login_dto import UserLoginDTO
-from application.dtos.jwt_token_dto import JWTTokenDTO
+from application.dtos.jwt_token_dto import JWTTokenDTO, JWTTokensDTO
 from application.dtos.forgot_password_dto import ForgotPasswordDTO
 from application.dtos.reset_password_dto import ResetPasswordDTO
 from application.dtos.change_email import ChangeEmailDTO
@@ -64,19 +64,39 @@ class AuthUseCase:
             value=jwt_tokens.refresh_token,
         )
         return jwt_tokens
-
-    async def delete(self, jwt_token: str):
+    
+    async def logout(self, access_token: str, refresh_token: str):
+        """ Выход пользователя """
+        try:
+            self.jwt_service.validate_token_type(
+                jwt_token=access_token,
+                token_type=config_manager.jwt.ACCESS_TOKEN_TYPE
+            )
+            token_data = self.jwt_service.decode_token(refresh_token)
+            jti = token_data.get("jti")
+            if not await self.redis_repository.exists(f"refresh_token:{jti}"):
+                raise TokenProcessingException("Refresh token not found in Redis")
+            await self.redis_repository.delete(f"refresh_token:{jti}")
+        except TokenProcessingException as e:
+            raise TokenProcessingException(f"Invalid token: {str(e)}")
+        
+    async def delete(self, jwt_tokens_dto: JWTTokensDTO):
         """ Удаляет пользователя по JWT токену """
         try:
             self.jwt_service.validate_token_type(
-                jwt_token=jwt_token,
+                jwt_token=jwt_tokens_dto.access_token,
                 token_type=config_manager.jwt.ACCESS_TOKEN_TYPE
             )
-            username = self.jwt_service.get_token_subject(jwt_token)
+            username = self.jwt_service.get_token_subject(jwt_tokens_dto.access_token)
             user = await self.auth_repository.get_by_username(username)
+            token_data = self.jwt_service.decode_token(jwt_tokens_dto.refresh_token)
+            jti = token_data.get("jti")
             if not user:
                 raise UserNotFoundException(username)
+            if not await self.redis_repository.exists(f"refresh_token:{jti}"):
+                raise TokenProcessingException("Refresh token not found in Redis")
             await self.auth_repository.delete(user)
+            await self.redis_repository.delete(f"refresh_token:{jti}")
         except TokenProcessingException as e:
             raise TokenProcessingException(f"Invalid access token: {str(e)}")
 
@@ -118,7 +138,7 @@ class AuthUseCase:
             if await self.auth_repository.get_by_email(dto.new_email):
                 raise EmailAlreadyExistsException(dto.new_email)
             new_email = Email(dto.new_email)
-            user.update_email(new_email)
+            user.change_email(new_email)
             await self.auth_repository.update(user)
         except TokenProcessingException as e:
             raise TokenProcessingException(f"Invalid reset token: {str(e)}")
