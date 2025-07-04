@@ -1,18 +1,32 @@
-import os
-from dotenv import load_dotenv
 from pathlib import Path
-from pydantic import BaseModel
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 BASE_DIR = Path(__file__).resolve().parent
-load_dotenv()
 
 
-class DatabaseSettings(BaseModel):
-    DATABASE_URL: str = os.getenv("AUTH_POSTGRES_URL")
+class DatabaseSettings(BaseSettings):
+    URL: str
+    
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        env_prefix="AUTH_POSTGRES_",
+        extra="ignore",
+    )
 
+class REDISSettings(BaseSettings):
+    PORT: int
+    HOST: str
+    PASSWORD: str
 
-class JWTSettings(BaseModel):
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        env_prefix="REDIS_",
+        extra="ignore",
+    )
+
+class JWTSettings(BaseSettings):
     PRIVATE_KEY: Path = BASE_DIR / "certs" / "private_key.pem"
     PUBLIC_KEY: Path = BASE_DIR / "certs" / "public_key.pem"
     ALGORITHM: str = "RS256"
@@ -24,9 +38,11 @@ class JWTSettings(BaseModel):
     refresh_token_expire_time_day: int = 20
 
 
-class ConfigManager(BaseSettings):
-    database: DatabaseSettings = DatabaseSettings()
-    jwt: JWTSettings = JWTSettings()
+class ConfigManager:
+    def __init__(self):
+        self.database = DatabaseSettings()
+        self.jwt = JWTSettings()
+        self.redis = REDISSettings()
 
 
 config_manager = ConfigManager()
