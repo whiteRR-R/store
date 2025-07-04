@@ -13,15 +13,6 @@ class JWTServiceProtocol(Protocol):
         """ Декодитует токен """
         ...
 
-    def create_reset_token(
-        self,
-        payload: dict,
-        token_type: str = config_manager.jwt.RESET_TOKEN_TYPE,
-        expire_time_in_minutes: int = config_manager.jwt.reset_token_expire_time_minute,
-    ) -> str:
-        """ Генерирует reset токен для пользователя для сброса пароля """
-        ...
-
     def create_access_token(
         self,
         payload: dict,

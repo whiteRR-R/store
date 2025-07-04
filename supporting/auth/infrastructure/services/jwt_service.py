@@ -55,16 +55,6 @@ class JWTService:
             raise InvalidTokenTypeException(f"Invalid token type {jwt_type!r} excepted {token_type!r}")
         return None
     
-    def create_reset_token(
-        self,
-        payload: dict,
-        token_type: str = config_manager.jwt.RESET_TOKEN_TYPE,
-        expire_time_in_minutes = config_manager.jwt.reset_token_expire_time_minute,
-    ):
-        """ Генерует reset токен для пользователя для зброса пароля """
-        expire_timedelta = timedelta(minutes=expire_time_in_minutes)
-        return self._create_token(payload=payload, token_type=token_type, expire_timedelta=expire_timedelta)
-    
     def create_access_token(
         self,
         payload: dict,
