@@ -1,3 +1,4 @@
+import uuid
 from datetime import timedelta, datetime, timezone
 import jwt
 from jwt.exceptions import InvalidTokenError
@@ -32,12 +33,13 @@ class JWTService:
         to_encode.update(
             iat=now,
             exp=expire_time,
-            type=token_type
+            type=token_type,
+            jti=uuid.uuid4().hex
         )
         encoded = jwt.encode(payload=to_encode, key=self._private_key, algorithm=self._algorithm)
         return encoded
     
-    def _decode_token(
+    def decode_token(
         self,
         jwt_token: str,
         ):
@@ -47,7 +49,7 @@ class JWTService:
     
     def validate_token_type(self, jwt_token: str, token_type: str):
         """ Проверяет, соответствует ли тип токена ожидаемому, и возвращает subject токена. """
-        jwt_data = self._decode_token(jwt_token)
+        jwt_data = self.decode_token(jwt_token)
         jwt_type = jwt_data.get("type")
         if jwt_type != token_type:
             raise InvalidTokenTypeException(f"Invalid token type {jwt_type!r} excepted {token_type!r}")
@@ -92,7 +94,7 @@ class JWTService:
     def get_token_subject(self, jwt_token: str) -> str:
         """ Возвращает имя пользователя из токена """
         try:
-            token_data = self._decode_token(jwt_token)
+            token_data = self.decode_token(jwt_token)
             return token_data.get("sub")
         except InvalidTokenError:
             raise InvalidTokenException("Could not validate credentials")
