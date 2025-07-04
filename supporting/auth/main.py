@@ -2,10 +2,7 @@ from fastapi import FastAPI
 from container import Container
 from domain.exceptions import (
     DomainException,
-    InvalidRoleException,
-    InvalidEmailException,
-    InvalidUsernameException,
-    InvalidPermissionException,
+    ValidationError
 )
 from application.exceptions import (
     AuthException,
@@ -16,10 +13,7 @@ from application.exceptions import (
 from infrastructure.exceptions import DatabaseException
 from exception_handlers import (
     domain_exception_handler,
-    invalid_role_exception_handler,
-    invalid_email_exception_handler,
-    invalid_username_exception_handler,
-    invalid_permission_exception_handler,
+    validation_exception_handler,
     auth_exception_handler,
     registration_exception_handler,
     user_not_found_exception_handler,
@@ -44,10 +38,7 @@ class Application:
     def _registration_exception_handler(self):
         """Обработчик исключений"""
         self.app.add_exception_handler(DomainException, domain_exception_handler)
-        self.app.add_exception_handler(InvalidRoleException, invalid_role_exception_handler)
-        self.app.add_exception_handler(InvalidEmailException, invalid_email_exception_handler)
-        self.app.add_exception_handler(InvalidUsernameException, invalid_username_exception_handler)
-        self.app.add_exception_handler(InvalidPermissionException, invalid_permission_exception_handler)
+        self.app.add_exception_handler(ValidationError, validation_exception_handler)
         self.app.add_exception_handler(AuthException, auth_exception_handler)
         self.app.add_exception_handler(RegistrationException, registration_exception_handler)
         self.app.add_exception_handler(UserNotFoundException, user_not_found_exception_handler)
