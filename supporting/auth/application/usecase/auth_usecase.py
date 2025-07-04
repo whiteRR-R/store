@@ -1,5 +1,4 @@
-from typing import Optional
-from domain.entities.user import User
+from config import config_manager
 from domain.valueobject.email import Email
 from domain.factories.user_factory import UserFactory
 from domain.interface.repository.auth_repository import AuthRepositoryProtocol
@@ -18,7 +17,6 @@ from application.exceptions import (
     InvalidCredentialsException,
     TokenProcessingException,
 )
-from config import config_manager
 
 
 class AuthUseCase:
@@ -33,7 +31,7 @@ class AuthUseCase:
         self.jwt_service = jwt_service
 
     async def register(self, user_data: UserDTO):
-        """ Регистрирует нового пользователя """
+        """ Регистрация нового пользователя"""
         if await self.auth_repository.get_by_username(user_data.username):
             raise UsernameAlreadyExistsException(user_data.username)
         if await self.auth_repository.get_by_email(user_data.email):

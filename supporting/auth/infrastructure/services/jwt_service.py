@@ -1,9 +1,9 @@
-from application.dtos.jwt_token_dto import JWTTokensDTO
-from infrastructure.exceptions import InvalidTokenException, InvalidTokenTypeException
-from jwt.exceptions import InvalidTokenError
-from config import config_manager
 from datetime import timedelta, datetime, timezone
 import jwt
+from jwt.exceptions import InvalidTokenError
+from application.dtos.jwt_token_dto import JWTTokensDTO
+from infrastructure.exceptions import InvalidTokenException, InvalidTokenTypeException
+from config import config_manager
 
 
 class JWTService:
