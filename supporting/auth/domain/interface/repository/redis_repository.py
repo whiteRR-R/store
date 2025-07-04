@@ -13,3 +13,6 @@ class RedisRepositoryProtocol(Protocol):
 
     async def exists(self, key: str) -> bool:
         pass
+
+    async def getdel(self, key: str) -> str:
+        pass
