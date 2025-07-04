@@ -6,7 +6,7 @@ from infrastructure.exceptions import RollbackException
 from presentation.api.endpoints.product import router as product_router
 from presentation.api.endpoints.brand import router as brand_router
 from presentation.api.endpoints.category import router as category_router
-from presentation.api.exception_handlers import (
+from exception_handlers import (
     data_not_found_exception_handler,
     rollback_exception_handler,
     invalid_value_exception_handler,
@@ -42,6 +42,8 @@ class Application:
         )
 
     async def _lifespan(self, app: FastAPI):
+        s3 = self.container.s3_storage()
+        await s3.ensure_bucket()
         event_bus_subscriber = self.container.event_bus_subscriber()
         await event_bus_subscriber.connect()
         await self.initializate_handlers()
