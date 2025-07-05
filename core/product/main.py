@@ -46,7 +46,7 @@ class Application:
         await s3.ensure_bucket()
         event_bus_subscriber = self.container.event_bus_subscriber()
         await event_bus_subscriber.connect()
-        await self.initializate_handlers()
+        await self._initializate_handlers()
         yield
         await event_bus_subscriber.close()
 
