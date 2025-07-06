@@ -1,0 +1,14 @@
+
+services:
+  order_db:
+    image: postgres:latest
+    container_name: order_db
+    environment:
+      - POSTGRES_USER=${POSTGRES_DATABASE_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_DATABASE_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DATABASE_DB}
+    volumes:
+      - ./postgres_data/order:/var/lib/postgresql/data
+    ports:
+      - "${POSTGRES_DATABASE_PORT}:${POSTGRES_DATABASE_PORT}"
+    command: -p ${POSTGRES_DATABASE_PORT}
