@@ -1,3 +1,4 @@
+from uuid import UUID
 from typing import List
 from enum import Enum
 from decimal import Decimal
@@ -14,7 +15,7 @@ class OrderStatus(Enum):
 
 
 class Order:
-    def __init__(self,  order_id: str, customer_id: str):
+    def __init__(self,  order_id: UUID, customer_id: UUID):
         self._order_id = order_id
         self._customer_id = customer_id
         self.total: Decimal = Decimal("0.00")

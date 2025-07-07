@@ -1,5 +1,8 @@
+from uuid import UUID
+
+
 class OrderItem:
-    def __init__(self, product_id: str, quantity: int, price: int):
+    def __init__(self, product_id: UUID, quantity: int, price: int):
         self.product_id = product_id
         self.quantity = quantity
         self.price = price
