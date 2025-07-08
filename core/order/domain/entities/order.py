@@ -3,7 +3,7 @@ from typing import List
 from enum import Enum
 from decimal import Decimal
 from datetime import datetime
-from domain.entities.order_item import OrderItem
+from domain.value_objects.order_item import OrderItem
 from domain.exceptions import InvalidOrderStatusException, ItemNotFoundException
 
 

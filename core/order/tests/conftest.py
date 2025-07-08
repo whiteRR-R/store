@@ -1,6 +1,6 @@
 import uuid
 import pytest
-from domain.entities.order_item import OrderItem
+from domain.value_objects.order_item import OrderItem
 from domain.entities.order import Order
 
 
