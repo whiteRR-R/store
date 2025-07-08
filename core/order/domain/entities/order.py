@@ -4,6 +4,7 @@ from enum import Enum
 from decimal import Decimal
 from datetime import datetime
 from domain.entities.order_item import OrderItem
+from domain.exceptions import InvalidOrderStatusException, ItemNotFoundException
 
 
 class OrderStatus(Enum):
@@ -27,44 +28,51 @@ class Order:
         self.cancelled_at: datetime | None = None
         
     def pay(self):
-        if self.status == OrderStatus.PENDING:
-            self.status = OrderStatus.PAID
-            self.updated_at = datetime.now()
+        if self.status is not OrderStatus.PENDING:
+            raise InvalidOrderStatusException(f"Invalid order status {self.status} excepted {OrderStatus.PENDING}")
+        self.status = OrderStatus.PAID
+        self.updated_at = datetime.now()
     
     def ship(self):
-        if self.status == OrderStatus.PAID:
-            self.status = OrderStatus.SHIPPED
-            self.shipped_at = datetime.now()
-            self.updated_at = datetime.now()
-            
+        if self.status is not OrderStatus.PAID:
+            raise InvalidOrderStatusException(f"Invalid order status {self.status} excepted {OrderStatus.PAID}")
+        self.status = OrderStatus.SHIPPED
+        self.shipped_at = datetime.now()
+        self.updated_at = datetime.now()
+    
     def confirm(self):
-        if self.status == OrderStatus.SHIPPED:
-            self.status = OrderStatus.CONFIRMED
-            self.updated_at = datetime.now()
+        if self.status is not OrderStatus.SHIPPED:
+            raise InvalidOrderStatusException(f"Invalid order status {self.status} excepted {OrderStatus.SHIPPED}")
+        self.status = OrderStatus.CONFIRMED
+        self.updated_at = datetime.now()
     
     def cancel(self):
-        if self.status in [OrderStatus.PENDING, OrderStatus.PAID]:
-            self.status = OrderStatus.CANCELLED
-            self.cancelled_at = datetime.now()
-            self.updated_at = datetime.now()
+        if self.status is not OrderStatus.PAID:
+           raise InvalidOrderStatusException(f"Invalid order status {self.status} excepted {OrderStatus.SHIPPED}")
+        self.status = OrderStatus.CANCELLED
+        self.cancelled_at = datetime.now()
+        self.updated_at = datetime.now()
 
     def add_item(self, item: OrderItem):
-        if self.status is OrderStatus.PENDING:
-            self._items.append(item)
-            self.total += item.quantity * item.price
+        if self.status is not OrderStatus.PENDING:
+            raise InvalidOrderStatusException(f"Invalid order status {self.status} excepted {OrderStatus.PENDING}")
+        self._items.append(item)
+        self.total += item.quantity * item.price
     
     def remove_item(self, item: OrderItem):
-        if item in self._items:
-            self._items.remove(item)
-            self.total -= item.quantity * item.price    
-            self.updated_at = datetime.now()
+        if item not in self._items:
+            raise ItemNotFoundException(f"Item {item} not found")
+        self._items.remove(item)
+        self.total -= item.quantity * item.price    
+        self.updated_at = datetime.now()
     
     def discount(self, amount: Decimal):
-        if self.status is OrderStatus.PENDING:
-            self.total -= amount
-            if self.total < Decimal("0.00"):
-                self.total = Decimal("0.00")
-            self.updated_at = datetime.now()
+        if self.status is not OrderStatus.PENDING:
+            raise InvalidOrderStatusException(f"Invalid order status {self.status} excepted {OrderStatus.PENDING}")
+        self.total -= amount
+        if self.total < Decimal("0.00"):
+            self.total = Decimal("0.00")
+        self.updated_at = datetime.now()
             
     def get_items(self) -> List[OrderItem]:
         return self._items
