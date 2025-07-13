@@ -1,5 +1,6 @@
 from uuid import UUID
 from typing import List, Protocol
+from application.dtos.filter_dto import ProductFilterDTO
 from application.dtos.product_dto import (
     AttributeDTO, ProductDTO,
     CreateProductDTO, ImageDTO,
@@ -18,7 +19,7 @@ class DeleteProductUseCaseProtocol(Protocol):
         pass
     
 class GetAllProductsUseCaseProtocol(Protocol):
-    async def execute(self) -> List[ProductDTO]:
+    async def execute(self, filters: ProductFilterDTO) -> List[ProductDTO]:
         """Retrieve all products."""
         pass
 
