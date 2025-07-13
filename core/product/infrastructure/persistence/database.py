@@ -27,14 +27,12 @@ class Database:
     
     @asynccontextmanager
     async def get_session(self):
-        async with self._session_factory() as session:
-            try:
-                yield session
-            except InfrastructureException:
-                await session.rollback()
-                raise RollbackException("Transaction rollbacked")
-            finally:
-                await session.close()
+        session = self._session_factory()
+        try:
+            yield session
+        except InfrastructureException:
+            await session.rollback()
+            raise RollbackException("Transaction rollbacked")
     
     def get_async_session_factory(self) -> async_sessionmaker[AsyncSession]:
         return self._session_factory
