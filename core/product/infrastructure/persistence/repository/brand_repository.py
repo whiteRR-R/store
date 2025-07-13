@@ -18,6 +18,7 @@ class BrandRepository:
         brand_model = self.mapper.entity_to_model(brand)
         session.add(brand_model)
         await session.commit()
+        return brand
 
     @transaction
     async def get_all(self, session: AsyncSession) -> List[Brand]:        

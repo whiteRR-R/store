@@ -20,7 +20,7 @@ async def create_brand(
     brand_dto: CreateBrandDTO,
     use_case: CreateBrandUseCaseProtocol = Depends(Provide[Container.create_brand_use_case]),
 ):
-    await use_case.execute(brand_dto=brand_dto)
+    return await use_case.execute(brand_dto=brand_dto)
 
 @router.get(
     "/brands/",

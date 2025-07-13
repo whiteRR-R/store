@@ -17,7 +17,7 @@ class AddProductImageUseCase:
         product = await self.product_repository.get_by_id(product_id)
         
         if not product:
-            DataNotFoundException(f"Product with {product_id} not found")
+            raise DataNotFoundException(f"Product with {product_id} not found")
         for image in images:
             image_url = await self.s3_storage.upload(image.file, image.filename)
             image_vo = ProductImage(image_url)

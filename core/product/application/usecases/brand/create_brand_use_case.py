@@ -9,5 +9,5 @@ class CreateBrandUseCase:
 
     async def execute(self, brand_dto: CreateBrandDTO) -> None:
         brand = BrandFactory.from_dto(brand_dto)
-        await self.brand_repository.add(brand)
+        return await self.brand_repository.add(brand)
         
