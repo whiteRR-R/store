@@ -95,8 +95,8 @@ class ProductRoot:
         return [category for category in self._categories]
     
     @property
-    def attributes(self) -> Dict[str, str]:
-        return {attribute.key: attribute.value for attribute in self._attributes}
+    def attributes(self) -> Dict[UUID, str]:
+        return {attribute.attribute_id: attribute.value for attribute in self._attributes}
     
     @property
     def images(self) -> List[str]:

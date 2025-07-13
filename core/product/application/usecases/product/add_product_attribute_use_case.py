@@ -15,7 +15,7 @@ class AddProductAttributeUseCase:
             raise DataNotFoundException("Product not found")
         
         attribute = ProductAttribute(
-            key=attribute_dto.key,
+            attribute_id=attribute_dto.attribute_id,
             value=attribute_dto.value
         )
         product.add_attribute(attribute)

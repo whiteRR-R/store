@@ -17,6 +17,6 @@ class DeleteProductAttributeUseCase:
         if not product:
             raise DataNotFoundException(f"Product with ID {product_id} does not exist.")
         
-        attribute = ProductAttribute(key=attribute_dto.key, value=attribute_dto.value)
+        attribute = ProductAttribute(attribute_id=attribute_dto.attribute_id, value=attribute_dto.value)
         product.remove_attribute(attribute)
         await self.product_repository.update(product)

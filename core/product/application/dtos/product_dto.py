@@ -1,11 +1,11 @@
-from typing import List, Optional, BinaryIO
+from typing import Dict, List, Optional, BinaryIO
 from uuid import UUID
 from dataclasses import dataclass, field
 
 
 @dataclass
 class AttributeDTO:
-    key: str
+    attribute_id: UUID
     value: str
 
 @dataclass
@@ -23,7 +23,7 @@ class CreateProductDTO:
     brand_id: UUID
     description: str
     price: int
-    category_ids: List[UUID]
+    category_ids: List[UUID] = field(default_factory=list)
     attributes: List[AttributeDTO] = field(default_factory=list)
 
 @dataclass
