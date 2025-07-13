@@ -1,6 +1,7 @@
-from domain.aggregates.product import ProductRoot
 from uuid import UUID
 from typing import Protocol
+from application.dtos.filter_dto import ProductFilterDTO
+from domain.aggregates.product import ProductRoot
 
 
 class ProductRepositoryProtocol(Protocol):
@@ -22,7 +23,7 @@ class ProductRepositoryProtocol(Protocol):
         """
         ...
     
-    async def get_all(self) -> list[ProductRoot]:
+    async def get_all(self, filters: ProductFilterDTO) -> list[ProductRoot]:
         """
         Retrieves all products from the repository.
         """
