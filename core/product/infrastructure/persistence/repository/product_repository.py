@@ -1,59 +1,66 @@
 from typing import List, Optional, AsyncContextManager, Sequence
 from uuid import UUID
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, desc, asc
 from sqlalchemy.orm import joinedload, selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 from domain.aggregates.product import ProductRoot
+from application.dtos.filter_dto import ProductFilterDTO, SortOrder
 from infrastructure.persistence.models.category_model import CategoryModel
 from infrastructure.persistence.models.brand_model import BrandModel
 from infrastructure.persistence.models.product_model import ProductModel
 from infrastructure.persistence.models.image_model import ProductImageModel
+from infrastructure.persistence.models.association_models import AssosiationProductAttributeModel
 from infrastructure.persistence.datamappers.product_mapper import ProductDataMapper
 from infrastructure.persistence.decorators import transaction
 from infrastructure.exceptions import NotFoundException
 
 
-class ProductRepository:
-    def __init__(self, session_context_manager: AsyncContextManager[AsyncSession]) -> None:
-        self.session_context_manager = session_context_manager
+class SQLAlchemyProductRepository:
+    def __init__(self, session: AsyncSession) -> None:
+        self.session = session
         self.mapper = ProductDataMapper()
         
-    async def _get_existing_brand(self, session: AsyncSession, brand_id: UUID) -> Optional[BrandModel]:
-        stmt = await session.execute(select(BrandModel).where(BrandModel.id == brand_id))
+    async def _get_brand(self, brand_id: UUID) -> Optional[BrandModel]:
+        stmt = await self.session.execute(select(BrandModel).where(BrandModel.id == brand_id))
         return stmt.scalars().one_or_none()
 
-    async def _get_existing_categories(self, session: AsyncSession, category_ids: List[UUID]) -> List[CategoryModel]:
-        stmt = await session.execute(
-            select(CategoryModel).where(CategoryModel.id.in_(category_ids))
-        )
+
+    async def _get_categories(self, category_ids: List[UUID]) -> List[CategoryModel]:
+        stmt = await self.session.execute(select(CategoryModel).where(CategoryModel.id.in_(category_ids)))
         categories = stmt.scalars().all()
-
-        if len(categories) != len(category_ids):
-            raise NotFoundException("Some categories do not exist")
         return list(categories)
-
-    @transaction
-    async def add(self, session: AsyncSession, product: ProductRoot) -> None:
+    
+    
+    async def add(self, product: ProductRoot) -> None:
         product_model = self.mapper.entity_to_model(product)
-        brand = await self._get_existing_brand(session, product.brand.id)
-        categories = await self._get_existing_categories(session, [category.id for category in product.categories])
+        brand = await self._get_brand(product.brand.id)
+        categories = await self._get_categories([category.id for category in product.categories])
+        
         if not brand or not categories:
             raise NotFoundException("Brand or categories do not exist")
+        
         product_model.brand = brand
         product_model.categories = categories
-        session.add(product_model)
-        await session.commit()
+        
+        assosiations = [
+            AssosiationProductAttributeModel(
+                product_id=product.id,
+                attribute_id=attr_id,
+                value=attr_value
+            )
+            for attr_id, attr_value in product.attributes.items()
+        ]
+        
+        self.session.add(product_model)
+        self.session.add_all(assosiations)
 
-    @transaction
-    async def delete(self, session: AsyncSession, product: ProductRoot) -> None:
-        await session.execute(
-            delete(ProductModel).where(ProductModel.id == product.id)
-        )
-        await session.commit()
 
-    @transaction
-    async def update(self, session: AsyncSession, product: ProductRoot) -> None:
-        stmt = await session.execute(
+    async def delete(self, product: ProductRoot) -> None:
+        await self.session.execute(delete(ProductModel).where(ProductModel.id == product.id))
+
+
+    async def update(self, product: ProductRoot) -> None:
+        stmt = await self.session.execute(
             select(ProductModel)
             .where(ProductModel.id == product.id)
             .options(
@@ -64,8 +71,8 @@ class ProductRepository:
         )
         product_model = stmt.unique().scalars().one_or_none()
 
-        brand = await self._get_existing_brand(session, product.brand.id)
-        categories = await self._get_existing_categories(session, [category.id for category in product.categories])
+        brand = await self._get_brand(product.brand.id)
+        categories = await self._get_categories([category.id for category in product.categories])
 
         if product_model and brand and categories:
             product_model.name = product.name.value
@@ -78,33 +85,43 @@ class ProductRepository:
             product_model.categories.extend(categories)
 
             product_model.images.clear()
-            product_model.images.extend(
-                [ProductImageModel(url=image_urls) for image_urls in product.images]
-            )
-            await session.commit()
+            product_model.images.extend([ProductImageModel(url=image_urls) for image_urls in product.images])
 
-    @transaction
-    async def get_by_id(self, session: AsyncSession, product_id: UUID) -> Optional[ProductRoot]:
-        stmt = await session.execute(
+
+    async def get_by_id(self, product_id: UUID) -> Optional[ProductRoot]:
+        stmt = await self.session.execute(
             select(ProductModel)
             .where(ProductModel.id == product_id)
             .options(
                 joinedload(ProductModel.brand),
                 joinedload(ProductModel.categories),
-                selectinload(ProductModel.images)
+                selectinload(ProductModel.images),
+                selectinload(ProductModel.attributes)
             )
         )
         product = stmt.unique().scalars().first()
         return self.mapper.model_to_entity(product) if product else None
 
-    @transaction
-    async def get_all(self, session: AsyncSession) -> List[ProductRoot]:
-        stmt = await session.execute(
-            select(ProductModel).options(
+
+    async def get_all(self, filters: ProductFilterDTO) -> List[ProductRoot]:
+        stmt = select(ProductModel).options(
                 joinedload(ProductModel.brand),
                 joinedload(ProductModel.categories),
                 selectinload(ProductModel.images)
             )
-        )
-        products = stmt.unique().scalars().all()
+
+        if filters.min_price is not None:
+            stmt = stmt.where(ProductModel.price >= filters.min_price)
+        if filters.max_price is not None:
+            stmt = stmt.where(ProductModel.price <= filters.max_price)
+
+        order_column = getattr(ProductModel, filters.sort_by.value)
+
+        if filters.order == SortOrder.desc:
+            stmt.order_by(desc(order_column))
+        else:
+            stmt.order_by(asc(order_column))
+
+        result = await self.session.execute(stmt)
+        products = result.unique().scalars().all()
         return [self.mapper.model_to_entity(product) for product in products]
