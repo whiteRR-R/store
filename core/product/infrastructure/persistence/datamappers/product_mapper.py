@@ -41,7 +41,7 @@ class ProductDataMapper:
         Converts a model object to an entity object.
         """
         attributes = [
-            ProductAttribute(key, value) for key, value in product_model.attributes.items()
+            ProductAttribute(attr_id, attr_value) for attr_id, attr_value in product_model.attributes.items()
         ]
         categories = [
             CategoryFactory.from_params(category_id=category.id, category_name=category.name)
