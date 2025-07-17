@@ -21,4 +21,7 @@ class DeleteProductImageUseCase(DeleteProductImageUseCaseProtocol):
         image_vo = ProductImage(image.url)
         product.remove_image(image_vo)
         
+        for url in product.images:
+            await self.s3_storage.delete(url)
+        
         await self.product_repository.update(product)
