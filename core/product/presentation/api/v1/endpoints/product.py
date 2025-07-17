@@ -1,7 +1,6 @@
-from typing import Dict, List
+from typing import List, Annotated
 from uuid import UUID
-from fastapi import APIRouter, Body, Depends, status, File, UploadFile, Form
-from dependency_injector.wiring import Provide, inject
+from fastapi import APIRouter, Depends, status, File, UploadFile
 from application.dtos.product_dto import (
     CreateProductDTO,
     DeleteImageDTO,
@@ -9,6 +8,7 @@ from application.dtos.product_dto import (
     ImageDTO,
     AttributeDTO,
     )
+from presentation.stub import Stub
 from application.dtos.filter_dto import ProductFilterDTO
 from application.interfaces.usecases.product_use_cases import (
     CreateProductUseCaseProtocol, GetAllProductsUseCaseProtocol,
@@ -17,7 +17,6 @@ from application.interfaces.usecases.product_use_cases import (
     UpdateProductDescriptionUseCaseProtocol, UpdateProductPriceUseCaseProtocol,
     AddProductImageUseCaseProtocol, DeleteProductImageUseCaseProtocol,
 )
-from container import Container
 
 
 router = APIRouter(tags=["products"])
@@ -27,24 +26,18 @@ router = APIRouter(tags=["products"])
     "/products/",
     status_code=status.HTTP_201_CREATED,
 )
-@inject
 async def create_product(
     product_dto: CreateProductDTO,
-    use_case: CreateProductUseCaseProtocol = Depends(
-        Provide[Container.create_product_use_case]
-    ),
+    use_case: Annotated[CreateProductUseCaseProtocol, Depends(Stub(CreateProductUseCaseProtocol))]
 ):
     await use_case.execute(product_dto=product_dto)
 
 
 @router.post("/products/{product_id}/images")
-@inject
 async def add_product_image(
     product_id: UUID,
-    images: List[UploadFile] = File(...),
-    use_case: AddProductImageUseCaseProtocol = Depends(
-        Provide[Container.add_product_image_use_case]
-    )
+    use_case: Annotated[AddProductImageUseCaseProtocol, Depends(Stub(AddProductImageUseCaseProtocol))],
+    images: List[UploadFile] = File(...)
 ):
     image_dto = [ImageDTO(file=image.file, filename=image.filename or "") for image in images]
     await use_case.execute(product_id=product_id, images=image_dto)
@@ -53,13 +46,10 @@ async def add_product_image(
     "/products/{product_id}/attributes/",
     status_code=status.HTTP_201_CREATED,
 )
-@inject
 async def add_product_attribute(
     product_id: UUID,
     attribute_dto: AttributeDTO,
-    use_case: AddProductAttributeUseCaseProtocol = Depends(
-        Provide[Container.add_product_attribute_use_case]
-    ),
+    use_case: Annotated[AddProductAttributeUseCaseProtocol, Depends(Stub(AddProductAttributeUseCaseProtocol))]
 ):
     await use_case.execute(product_id=product_id, attribute_dto=attribute_dto)
 
@@ -68,12 +58,9 @@ async def add_product_attribute(
     response_model=List[ProductDTO],
     status_code=status.HTTP_200_OK,
 )
-@inject
 async def get_all_products(
+    use_case: Annotated[GetAllProductsUseCaseProtocol, Depends(Stub(GetAllProductsUseCaseProtocol))],
     filters: ProductFilterDTO = Depends(),
-    use_case: GetAllProductsUseCaseProtocol = Depends(
-        Provide[Container.get_all_product_use_case]
-    ),
 ) -> List[ProductDTO]:
     return await use_case.execute(filters)
 
@@ -83,12 +70,9 @@ async def get_all_products(
     response_model=ProductDTO,
     status_code=status.HTTP_200_OK,
 )
-@inject
 async def get_product_by_id(
     product_id: UUID,
-    use_case: GetProductByIdUseCaseProtocol = Depends(
-        Provide[Container.get_by_id_product_use_case]
-    ),
+    use_case: Annotated[GetProductByIdUseCaseProtocol, Depends(Stub(GetProductByIdUseCaseProtocol))]
 ) -> ProductDTO:
     return await use_case.execute(product_id=product_id)
 
@@ -97,13 +81,10 @@ async def get_product_by_id(
     "/products/{product_id}/description",
     status_code=status.HTTP_200_OK,
 )
-@inject
 async def update_product_description(
     product_id: UUID,
     description: str,
-    use_case: UpdateProductDescriptionUseCaseProtocol = Depends(
-        Provide[Container.update_product_description_use_case]
-    ),
+    use_case: Annotated[UpdateProductDescriptionUseCaseProtocol, Depends(Stub(UpdateProductDescriptionUseCaseProtocol))]
 ):    
     await use_case.execute(product_id=product_id, description=description)
 
@@ -112,13 +93,10 @@ async def update_product_description(
     "/products/{product_id}/price",
     status_code=status.HTTP_200_OK
 )
-@inject
 async def update_product_price(
     product_id: UUID,
     price: int,
-    use_case: UpdateProductPriceUseCaseProtocol = Depends(
-        Provide[Container.update_product_price_use_case]
-    )
+    use_case: Annotated[UpdateProductPriceUseCaseProtocol, Depends(Stub(UpdateProductPriceUseCaseProtocol))]
 ):
     await use_case.execute(product_id=product_id, price=price)
 
@@ -127,12 +105,9 @@ async def update_product_price(
     "/products/{product_id}",
     status_code=status.HTTP_200_OK,
 )
-@inject
 async def delete_product_by_id(
     product_id: UUID,
-    use_case: DeleteProductUseCaseProtocol = Depends(
-        Provide[Container.delete_product_use_case]
-    ),
+    use_case: Annotated[DeleteProductUseCaseProtocol, Depends(Stub(DeleteProductUseCaseProtocol))]
 ):
     await use_case.execute(product_id=product_id)
 
@@ -141,14 +116,11 @@ async def delete_product_by_id(
     "/products/{product_id}/attributes/{attribute_id}",
     status_code=status.HTTP_200_OK,
 )
-@inject
 async def remove_product_attribute(
     product_id: UUID,
     attribute_id: UUID,
     attribute_dto: AttributeDTO,
-    use_case: DeleteProductAttributeUseCaseProtocol = Depends(
-        Provide[Container.delete_product_attribute_use_case]
-    ),
+    use_case: Annotated[DeleteProductAttributeUseCaseProtocol, Depends(Stub(DeleteProductAttributeUseCaseProtocol))]
 ):
     await use_case.execute(product_id=product_id, attribute_dto=attribute_dto)
 
@@ -157,12 +129,9 @@ async def remove_product_attribute(
     "/products/{product_id}/image",
     status_code=status.HTTP_204_NO_CONTENT
 )
-@inject
 async def remove_product_image(
     product_id: UUID,
     image_dto: DeleteImageDTO,
-    use_case: DeleteProductImageUseCaseProtocol = Depends(
-        Provide[Container.delete_product_image_use_case]
-    )
+    use_case: Annotated[DeleteProductImageUseCaseProtocol, Depends(Stub(DeleteProductImageUseCaseProtocol))]
 ):
     await use_case.execute(product_id=product_id, image=image_dto)

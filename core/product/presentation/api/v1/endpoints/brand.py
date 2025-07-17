@@ -8,17 +8,16 @@ from application.interfaces.usecases.brand_use_cases import (
     GetAllBrandsUseCaseProtocol,
     DeleteBrandUseCaseProtocol
 )
-from container import Container
+from presentation.stub import Stub
 
 
 router = APIRouter(tags=["brands"])
 
 
 @router.post("/brands/", status_code=status.HTTP_201_CREATED)
-@inject
 async def create_brand(
     brand_dto: CreateBrandDTO,
-    use_case: CreateBrandUseCaseProtocol = Depends(Provide[Container.create_brand_use_case]),
+    use_case: CreateBrandUseCaseProtocol = Depends(Stub(CreateBrandUseCaseProtocol)),
 ):
     return await use_case.execute(brand_dto=brand_dto)
 
@@ -27,17 +26,15 @@ async def create_brand(
     status_code=status.HTTP_200_OK,
     response_model=List[BrandDTO],
 )
-@inject
 async def get_all_brands(
-    use_case: GetAllBrandsUseCaseProtocol = Depends(Provide[Container.get_all_brand_use_case])
+    use_case: GetAllBrandsUseCaseProtocol = Depends(Stub(GetAllBrandsUseCaseProtocol))
 ) -> List[BrandDTO]:
     return await use_case.execute()
 
 
 @router.delete("/brands/{brand_id}", status_code=status.HTTP_204_NO_CONTENT)
-@inject
 async def delete_brand_by_id(
     brand_id: UUID,
-    use_case: DeleteBrandUseCaseProtocol = Depends(Provide[Container.delete_brand_use_case]),
+    use_case: DeleteBrandUseCaseProtocol = Depends(Stub(DeleteBrandUseCaseProtocol)),
 ):
     await use_case.execute(brand_id=brand_id)
