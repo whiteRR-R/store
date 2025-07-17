@@ -14,7 +14,6 @@ class CategoryModel(Base):
     __tablename__ = "category"
     
     id: Mapped[uuid.UUID] = mapped_column(UUID, primary_key=True)
-    product_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("product.id"))
     name: Mapped[str] = mapped_column(String, nullable=False)
     
     # Relationships many-to-many

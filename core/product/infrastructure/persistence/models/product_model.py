@@ -47,6 +47,6 @@ class ProductModel(Base):
     attributes: Mapped[List["AttributeModel"]] = relationship(
         "AttributeModel",
         secondary=AssosiationProductAttributeModel.__table__,
-        back_populates="product",
+        back_populates="products",
         lazy="joined"
     )
