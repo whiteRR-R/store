@@ -5,6 +5,3 @@ class ApplicationException(Exception):
 class DataNotFoundException(ApplicationException):
     """Exception raised when data is not found."""
     pass
-
-
-
