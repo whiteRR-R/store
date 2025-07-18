@@ -11,7 +11,6 @@ from infrastructure.persistence.models.product_model import ProductModel
 from infrastructure.persistence.models.image_model import ProductImageModel
 from infrastructure.persistence.models.association_models import AssosiationProductAttributeModel
 from infrastructure.persistence.datamappers.product_mapper import ProductDataMapper
-from infrastructure.persistence.decorators import transaction
 from infrastructure.exceptions import NotFoundException
 
 

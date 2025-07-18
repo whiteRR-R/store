@@ -1,11 +1,10 @@
+from uuid import UUID
+from typing import List, Optional, Callable, AsyncContextManager
+from sqlalchemy import select, delete
+from sqlalchemy.ext.asyncio import AsyncSession
 from domain.entities.brand import Brand
 from infrastructure.persistence.datamappers.brand_mapper import BrandDataMapper
 from infrastructure.persistence.models.brand_model import BrandModel
-from infrastructure.persistence.decorators import transaction
-from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List, Optional, Callable, AsyncContextManager
-from sqlalchemy import select, delete
-from uuid import UUID
 
 
 class SQLAlchemyBrandRepository:

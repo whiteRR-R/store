@@ -1,11 +1,10 @@
+from uuid import UUID
+from typing import Iterable, List, Optional, AsyncContextManager
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 from domain.entities.category import Category
 from infrastructure.persistence.datamappers.category_mapper import CategoryDataMapper
 from infrastructure.persistence.models.category_model import CategoryModel
-from infrastructure.persistence.decorators import transaction
-from sqlalchemy.ext.asyncio import AsyncSession
-from typing import Iterable, List, Optional, AsyncContextManager
-from sqlalchemy import select
-from uuid import UUID
 
 
 class SQLAlchemyCategoryRepository:
