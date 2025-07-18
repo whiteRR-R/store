@@ -1,5 +1,5 @@
 import uuid
-from infrastructure.persistence.database import Base
+from infrastructure.persistence.database.database import Base
 from sqlalchemy import String, Integer
 from sqlalchemy.dialects.postgresql import JSONB, ARRAY
 from sqlalchemy.orm import Mapped, mapped_column, relationship

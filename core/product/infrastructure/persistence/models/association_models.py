@@ -1,7 +1,7 @@
 import uuid
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import ForeignKey, UUID, String
-from infrastructure.persistence.database import Base
+from infrastructure.persistence.database.database import Base
 
 
 class AssociationProductCategoryModel(Base):

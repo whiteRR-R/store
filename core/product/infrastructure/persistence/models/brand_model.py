@@ -2,7 +2,7 @@ import uuid
 from typing import List, TYPE_CHECKING
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey, String, UUID
-from infrastructure.persistence.database import Base
+from infrastructure.persistence.database.database import Base
 
 if TYPE_CHECKING:
     from infrastructure.persistence.models.product_model import ProductModel
