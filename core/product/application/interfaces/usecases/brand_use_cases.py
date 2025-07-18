@@ -1,5 +1,5 @@
 from application.dtos.brand_dto import CreateBrandDTO, BrandDTO
-from typing import Protocol
+from typing import Protocol, TypeVar
 from uuid import UUID
 
 

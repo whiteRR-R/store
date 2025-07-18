@@ -2,10 +2,11 @@ from domain.interfaces.repositories.attribute_repository import AttributeReposit
 from domain.interfaces.repositories.product_repository import ProductRepositoryProtocol
 from domain.interfaces.repositories.category_repository import CategoryRepositoryProtocol
 from domain.interfaces.repositories.brand_repository import BrandRepositoryProtocol
+from domain.interfaces.transaction_manager import TransactionManagerProcotol
+from domain.value_objects.product_attribute import ProductAttribute
 from application.exceptions import DataNotFoundException 
 from application.factories.product_factory import ProductFactory
 from application.dtos.product_dto import CreateProductDTO
-from domain.value_objects.product_attribute import ProductAttribute
 
 
 class CreateProductUseCase:
@@ -14,13 +15,15 @@ class CreateProductUseCase:
         product_repository: ProductRepositoryProtocol,
         category_repository: CategoryRepositoryProtocol,
         brand_repository: BrandRepositoryProtocol,
-        attribute_repository: AttributeRepositoryProtocol
+        attribute_repository: AttributeRepositoryProtocol,
+        transaction_manager: TransactionManagerProcotol
     ):
         self.product_repository = product_repository
         self.category_repository = category_repository
         self.brand_repository = brand_repository
         self.attribute_repository = attribute_repository
-   
+        self.transaction_manager = transaction_manager 
+
     async def execute(self, product_dto: CreateProductDTO) -> None:
         """
         Creates a new product.
@@ -40,3 +43,4 @@ class CreateProductUseCase:
         
         product = ProductFactory.from_dto(product_dto, brand, categories)
         await self.product_repository.add(product)
+        await self.transaction_manager.commit()
