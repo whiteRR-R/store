@@ -21,6 +21,11 @@ class SQLAlchemyAttributeRepository:
         stmt = await self.session.execute(select(AttributeModel).where(AttributeModel.id.in_(ids)))
         attributes = stmt.scalars().all()
         return attributes
+
+    async def get_all(self):
+        stmt = await self.session.execute(select(AttributeModel))
+        attributes = stmt.scalars().all()
+        return attributes
     
     async def delete(self, id: UUID):
         await self.session.execute(delete(AttributeModel).where(AttributeModel.id == id))
