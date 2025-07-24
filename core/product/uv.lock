@@ -410,6 +410,15 @@ wheels = [
 ]
 
 [[package]]
+name = "dishka"
+version = "1.6.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/11/04/f3add05678a3ac1ab7736faae45b18b5365d84b1cd3cf3af64b09a1d6a5f/dishka-1.6.0.tar.gz", hash = "sha256:f1fa5ec7e980d4f618d0c425d1bb81d8e9414894d8ec6553b197d2298774e12f", size = 65971 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/76/6b/f9cd08543c4f55bf129a0ebce5c09e43528235dd6e7cb906761ca094979a/dishka-1.6.0-py3-none-any.whl", hash = "sha256:ab1aedee152ce7bb11cfd2673d7ce4001fe2b330d14e84535d7525a68430b2c2", size = 90789 },
+]
+
+[[package]]
 name = "dnspython"
 version = "2.7.0"
 source = { registry = "https://pypi.org/simple" }
@@ -875,6 +884,7 @@ dependencies = [
     { name = "certifi" },
     { name = "click" },
     { name = "dependency-injector" },
+    { name = "dishka" },
     { name = "dnspython" },
     { name = "email-validator" },
     { name = "exceptiongroup" },
@@ -933,6 +943,7 @@ requires-dist = [
     { name = "certifi", specifier = "==2025.1.31" },
     { name = "click", specifier = "==8.1.8" },
     { name = "dependency-injector", specifier = "==4.46.0" },
+    { name = "dishka", specifier = ">=1.6.0" },
     { name = "dnspython", specifier = "==2.7.0" },
     { name = "email-validator", specifier = "==2.2.0" },
     { name = "exceptiongroup", specifier = "==1.2.2" },
