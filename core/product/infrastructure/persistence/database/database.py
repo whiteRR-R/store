@@ -33,6 +33,8 @@ class Database:
         except InfrastructureException:
             await session.rollback()
             raise RollbackException("Transaction rollbacked")
+        finally:
+            await session.close()
     
     def get_async_session_factory(self) -> async_sessionmaker[AsyncSession]:
         return self._session_factory
