@@ -15,21 +15,20 @@ if TYPE_CHECKING:
     from infrastructure.persistence.models.brand_model import BrandModel
     from infrastructure.persistence.models.category_model import CategoryModel
     from infrastructure.persistence.models.image_model import ProductImageModel
-    from infrastructure.persistence.models.attribute_model import AttributeModel
 
 
 class ProductModel(Base):
     __tablename__ = "product"
-    
+
     id: Mapped[uuid.UUID] = mapped_column(UUID, primary_key=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     brand_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("brand.id"))
     description: Mapped[str] = mapped_column(String(255), nullable=False)
     price: Mapped[int] = mapped_column(Integer, nullable=False)
-    
+
     # Relationships one-to-many
     brand: Mapped["BrandModel"] = relationship("BrandModel", back_populates="products")
-    
+
     # Relationships many-to-one
     images: Mapped[List["ProductImageModel"]] = relationship(
         "ProductImageModel",
@@ -44,9 +43,9 @@ class ProductModel(Base):
         back_populates="products",
         lazy="joined",
     )
-    attributes: Mapped[List["AttributeModel"]] = relationship(
-        "AttributeModel",
-        secondary=AssosiationProductAttributeModel.__table__,
-        back_populates="products",
+    attribute_links: Mapped[List["AssosiationProductAttributeModel"]] = relationship(
+        "AssosiationProductAttributeModel",
+        back_populates="product",
+        cascade="all, delete-orphan",
         lazy="joined"
     )
