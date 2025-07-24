@@ -7,6 +7,7 @@ from domain.value_objects.product_name import ProductName
 from domain.value_objects.product_price import ProductPrice
 from application.factories.brand_factory import BrandFactory
 from application.factories.category_factory import CategoryFactory
+from infrastructure.persistence.models.association_models import AssosiationProductAttributeModel
 from infrastructure.persistence.models.product_model import ProductModel
 from infrastructure.persistence.models.image_model import ProductImageModel
 
@@ -26,14 +27,21 @@ class ProductDataMapper:
             name=product.name.value,
             description=product.description.value,
             price=product.price.value,
-            attributes=product.attributes,
         )
         
         product_model.images = [
             ProductImageModel(url=url)
-            for url in product_model.images
+            for url in product.images
         ]
-        
+
+        product_model.attribute_links = [
+            AssosiationProductAttributeModel(
+                product_id=product.id,
+                attribute_id=attr.attribute_id,
+                value=attr.value
+            )
+            for attr in product.attributes
+        ]
         return product_model
     
     def model_to_entity(self, product_model: ProductModel) -> ProductRoot:
@@ -41,7 +49,7 @@ class ProductDataMapper:
         Converts a model object to an entity object.
         """
         attributes = [
-            ProductAttribute(attr_id, attr_value) for attr_id, attr_value in product_model.attributes.items()
+            ProductAttribute(attr.attribute_id, attr.value) for attr in product_model.attribute_links
         ]
         categories = [
             CategoryFactory.from_params(category_id=category.id, category_name=category.name)
