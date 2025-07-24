@@ -11,7 +11,7 @@ from infrastructure.persistence.models.product_model import ProductModel
 from infrastructure.persistence.models.image_model import ProductImageModel
 from infrastructure.persistence.models.association_models import AssosiationProductAttributeModel
 from infrastructure.persistence.datamappers.product_mapper import ProductDataMapper
-from infrastructure.exceptions import NotFoundException
+from infrastructure.exceptions import DataNotFoundException
 
 
 class SQLAlchemyProductRepository:
@@ -36,7 +36,7 @@ class SQLAlchemyProductRepository:
         categories = await self._get_categories([category.id for category in product.categories])
         
         if not brand or not categories:
-            raise NotFoundException("Brand or categories do not exist")
+            raise DataNotFoundException("Brand or categories do not exist")
         
         product_model.brand = brand
         product_model.categories = categories
