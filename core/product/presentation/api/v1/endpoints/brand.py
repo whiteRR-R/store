@@ -1,24 +1,22 @@
 from typing import List
 from uuid import UUID
-from dependency_injector.wiring import Provide, inject
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, status
+from dishka.integrations.fastapi import FromDishka, inject
 from application.dtos.brand_dto import BrandDTO, CreateBrandDTO
-from application.interfaces.usecases.brand_use_cases import (
-    CreateBrandUseCaseProtocol,
-    GetAllBrandsUseCaseProtocol,
-    DeleteBrandUseCaseProtocol
-)
-from presentation.stub import Stub
+from application.usecases.brand.create_brand_use_case import CreateBrandUseCase
+from application.usecases.brand.delete_brand_use_case import DeleteBrandUseCase
+from application.usecases.brand.get_all_brand_use_case import GetAllBrandUseCase
 
 
 router = APIRouter(tags=["brands"])
 
 
 @router.post("/brands/", status_code=status.HTTP_201_CREATED)
+@inject
 async def create_brand(
     brand_dto: CreateBrandDTO,
-    use_case: CreateBrandUseCaseProtocol = Depends(Stub(CreateBrandUseCaseProtocol)),
-):
+    use_case: FromDishka[CreateBrandUseCase]
+) -> UUID:
     return await use_case.execute(brand_dto=brand_dto)
 
 @router.get(
@@ -26,15 +24,17 @@ async def create_brand(
     status_code=status.HTTP_200_OK,
     response_model=List[BrandDTO],
 )
+@inject
 async def get_all_brands(
-    use_case: GetAllBrandsUseCaseProtocol = Depends(Stub(GetAllBrandsUseCaseProtocol))
+    use_case: FromDishka[GetAllBrandUseCase]
 ) -> List[BrandDTO]:
     return await use_case.execute()
 
 
 @router.delete("/brands/{brand_id}", status_code=status.HTTP_204_NO_CONTENT)
+@inject
 async def delete_brand_by_id(
     brand_id: UUID,
-    use_case: DeleteBrandUseCaseProtocol = Depends(Stub(DeleteBrandUseCaseProtocol)),
+    use_case: FromDishka[DeleteBrandUseCase],
 ):
     await use_case.execute(brand_id=brand_id)
