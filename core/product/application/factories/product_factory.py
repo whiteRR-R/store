@@ -42,8 +42,8 @@ class ProductFactory:
             price=product.price.value,
             category_ids=[category.id for category in product.categories],
             attributes=[
-                AttributeDTO(attribute_id=attribute_id, value=value)
-                for attribute_id, value in product.attributes.items()
+                AttributeDTO(attribute_id=attr.attribute_id, value=attr.value)
+                for attr in product.attributes
             ],
             images=[image for image in product.images]
         )
