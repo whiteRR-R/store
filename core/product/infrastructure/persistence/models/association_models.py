@@ -1,7 +1,13 @@
 import uuid
-from sqlalchemy.orm import Mapped, mapped_column
+from typing import TYPE_CHECKING
+
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey, UUID, String
 from infrastructure.persistence.database.database import Base
+
+if TYPE_CHECKING:
+    from infrastructure.persistence.models.attribute_model import AttributeModel
+    from infrastructure.persistence.models.product_model import ProductModel
 
 
 class AssociationProductCategoryModel(Base):
@@ -16,4 +22,13 @@ class AssosiationProductAttributeModel(Base):
     
     product_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("product.id", ondelete="CASCADE"), primary_key=True)
     attribute_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("attributes.id"), primary_key=True)
-    value: Mapped[uuid.UUID] = mapped_column(String)
+    value: Mapped[str] = mapped_column(String)
+
+    product: Mapped["ProductModel"] = relationship(
+        "ProductModel",
+        back_populates="attribute_links"
+    )
+    attribute: Mapped["AttributeModel"] = relationship(
+        "AttributeModel",
+        back_populates="product_links"
+    )
