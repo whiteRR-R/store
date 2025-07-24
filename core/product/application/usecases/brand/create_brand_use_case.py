@@ -1,3 +1,4 @@
+from uuid import UUID
 from domain.interfaces.repositories.brand_repository import BrandRepositoryProtocol
 from domain.interfaces.transaction_manager import TransactionManagerProcotol
 from application.dtos.brand_dto import CreateBrandDTO
@@ -13,7 +14,7 @@ class CreateBrandUseCase:
         self.brand_repository = brand_repository
         self.transaction_manager = transaction_manager
 
-    async def execute(self, brand_dto: CreateBrandDTO) -> None:
+    async def execute(self, brand_dto: CreateBrandDTO) -> UUID:
         brand = BrandFactory.from_dto(brand_dto)
         await self.brand_repository.add(brand)
         await self.transaction_manager.commit()
