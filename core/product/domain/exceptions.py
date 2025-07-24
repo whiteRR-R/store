@@ -10,7 +10,7 @@ class InvalidValueException(DomainException):
     """Exception raised when an invalid value is encountered."""
     pass
 
-class NotFoundException(DomainException):
+class ValueObjectNotFoundException(DomainException):
     """Exception raised when an entity or value-object is not found in the domain."""
     pass
 
