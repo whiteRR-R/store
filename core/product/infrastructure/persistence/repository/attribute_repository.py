@@ -1,3 +1,4 @@
+import uuid
 from typing import Iterable
 from sqlalchemy import UUID, delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -9,11 +10,11 @@ class SQLAlchemyAttributeRepository:
         self.session = session
     
     async def add(self, key: str):
-        attribute = AttributeModel(key)
+        attribute = AttributeModel(id=uuid.uuid4(), name=key)
         self.session.add(attribute)
     
-    async def get_by_id(self, id: UUID):
-        stmt = await self.session.execute(select(AttributeModel).where(AttributeModel.id == id))
+    async def get_by_id(self, attribute_id: UUID):
+        stmt = await self.session.execute(select(AttributeModel).where(AttributeModel.id == attribute_id))
         attribute = stmt.scalar_one_or_none()
         return attribute
     
@@ -27,5 +28,5 @@ class SQLAlchemyAttributeRepository:
         attributes = stmt.scalars().all()
         return attributes
     
-    async def delete(self, id: UUID):
-        await self.session.execute(delete(AttributeModel).where(AttributeModel.id == id))
+    async def delete(self, attribute_id: UUID):
+        await self.session.execute(delete(AttributeModel).where(AttributeModel.id == attribute_id))

@@ -40,18 +40,8 @@ class SQLAlchemyProductRepository:
         
         product_model.brand = brand
         product_model.categories = categories
-        
-        assosiations = [
-            AssosiationProductAttributeModel(
-                product_id=product.id,
-                attribute_id=attr_id,
-                value=attr_value
-            )
-            for attr_id, attr_value in product.attributes.items()
-        ]
-        
+
         self.session.add(product_model)
-        self.session.add_all(assosiations)
 
 
     async def delete(self, product: ProductRoot) -> None:
@@ -106,7 +96,8 @@ class SQLAlchemyProductRepository:
         stmt = select(ProductModel).options(
                 joinedload(ProductModel.brand),
                 joinedload(ProductModel.categories),
-                selectinload(ProductModel.images)
+                selectinload(ProductModel.images),
+                joinedload(ProductModel.attribute_links)
             )
 
         if filters.min_price is not None:
@@ -117,9 +108,9 @@ class SQLAlchemyProductRepository:
         order_column = getattr(ProductModel, filters.sort_by.value)
 
         if filters.order == SortOrder.desc:
-            stmt.order_by(desc(order_column))
+            stmt = stmt.order_by(desc(order_column))
         else:
-            stmt.order_by(asc(order_column))
+            stmt = stmt.order_by(asc(order_column))
 
         result = await self.session.execute(stmt)
         products = result.unique().scalars().all()
