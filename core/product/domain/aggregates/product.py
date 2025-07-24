@@ -18,9 +18,9 @@ class ProductRoot:
         brand: Brand,
         description: ProductDescription,
         price: ProductPrice, 
-        categories: MutableSequence[Category],
-        attributes: MutableSequence[ProductAttribute],
-        images: MutableSequence[ProductImage],
+        categories: List[Category],
+        attributes: List[ProductAttribute],
+        images: List[ProductImage],
         id: Optional[UUID] = None,
     ) -> None:
         self._id = id or uuid4()
@@ -95,8 +95,8 @@ class ProductRoot:
         return [category for category in self._categories]
     
     @property
-    def attributes(self) -> Dict[UUID, str]:
-        return {attribute.attribute_id: attribute.value for attribute in self._attributes}
+    def attributes(self) -> List[ProductAttribute]:
+        return self._attributes
     
     @property
     def images(self) -> List[str]:
