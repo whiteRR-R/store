@@ -3,19 +3,27 @@ from enum import Enum
 
 
 class SortField(Enum):
-    name = "name"
-    price = "price"
+    NAME = "name"
+    PRICE = "price"
 
 
 class SortOrder(Enum):
-    asc = "asc"
-    desc = "desc"
+    ASC = "asc"
+    DESC = "desc"
 
 
 class ProductFilterDTO(BaseModel):
     min_price: int | None = Field(None, ge=0)
     max_price: int | None = Field(None, ge=0)
-    limit: int = Field(20, ge=1, le=100)
-    offset: int = Field(0, ge=0)
-    sort_by: SortField = Field(SortField.price)
-    order: SortOrder = Field(SortOrder.desc)
+    page: int = Field(1, ge=1)
+    _limit: int = 20
+    sort_by: SortField = Field(SortField.PRICE)
+    order: SortOrder = Field(SortOrder.DESC)
+
+    @property
+    def offset(self):
+        return (self.page - 1) * self._limit
+    
+    @property
+    def limit(self):
+        return self._limit
