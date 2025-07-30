@@ -7,7 +7,6 @@ requires-python = ">=3.11"
 dependencies = [
     "aio-pika==9.5.5",
     "aioboto3>=14.3.0",
-    "aioredis[hiredis]>=2.0.1",
     "aiormq==6.8.1",
     "alembic==1.15.1",
     "annotated-types==0.7.0",
