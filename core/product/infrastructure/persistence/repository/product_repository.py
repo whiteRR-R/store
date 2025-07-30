@@ -107,11 +107,13 @@ class SQLAlchemyProductRepository:
 
         order_column = getattr(ProductModel, filters.sort_by.value)
 
-        if filters.order == SortOrder.desc:
+        if filters.order == SortOrder.DESC:
             stmt = stmt.order_by(desc(order_column))
         else:
             stmt = stmt.order_by(asc(order_column))
-
+            
+        stmt = stmt.offset(filters.offset).limit(filters.limit)
+        
         result = await self.session.execute(stmt)
         products = result.unique().scalars().all()
         return [self.mapper.model_to_entity(product) for product in products]
