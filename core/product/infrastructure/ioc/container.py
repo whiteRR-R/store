@@ -8,7 +8,7 @@ from config import config_manager
 
 def create_container():
     return make_async_container(
-        DatabaseProvider(config_manager.database.URL),
+        DatabaseProvider(config_manager.database.URL, config_manager.redis.URL),
         RepositoryProvider(),
         UseCaseProvider(),
         S3Provider(
