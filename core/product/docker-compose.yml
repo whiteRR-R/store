@@ -15,6 +15,26 @@ services:
     networks:
       - backend
   
+  redis_cache:
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - "${REDIS_PORT}:${REDIS_PORT}"
+    command: >
+      redis-server
+      --appendonly yes
+      --save 900 1 
+      --save 300 10 
+      --save 60 10000
+      --loglevel warning
+      --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    
+  
 networks:
   backend:
     external: true
+
+volumes:
+  redis_data:
