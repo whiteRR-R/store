@@ -1,6 +1,6 @@
+import json
 from typing import Any
-from uuid import UUID
-from aioredis import Redis
+from redis.asyncio import Redis
 from domain.interfaces.repositories.product_repository import ProductRepositoryProtocol
 
 
@@ -13,4 +13,7 @@ class RedisCacheRepository:
         return data
             
     async def set(self, key: str, data: Any):
-        await self.redis.set(key, data)
+        await self.redis.set(key, data, ex=120)
+    
+    async def delete(self, key: str):
+        await self.redis.delete(key)
