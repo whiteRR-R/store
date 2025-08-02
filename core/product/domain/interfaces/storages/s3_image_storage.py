@@ -1,8 +1,7 @@
-from typing import Any, Protocol, BinaryIO
-
+from typing import Any, Protocol
 
 class S3ImageStorageProtocol(Protocol):
-    async def upload(self, staging_path: BinaryIO, file_name: str) -> str:
+    async def upload(self, staging_path, file_name) -> str:
         """Upload image"""
         pass
     

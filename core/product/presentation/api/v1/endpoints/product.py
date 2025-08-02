@@ -42,7 +42,7 @@ async def add_product_image(
     use_case: FromDishka[AddProductImageUseCase],
     images: List[UploadFile] = File(...)
 ):
-    image_dto = [ImageDTO(file=image.file, filename=image.filename or "") for image in images]
+    image_dto = [ImageDTO(file=image, filename=image.filename or "") for image in images]
     await use_case.execute(product_id=product_id, images=image_dto)
 
 
