@@ -13,6 +13,7 @@ class CreateAttributeUseCase:
         self.attribute_repository = attribute_repository
         self.transaction_manager = transaction_manager
 
-    async def execute(self, attribute_dto: AttributeDTO):
+    async def execute(self, attribute_dto: AttributeDTO) -> AttributeDTO:
         await self.attribute_repository.add(attribute_dto.key)
         await self.transaction_manager.commit()
+        return attribute_dto

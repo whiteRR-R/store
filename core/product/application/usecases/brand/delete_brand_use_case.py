@@ -13,9 +13,10 @@ class DeleteBrandUseCase:
         self.brand_repository = brand_repository
         self.transaction_manager = transaction_manager
 
-    async def execute(self, brand_id: UUID) -> None:
+    async def execute(self, brand_id: UUID) -> UUID:
         brand = await self.brand_repository.get_by_id(brand_id)
         if not brand:
             raise DataNotFoundException(f"Brand with ID {brand_id} not found")
         await self.brand_repository.delete(brand)
         await self.transaction_manager.commit()
+        return brand_id

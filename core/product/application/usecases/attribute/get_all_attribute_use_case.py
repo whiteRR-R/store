@@ -6,7 +6,7 @@ class GetAllAttributeUseCase:
     def __init__(
         self,
         attribute_repository: AttributeRepositoryProtocol,
-    ):
+    ) -> None:
         self.attribute_repository = attribute_repository
 
     async def execute(self):
