@@ -3,10 +3,12 @@ from domain.interfaces.repositories.attribute_repository import AttributeReposit
 from domain.interfaces.repositories.brand_repository import BrandRepositoryProtocol
 from domain.interfaces.repositories.category_repository import CategoryRepositoryProtocol
 from domain.interfaces.repositories.product_repository import ProductRepositoryProtocol
+from domain.interfaces.repositories.redis_repository import RedisCacheRepositoryProtocol
 from infrastructure.persistence.repository.product_repository import SQLAlchemyProductRepository
 from infrastructure.persistence.repository.attribute_repository import SQLAlchemyAttributeRepository
 from infrastructure.persistence.repository.brand_repository import SQLAlchemyBrandRepository
 from infrastructure.persistence.repository.category_repository import SQLAlchemyCategoryRepository
+from infrastructure.persistence.repository.redis_repository import RedisCacheRepository
 
 
 class RepositoryProvider(Provider):
@@ -16,3 +18,4 @@ class RepositoryProvider(Provider):
     attribute_repository = provide(SQLAlchemyAttributeRepository, provides=AttributeRepositoryProtocol)
     brand_repository = provide(SQLAlchemyBrandRepository, provides=BrandRepositoryProtocol)
     category_repository = provide(SQLAlchemyCategoryRepository, provides=CategoryRepositoryProtocol)
+    redis_repository = provide(RedisCacheRepository, provides=RedisCacheRepositoryProtocol)
