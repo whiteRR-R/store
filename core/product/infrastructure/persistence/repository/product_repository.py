@@ -85,7 +85,7 @@ class SQLAlchemyProductRepository:
                 joinedload(ProductModel.brand),
                 joinedload(ProductModel.categories),
                 selectinload(ProductModel.images),
-                selectinload(ProductModel.attributes)
+                selectinload(ProductModel.attribute_links)
             )
         )
         product = stmt.unique().scalars().first()
