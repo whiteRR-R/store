@@ -55,6 +55,7 @@ async def add_product_attribute(
 ):
     await use_case.execute(product_id=product_id, attribute_dto=attribute_dto)
 
+
 @router.get("/products/", response_model=List[ProductDTO], status_code=status.HTTP_200_OK)
 @inject
 async def get_all_products(
