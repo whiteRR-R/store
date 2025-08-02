@@ -6,6 +6,6 @@ class S3ImageStorageProtocol(Protocol):
         """Upload image"""
         pass
     
-    async def delete(self, key: str) -> str:
+    async def delete(self, url: str) -> None:
         """Delete image"""
         pass

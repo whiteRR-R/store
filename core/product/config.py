@@ -16,6 +16,15 @@ class DatabaseSettings(BaseSettings):
         extra="ignore",
     )
 
+class RedisSettings(BaseSettings):
+    URL: str
+    
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        env_prefix="REDIS_",
+        extra="ignore",
+    )
 
 class RabbitMQSettings(BaseSettings):
     USER: str
@@ -51,6 +60,7 @@ class S3Settings(BaseSettings):
 class ConfigManager:
     def __init__(self):
         self.database = DatabaseSettings()
+        self.redis = RedisSettings()
         self.rabbitmq = RabbitMQSettings()
         self.s3 = S3Settings()
 

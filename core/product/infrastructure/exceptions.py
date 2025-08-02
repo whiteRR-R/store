@@ -11,6 +11,6 @@ class RollbackException(InfrastructureException):
     """Exception raised when a transaction rollback is required."""
     pass
 
-class NotFoundException(InfrastructureException):
+class DataNotFoundException(InfrastructureException):
     """Exception raised when an entity is not found."""
     pass

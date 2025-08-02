@@ -1,42 +1,49 @@
-from typing import List, Optional, BinaryIO
+from typing import List
 from uuid import UUID
-from dataclasses import dataclass, field
+from pydantic import BaseModel, Field, ConfigDict
+from fastapi import UploadFile
 
 
-@dataclass
-class AttributeDTO:
-    key: str
+class AttributeDTO(BaseModel):
+    attribute_id: UUID
     value: str
 
-@dataclass
-class ImageDTO:
-    file: BinaryIO
+
+class DeleteAttributeDTO(BaseModel):
+    value: str
+
+
+class ImageDTO(BaseModel):
+    file: UploadFile
     filename: str
 
-@dataclass
-class DeleteImageDTO:
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+
+
+class DeleteImageDTO(BaseModel):
     url: str
 
-@dataclass
-class CreateProductDTO:
+
+class CreateProductDTO(BaseModel):
     name: str
     brand_id: UUID
     description: str
     price: int
-    category_ids: List[UUID]
-    attributes: List[AttributeDTO] = field(default_factory=list)
+    category_ids: List[UUID] = Field(default_factory=list)
+    attributes: List[AttributeDTO] = Field(default_factory=list)
 
-@dataclass
-class ProductDTO:
+
+class ProductDTO(BaseModel):
     id: UUID
     name: str
     brand_id: UUID
     description: str
     price: int
     category_ids: List[UUID]
-    attributes: List[AttributeDTO] = field(default_factory=list)
-    images: List[str] = field(default_factory=list)
+    attributes: List[AttributeDTO] = Field(default_factory=list)
+    images: List[str] = Field(default_factory=list)
 
-@dataclass
+
 class UpdateProductDTO(ProductDTO):
     pass

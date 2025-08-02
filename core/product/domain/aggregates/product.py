@@ -6,7 +6,7 @@ from domain.value_objects.product_attribute import ProductAttribute
 from domain.value_objects.product_image import ProductImage
 from domain.value_objects.product_description import ProductDescription
 from domain.value_objects.product_price import ProductPrice
-from domain.exceptions import AlreadyExistException, NotFoundException, InvalidOperationException
+from domain.exceptions import AlreadyExistException, ValueObjectNotFoundException, InvalidOperationException
 from typing import List, Optional, Dict, MutableSequence
 from uuid import uuid4, UUID
 
@@ -18,9 +18,9 @@ class ProductRoot:
         brand: Brand,
         description: ProductDescription,
         price: ProductPrice, 
-        categories: MutableSequence[Category],
-        attributes: MutableSequence[ProductAttribute],
-        images: MutableSequence[ProductImage],
+        categories: List[Category],
+        attributes: List[ProductAttribute],
+        images: List[ProductImage],
         id: Optional[UUID] = None,
     ) -> None:
         self._id = id or uuid4()
@@ -49,7 +49,7 @@ class ProductRoot:
         if len(self._attributes) <= 1:
             raise InvalidOperationException("Need to add attribute first")
         if attribute not in self._attributes:
-            raise NotFoundException(f"Attribute: {attribute} does not exist")
+            raise ValueObjectNotFoundException(f"Attribute: {attribute} does not exist")
         self._attributes.remove(attribute)
     
     def add_category(self, category: Category) -> None:
@@ -61,7 +61,7 @@ class ProductRoot:
         if len(self._categories) <= 1:
             raise InvalidOperationException("Need to add category first")
         if category not in self._categories:
-            raise NotFoundException(f"Category: {category} does not exist")
+            raise ValueObjectNotFoundException(f"Category: {category} does not exist")
         self._categories.remove(category)
     
     def update_description(self, description: ProductDescription) -> None:
@@ -95,8 +95,8 @@ class ProductRoot:
         return [category for category in self._categories]
     
     @property
-    def attributes(self) -> Dict[str, str]:
-        return {attribute.key: attribute.value for attribute in self._attributes}
+    def attributes(self) -> List[ProductAttribute]:
+        return self._attributes
     
     @property
     def images(self) -> List[str]:
