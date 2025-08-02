@@ -3,12 +3,11 @@ from domain.interfaces.storages.s3_image_storage import S3ImageStorageProtocol
 from domain.interfaces.repositories.product_repository import ProductRepositoryProtocol
 from domain.interfaces.transaction_manager import TransactionManagerProcotol
 from domain.value_objects.product_image import ProductImage
-from application.interfaces.usecases.product_use_cases import DeleteProductImageUseCaseProtocol
 from application.dtos.product_dto import DeleteImageDTO
 from application.exceptions import DataNotFoundException
 
 
-class DeleteProductImageUseCase(DeleteProductImageUseCaseProtocol):
+class DeleteProductImageUseCase:
     
     def __init__(
         self, 
