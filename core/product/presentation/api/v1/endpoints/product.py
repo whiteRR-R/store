@@ -113,11 +113,11 @@ async def remove_product_attribute(
     await use_case.execute(product_id=product_id, attribute_dto=attribute_dto)
 
 
-@router.delete("/products/{product_id}/image",status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/products/{product_id}/images/{image_url}",status_code=status.HTTP_204_NO_CONTENT)
 @inject
 async def remove_product_image(
     product_id: UUID,
-    image_dto: DeleteImageDTO,
+    image_url: str,
     use_case: FromDishka[DeleteProductImageUseCase]
 ):
-    await use_case.execute(product_id=product_id, image=image_dto)
+    await use_case.execute(product_id=product_id, image_url=image_url)

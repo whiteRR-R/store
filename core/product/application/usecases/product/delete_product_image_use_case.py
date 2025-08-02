@@ -20,12 +20,12 @@ class DeleteProductImageUseCase:
         self.s3_storage = s3_storage
         self.transaction_manager = transaction_manager
     
-    async def execute(self, product_id: UUID, image: DeleteImageDTO) -> None:
+    async def execute(self, product_id: UUID, image_url: str) -> None:
         product = await self.product_repository.get_by_id(product_id)
         
         if not product:
             raise DataNotFoundException(f"Product with {product_id} not found")
-        image_vo = ProductImage(image.url)
+        image_vo = ProductImage(image_url)
         product.remove_image(image_vo)
         
         for url in product.images:
