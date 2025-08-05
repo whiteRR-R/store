@@ -1,7 +1,7 @@
 import uuid
 from config import config_manager
 from domain.valueobject.email import Email
-from domain.factories.user_factory import UserFactory
+from application.factories.user_factory import UserFactory
 from domain.interface.repository.auth_repository import AuthRepositoryProtocol
 from domain.interface.repository.redis_repository import RedisRepositoryProtocol
 from domain.interface.services.jwt_service import JWTServiceProtocol
