@@ -11,7 +11,10 @@ class AttributeRepositoryProtocol(Protocol):
     
     async def get_by_ids(self, ids: Iterable[UUID]):
         ...
-            
+    
+    async def retrieve_attribute_value(self, product_id: UUID, attribute_id: UUID):
+        ...
+        
     async def get_all(self):
         ...
         
