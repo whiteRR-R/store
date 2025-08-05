@@ -17,8 +17,6 @@ class ProductAttribute:
             raise InvalidValueException("Attribute value must be at least 3 characters long.")
         if len(self.value) > 50:
             raise InvalidValueException("Attribute value must be at most 50 characters long.")
-        if not self.value.isalnum():
-            raise InvalidValueException("Attribute value must be alphanumeric.")
         if not self.value[0].isalpha():
             raise InvalidValueException("Attribute value must start with a letter.")
         if not self.value:
