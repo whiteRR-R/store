@@ -56,6 +56,7 @@ class SQLAlchemyProductRepository:
                 joinedload(ProductModel.brand),
                 joinedload(ProductModel.categories),
                 selectinload(ProductModel.images),
+                selectinload(ProductModel.attribute_links)
             )
         )
         product_model = stmt.unique().scalars().one_or_none()
@@ -67,7 +68,6 @@ class SQLAlchemyProductRepository:
             product_model.name = product.name.value
             product_model.description = product.description.value
             product_model.price = product.price.value
-            product_model.attributes = product.attributes
             product_model.brand = brand
 
             product_model.categories.clear()
@@ -75,6 +75,15 @@ class SQLAlchemyProductRepository:
 
             product_model.images.clear()
             product_model.images.extend([ProductImageModel(url=image_urls) for image_urls in product.images])
+            
+            product_model.attribute_links.clear()
+            product_model.attribute_links.extend([
+                AssosiationProductAttributeModel(
+                    attribute_id=attr.attribute_id,
+                    value=attr.value
+                )
+                for attr in product.attributes
+            ])
 
 
     async def get_by_id(self, product_id: UUID) -> Optional[ProductRoot]:
