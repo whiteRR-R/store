@@ -1,4 +1,5 @@
 from uuid import UUID
+from domain.interfaces.repositories.attribute_repository import AttributeRepositoryProtocol
 from domain.interfaces.repositories.product_repository import ProductRepositoryProtocol
 from domain.interfaces.transaction_manager import TransactionManagerProcotol
 from domain.value_objects.product_attribute import ProductAttribute
@@ -10,12 +11,14 @@ class DeleteProductAttributeUseCase:
     def __init__(
         self, 
         product_repository: ProductRepositoryProtocol,
+        attribute_repository: AttributeRepositoryProtocol,
         transaction_manager: TransactionManagerProcotol
     ) -> None:
         self.product_repository = product_repository
+        self.attribute_repository = attribute_repository
         self.transaction_manager = transaction_manager
 
-    async def execute(self, product_id: UUID, attribute_dto: AttributeDTO) -> None:
+    async def execute(self, product_id: UUID, attribute_id: UUID) -> None:
         """
         Deletes a product attribute by its ID.
         """
@@ -24,8 +27,13 @@ class DeleteProductAttributeUseCase:
         if not product:
             raise DataNotFoundException(f"Product with ID {product_id} does not exist.")
         
-        attribute = ProductAttribute(attribute_id=attribute_dto.attribute_id, value=attribute_dto.value)
-        product.remove_attribute(attribute)
+        attribute = await self.attribute_repository.retrieve_attribute_value(product_id=product_id, attribute_id=attribute_id)
+
+        if not attribute:
+            raise DataNotFoundException(f"Attribute with ID {attribute_id} does not exist.")
+
+        attribute_vo = ProductAttribute(attribute_id=attribute_id, value=attribute.value)
+        product.remove_attribute(attribute_vo)
         
         await self.product_repository.update(product)
         await self.transaction_manager.commit()
