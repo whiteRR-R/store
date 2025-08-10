@@ -10,6 +10,6 @@ class GetAllCategoryUseCase:
     def __init__(self, category_repository: CategoryRepositoryProtocol):
         self.category_repository = category_repository
     
-    async def execute(self) -> List[CategoryDTO]:
+    async def execute(self) -> List[Category]:
         categories = await self.category_repository.get_all()
-        return [CategoryFactory.to_dto(category) for category in categories]
+        return categories
