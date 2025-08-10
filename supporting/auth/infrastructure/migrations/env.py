@@ -22,7 +22,7 @@ from infrastructure.persistence.database import Base
 from infrastructure.persistence.models.user_model import UserModel
 from config import config_manager
 target_metadata = Base.metadata
-config.set_main_option("sqlalchemy.url", config_manager.database.DATABASE_URL)
+config.set_main_option("sqlalchemy.url", config_manager.database.URL)
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

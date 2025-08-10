@@ -1,4 +1,6 @@
 from typing import Protocol
+from uuid import UUID
+from domain.valueobject.role import Role
 from application.dtos.user_dto import UserDTO
 from application.dtos.change_email import ChangeEmailDTO
 from application.dtos.login_dto import UserLoginDTO
@@ -45,4 +47,8 @@ class AuthUseCaseProtocol(Protocol):
     
     async def update_email(self, token: str, change_email_dto: ChangeEmailDTO) -> None:
         """ Обновляет email пользователя. """
+        ...
+
+    async def update_role(self, user_id: UUID, role: Role):
+        """ Обновляет роль пользоватея """
         ...

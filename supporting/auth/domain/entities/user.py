@@ -1,7 +1,6 @@
 from domain.valueobject.role import Role
 from domain.valueobject.email import Email
 from domain.valueobject.username import Username
-from domain.valueobject.permission import Permission
 
 
 class User:

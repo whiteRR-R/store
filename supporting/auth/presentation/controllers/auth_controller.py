@@ -1,4 +1,5 @@
 from typing import Annotated
+from uuid import UUID
 from fastapi import APIRouter, Response, status, HTTPException, Depends, Request
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from dependency_injector.wiring import inject, Provide
@@ -9,6 +10,8 @@ from application.dtos.jwt_token_dto import JWTTokensDTO
 from application.dtos.user_dto import UserDTO
 from application.dtos.forgot_password_dto import ForgotPasswordDTO
 from application.dtos.reset_password_dto import ResetPasswordDTO
+from domain.valueobject.role import Role
+from presentation.responses.change_role_response import ChangeRoleResponse
 from presentation.responses.jwt_token_response import JWTTokenResponse
 from presentation.responses.forgot_password_response import ForgotPasswordResponse
 from presentation.responses.reset_password_response import ResetPasswordResponse
@@ -17,10 +20,10 @@ from presentation.responses.register_response import RegisterResponse
 from presentation.responses.delete_user_response import DeleteUserResponse
 from presentation.responses.logout_user_response import LogoutUserResponse
 from presentation.responses.change_email_response import ChangeEmailResponse
+from presentation.dependencies.permissions import oauth2_scheme
 from container import Container
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl='login')
 router = APIRouter()
 
 
@@ -113,6 +116,16 @@ async def change_email(
     return ChangeEmailResponse(message=f"Email successfully changed to {change_email_dto.new_email}")
 
 
+@router.put("/change_role/{user_id}", status_code=status.HTTP_200_OK)
+@inject
+async def change_role(
+    user_id: UUID,
+    new_role: Role,
+    auth_usecase: AuthUseCaseProtocol = Depends(Provide[Container.auth_usecase])
+):
+    await auth_usecase.update_role(user_id, new_role)
+    return ChangeRoleResponse(message=f"Role successfully changed to {new_role}")
+
 @router.post("/refresh", response_model=JWTTokenResponse, status_code=status.HTTP_201_CREATED)
 @inject
 async def refresh_tokens(
@@ -127,6 +140,7 @@ async def refresh_tokens(
     response.set_cookie("access_token", access_token, httponly=True, secure=True, samesite="lax")
     return JWTTokenResponse(access_token=access_token, refresh_token=refresh_token)
 
+
 @router.get("/me", response_model=UserDataResponse, status_code=status.HTTP_200_OK)
 @inject
 async def get_user_data(
@@ -134,4 +148,4 @@ async def get_user_data(
     auth_usecase: AuthUseCaseProtocol = Depends(Provide[Container.auth_usecase])
 ):
     user = await auth_usecase.get_current_user_info(token)
-    return UserDataResponse(username=user.username, email=user.email, role=user.role)
+    return UserDataResponse(username=user.username, email=user.email, role=user.role.value)

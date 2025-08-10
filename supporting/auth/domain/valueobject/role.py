@@ -1,25 +1,10 @@
-from domain.exceptions import ValidationError
-from dataclasses import dataclass
+from enum import Enum
 
 
-@dataclass(frozen=True)
-class Role:
-    """Value Object для Role с проверкой длины и содержания"""
-    role: str
+class Role(Enum):
+    USER = "USER" 
+    MANAGER = "MANAGER"
+    ADMIN = "ADMIN" 
 
-    def __post_init__(self):
-        self._validate_role()
-    
     def __repr__(self):
-        return self.role
-
-    def _validate_role(self):
-        """Проверка, что role соответствует правилам"""
-        if not self.role:
-            raise ValidationError("Role cannot be an empty string.")
-        if ' ' in self.role:
-            raise ValidationError("Role cannot contain spaces.")
-        if len(self.role) <= 3:
-            raise ValidationError(f"Role '{self.role}' must be more than 3 characters")
-        if not self.role.isalnum():
-            raise ValidationError(f"Role '{self.role}' can only contain alphanumeric characters.")
+        return self.value

@@ -8,11 +8,11 @@ class UserFactory:
     """ Фабрика для создания пользователей """
 
     @staticmethod
-    def create(username: str, role: str, email: str, hash_password: bytes) -> User:
+    def create(username: str, role: Role, email: str, hash_password: bytes) -> User:
         """ Создает нового пользователя """
         return User(
             username=Username(username),
-            role=Role(role),
+            role=role,
             email=Email(email),
             hash_password=hash_password
         )

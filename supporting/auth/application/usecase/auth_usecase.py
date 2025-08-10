@@ -1,10 +1,11 @@
-import uuid
+from uuid import UUID, uuid4
 from config import config_manager
 from domain.valueobject.email import Email
-from application.factories.user_factory import UserFactory
+from domain.valueobject.role import Role
 from domain.interface.repository.auth_repository import AuthRepositoryProtocol
 from domain.interface.repository.redis_repository import RedisRepositoryProtocol
 from domain.interface.services.jwt_service import JWTServiceProtocol
+from application.factories.user_factory import UserFactory
 from application.interface.security.password_security import PasswordSecurityProtocol
 from application.dtos.user_dto import UserDTO
 from application.dtos.login_dto import UserLoginDTO
@@ -106,7 +107,7 @@ class AuthUseCase:
         user = await self.auth_repository.get_by_email(forgot_dto.email)
         if not user:
             raise UserNotFoundException(f"User with email '{forgot_dto.email}' not found.")
-        reset_key = uuid.uuid4().hex
+        reset_key = uuid4().hex
         await self.redis_repository.set(key=f"reset_password:{reset_key}", value=user.username)
         return reset_key
 
@@ -143,6 +144,13 @@ class AuthUseCase:
             await self.auth_repository.update(user)
         except TokenProcessingException as e:
             raise TokenProcessingException(f"Invalid reset token: {str(e)}")
+    
+    async def update_role(self, user_id: UUID, new_role: Role):
+        user = await self.auth_repository.get_by_id(user_id)
+        if not user:
+            UserNotFoundException(user_id)
+        user.change_role(new_role)
+        await self.auth_repository.update(user)
 
     async def get_current_user_info(self, jwt_token: str):
         """ Получает информацию о текущем пользователе по JWT токену """

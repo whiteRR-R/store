@@ -1,12 +1,13 @@
-from pydantic import BaseModel, EmailStr, field_validator
 import re
+from pydantic import BaseModel, EmailStr, Field, field_validator
+from domain.valueobject.role import Role
 
 
 class UserDTO(BaseModel):
     username: str
     email: EmailStr
     password: str
-    role: str = 'user'
+    role: Role = Field(Role.USER)
 
     @field_validator('password', mode='before')
     @classmethod

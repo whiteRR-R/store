@@ -1,4 +1,5 @@
 from typing import Protocol
+from uuid import UUID
 from domain.entities.user import User
 
 
@@ -14,6 +15,9 @@ class AuthRepositoryProtocol(Protocol):
     
     async def delete(self, user: User):
         """ Удаляет пользователя из репозитория. """
+        ...
+    
+    async def get_by_id(self, user_id: UUID) -> User:
         ...
     
     """ Интерфейс репозитория для работы с пользователями. """

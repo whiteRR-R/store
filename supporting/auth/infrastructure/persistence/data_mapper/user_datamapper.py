@@ -1,11 +1,6 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import update
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import update, select
 from domain.entities.user import User
-from domain.factories.user_factory import UserFactory
-from domain.entities.user import User
-from domain.factories.user_factory import UserFactory
+from domain.valueobject.role import Role
+from application.factories.user_factory import UserFactory
 from infrastructure.persistence.models.user_model import UserModel
 from infrastructure.persistence.models.user_model import UserModel
 
@@ -27,6 +22,6 @@ class UserDataMapper:
         return UserFactory.create(
             username=model.username,
             email=model.email,
-            role=model.role,
+            role=Role(model.role),
             hash_password=model.hashed_password
         )
