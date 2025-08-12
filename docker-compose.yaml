@@ -1,20 +1,48 @@
-version: '3.9'
-
 services:
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: rabbitmq
-    hostname: rabbitmq
-    ports:
-      - "${RABBITMQ_PORT}:${RABBITMQ_PORT}"
-      - "${RABBITMQ_MANAGEMENT_PORT}:${RABBITMQ_MANAGEMENT_PORT}" 
+  # Account Service DB
+  account_db:
+    image: postgres:latest
+    container_name: account_db
     environment:
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
-
+      POSTGRES_USER: ${ACCOUNT_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${ACCOUNT_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${ACCOUNT_POSTGRES_DB}
+    volumes:
+      - ./postgres_data/account:/var/lib/postgresql/data
+    ports:
+      - "${ACCOUNT_POSTGRES_PORT}:${ACCOUNT_POSTGRES_PORT}"
+    command: -p ${ACCOUNT_POSTGRES_PORT}
     networks:
       - backend
 
+  # Auth Service DB
+  auth_db:
+    image: postgres:latest
+    container_name: auth_db
+    environment:
+      POSTGRES_USER: ${AUTH_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${AUTH_POSTGRES_PASS}
+      POSTGRES_DB: ${AUTH_POSTGRES_NAME}
+    volumes:
+      - ./postgres_data/auth:/var/lib/postgresql/data
+    ports:
+      - "${AUTH_POSTGRES_PORT}:${AUTH_POSTGRES_PORT}"
+    command: -p ${AUTH_POSTGRES_PORT}
+    networks:
+      - backend
+
+  # Auth Redis
+  auth_redis_cache:
+    image: redis:latest
+    container_name: auth_redis_cache
+    environment:
+      REDIS_PASSWORD: ${AUTH_REDIS_PASSWORD}
+    ports:
+      - "${AUTH_REDIS_PORT}:${AUTH_REDIS_PORT}"
+    networks:
+      - backend
+
+  # MinIO
   minio:
     image: quay.io/minio/minio
     container_name: minio
@@ -25,11 +53,79 @@ services:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     command: server /data --console-address ":9001"
-
     networks:
       - backend
 
+  # Order Service DB
+  order_db:
+    image: postgres:latest
+    container_name: order_db
+    environment:
+      POSTGRES_USER: ${POSTGRES_DATABASE_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_DATABASE_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DATABASE_DB}
+    volumes:
+      - ./postgres_data/order:/var/lib/postgresql/data
+    ports:
+      - "${POSTGRES_DATABASE_PORT}:${POSTGRES_DATABASE_PORT}"
+    command: -p ${POSTGRES_DATABASE_PORT}
+    networks:
+      - backend
+
+  # Product Service DB
+  product_db:
+    image: postgres:latest
+    container_name: product_db
+    environment:
+      POSTGRES_USER: ${PRODUCT_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${PRODUCT_POSTGRES_PASS}
+      POSTGRES_DB: ${PRODUCT_POSTGRES_NAME}
+    volumes:
+      - ./postgres_data/category:/var/lib/postgresql/data
+    ports:
+      - "${PRODUCT_POSTGRES_PORT}:${PRODUCT_POSTGRES_PORT}"
+    command: -p ${PRODUCT_POSTGRES_PORT}
+    networks:
+      - backend
+
+  # Redis Product
+  redis_product_cache:
+    image: redis:6.2-alpine
+    container_name: product_redis_cache
+    restart: always
+    ports:
+      - "${PRODUCT_REDIS_PORT}:${PRODUCT_REDIS_PORT}"
+    command: >
+      redis-server
+      --appendonly yes
+      --save 900 1 
+      --save 300 10 
+      --save 60 10000
+      --loglevel warning
+      --requirepass ${PRODUCT_REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    networks:
+      - backend
+
+  # RabbitMQ
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    hostname: rabbitmq
+    ports:
+      - "${RABBITMQ_PORT}:${RABBITMQ_PORT}"
+      - "${RABBITMQ_MANAGEMENT_PORT}:${RABBITMQ_MANAGEMENT_PORT}"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+    networks:
+      - backend
 
 networks:
   backend:
     external: true
+
+volumes:
+  redis_data:
+  redis-insight:
