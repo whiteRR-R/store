@@ -1,0 +1,16 @@
+from typing import List, Protocol, Optional
+from uuid import UUID
+
+from domain.entities.user import User
+
+
+class UserRepository(Protocol):
+    async def add(self, user: User) -> None: ...
+    
+    async def get_by_id(self, user_id: UUID) -> Optional[User]: ...
+    
+    async def get_all(self) -> List[User]: ...
+
+    async def update(self, user: User) -> None: ...
+
+    async def delete(self, user_id: UUID) -> None: ...
