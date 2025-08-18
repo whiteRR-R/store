@@ -2,7 +2,7 @@ from application.dtos.login_dto import UserLoginDTO
 from application.exceptions import InvalidCredentialsException
 from domain.interface.repository.auth_repository import AuthRepositoryProtocol
 from domain.interface.repository.redis_repository import RedisRepositoryProtocol
-from application.interface.security.password_security import PasswordSecurityProtocol
+from application.interfaces.security.password_security import PasswordSecurityProtocol
 from domain.interface.services.jwt_service import JWTServiceProtocol
 
 

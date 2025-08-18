@@ -1,6 +1,6 @@
 from application.dtos.reset_password_dto import ResetPasswordDTO
 from application.exceptions import TokenProcessingException, UserNotFoundException
-from application.interface.security.password_security import PasswordSecurityProtocol
+from application.interfaces.security.password_security import PasswordSecurityProtocol
 from domain.interface.repository.auth_repository import AuthRepositoryProtocol
 from domain.interface.repository.redis_repository import RedisRepositoryProtocol
 from domain.interface.transaction_manager.transaction_manager import TransactionManager

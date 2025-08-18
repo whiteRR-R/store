@@ -1,7 +1,7 @@
 from application.dtos.user_dto import UserDTO
 from application.exceptions import UsernameAlreadyExistsException, EmailAlreadyExistsException
 from application.factories.user_factory import UserFactory
-from application.interface.security.password_security import PasswordSecurityProtocol
+from application.interfaces.security.password_security import PasswordSecurityProtocol
 from domain.interface.repository.auth_repository import AuthRepositoryProtocol
 from domain.interface.transaction_manager.transaction_manager import TransactionManager
 
