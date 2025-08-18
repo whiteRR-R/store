@@ -15,6 +15,7 @@ dependencies = [
     "click==8.1.8",
     "cryptography==45.0.5",
     "dependency-injector==4.46.0",
+    "dishka>=1.6.0",
     "dnspython==2.7.0",
     "email-validator==2.2.0",
     "fastapi==0.115.11",
