@@ -15,9 +15,7 @@ class DatabaseSettings(BaseSettings):
     )
 
 class REDISSettings(BaseSettings):
-    PORT: int
-    HOST: str
-    PASSWORD: str
+    URL: str
 
     model_config = SettingsConfigDict(
         env_file=".env",
