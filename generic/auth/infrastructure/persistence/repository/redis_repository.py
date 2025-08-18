@@ -1,9 +1,9 @@
-from redis.asyncio import Redis
+import redis.asyncio as aioredis
 
 
 class RedisRepository:
-    def __init__(self, redis_client: Redis):
-        self.redis_client = redis_client
+    def __init__(self, redis_url: str):
+        self.redis_client = aioredis.from_url(redis_url, decode_responses=True)
 
     async def set(self, key: str, value: str):
         await self.redis_client.set(key, value)

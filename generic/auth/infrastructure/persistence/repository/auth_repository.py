@@ -10,57 +10,49 @@ class SQLAlchemyAuthRepository:
     """ Инициализация Sqlalchemy Auth Repository репозитория. """
     def __init__(
         self,
-        user_datamapper: UserDataMapper,
-        session_context_manager: AsyncContextManager[AsyncSession]
+        session: AsyncSession
     ):
-        self.user_datamapper = user_datamapper
-        self.session = session_context_manager
+        self.user_datamapper = UserDataMapper()
+        self.session = session
     
     async def add(self, user: User) -> None:
         """Добавляет пользователя в базу данных."""
-        async with self.session() as session:
-            model = self.user_datamapper.from_entity(user)
-            session.add(model)
-            await session.commit()
+        model = self.user_datamapper.from_entity(user)
+        self.session.add(model)
 
     async def update(self, user: User) -> None:
         """Обновляет данные пользователя."""
-        async with self.session() as session:
-            stmt = (
-                update(UserModel)
-                .where(UserModel.username == user.username)
-                .values(
-                    email=user.email,
-                    hashed_password=user.hash_password,
-                    role=user.role
-                )
+        stmt = (
+            update(UserModel)
+            .where(UserModel.username == user.username)
+            .values(
+                email=user.email,
+                hashed_password=user.hash_password,
+                role=user.role
             )
-            await session.execute(stmt)
-            await session.commit()
+        )
+        await self.session.execute(stmt)
 
     async def delete(self, username: str) -> None:
         """Удаляет пользователя по username."""
-        async with self.session() as session:
-            stmt = await session.execute(
-                select(UserModel).where(UserModel.username == username)
-            )
-            user = stmt.scalar_one_or_none()
-            if user:
-                await session.delete(user)
+        stmt = await self.session.execute(
+            select(UserModel).where(UserModel.username == username)
+        )
+        user = stmt.scalar_one_or_none()
+        if user:
+            await self.session.delete(user)
 
     async def get_by_username(self, username: str) -> Optional[User]:
         """ Находит пользователя по его имени (username). """
-        async with self.session() as session:
-            stmt = await session.execute(
-                select(UserModel).where(UserModel.username == username)
-            )
-            user = stmt.scalar_one_or_none()
-            return self.user_datamapper.to_entity(user) if user else None
+        stmt = await self.session.execute(
+            select(UserModel).where(UserModel.username == username)
+        )
+        user = stmt.scalar_one_or_none()
+        return self.user_datamapper.to_entity(user) if user else None
 
     async def get_by_email(self, email: str) -> Optional[User]:
         """ Находит пользователя по его почте (email). """
-        async with self.session() as session:
-            stmt = await session.execute(
+        stmt = await self.session.execute(
             select(UserModel).where(UserModel.email == email)
         )
         user = stmt.scalar_one_or_none()
