@@ -20,7 +20,7 @@ class DeleteUserInteractor:
         self.jwt_service = jwt_service
         self.transaction_manager = transaction_manager
 
-    async def execute(self, jwt_tokens_dto: JWTTokensDTO):
+    async def __call__(self, jwt_tokens_dto: JWTTokensDTO):
         try:
             self.jwt_service.validate_token_type(jwt_tokens_dto.access_token, config_manager.jwt.ACCESS_TOKEN_TYPE)
             username = self.jwt_service.get_token_subject(jwt_tokens_dto.access_token)

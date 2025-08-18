@@ -18,7 +18,7 @@ class UpdateEmailInteractor:
         self.jwt_service = jwt_service
         self.transaction_manager = transaction_manager
 
-    async def execute(self, jwt_token: str, dto: ChangeEmailDTO):
+    async def __call__(self, jwt_token: str, dto: ChangeEmailDTO):
         try:
             self.jwt_service.validate_token_type(jwt_token, config_manager.jwt.ACCESS_TOKEN_TYPE)
             username = self.jwt_service.get_token_subject(jwt_token)

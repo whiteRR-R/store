@@ -10,7 +10,7 @@ class GenerateAccessTokenFromRefreshInteractor:
         self.redis_repository = redis_repository
         self.jwt_service = jwt_service
 
-    async def execute(self, jwt_dto: JWTTokenDTO):
+    async def __call__(self, jwt_dto: JWTTokenDTO):
         try:
             self.jwt_service.validate_token_type(jwt_dto.token, config_manager.jwt.REFRESH_TOKEN_TYPE)
             token_data = self.jwt_service.decode_token(jwt_dto.token)

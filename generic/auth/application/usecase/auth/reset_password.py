@@ -18,7 +18,7 @@ class ResetPasswordInteractor:
         self.password_security = password_security
         self.transaction_manager = transaction_manager
 
-    async def execute(self, reset_dto: ResetPasswordDTO):
+    async def __call__(self, reset_dto: ResetPasswordDTO):
         try:
             if not await self.redis_repository.exists(f"reset_password:{reset_dto.reset_key}"):
                 raise TokenProcessingException("Reset key not found in Redis")

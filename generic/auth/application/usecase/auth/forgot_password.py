@@ -10,7 +10,7 @@ class ForgotPasswordInteractor:
         self.auth_repository = auth_repository
         self.redis_repository = redis_repository
 
-    async def execute(self, forgot_dto: ForgotPasswordDTO):
+    async def __call__(self, forgot_dto: ForgotPasswordDTO):
         user = await self.auth_repository.get_by_email(forgot_dto.email)
         if not user:
             raise UserNotFoundException(f"User with email '{forgot_dto.email}' not found.")

@@ -16,7 +16,7 @@ class RegisterUserInteractor:
         self.password_security = password_security
         self.transaction_manager = transaction_manager
 
-    async def execute(self, user_data: UserDTO):
+    async def __call__(self, user_data: UserDTO):
         if await self.auth_repository.get_by_username(user_data.username):
             raise UsernameAlreadyExistsException(user_data.username)
         if await self.auth_repository.get_by_email(user_data.email):

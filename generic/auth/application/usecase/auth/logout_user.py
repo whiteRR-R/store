@@ -9,7 +9,7 @@ class LogoutUserInteractor:
         self.redis_repository = redis_repository
         self.jwt_service = jwt_service
 
-    async def execute(self, access_token: str, refresh_token: str):
+    async def __call__(self, access_token: str, refresh_token: str):
         try:
             self.jwt_service.validate_token_type(access_token, config_manager.jwt.ACCESS_TOKEN_TYPE)
             token_data = self.jwt_service.decode_token(refresh_token)

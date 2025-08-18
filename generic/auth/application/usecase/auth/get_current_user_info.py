@@ -9,7 +9,7 @@ class GetCurrentUserInfoInteractor:
         self.auth_repository = auth_repository
         self.jwt_service = jwt_service
 
-    async def execute(self, jwt_token: str):
+    async def __call__(self, jwt_token: str):
         try:
             self.jwt_service.validate_token_type(jwt_token, config_manager.jwt.ACCESS_TOKEN_TYPE)
             username = self.jwt_service.get_token_subject(jwt_token)

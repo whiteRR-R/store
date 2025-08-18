@@ -19,7 +19,7 @@ class LoginUserInteractor:
         self.password_security = password_security
         self.jwt_service = jwt_service
 
-    async def execute(self, user_credentials: UserLoginDTO):
+    async def __call__(self, user_credentials: UserLoginDTO):
         user = await self.auth_repository.get_by_username(user_credentials.username)
         if not user:
             raise InvalidCredentialsException()
