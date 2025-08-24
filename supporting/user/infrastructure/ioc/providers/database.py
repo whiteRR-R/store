@@ -1,7 +1,7 @@
 from typing import AsyncIterable
 from dishka import Provider, Scope, provide
 from sqlalchemy.ext.asyncio import AsyncSession
-from domain.interfaces.transaction_manager import TransactionManager
+from application.common.transaction_manager import TransactionManager
 from infrastructure.persistence.database import SQLAlchemyDatabase
 from infrastructure.persistence.transaction_manager import SQLAlchemyTransactionManager
 
