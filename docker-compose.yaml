@@ -10,8 +10,7 @@ services:
     volumes:
       - ./postgres_data/account:/var/lib/postgresql/data
     ports:
-      - "${ACCOUNT_POSTGRES_PORT}:${ACCOUNT_POSTGRES_PORT}"
-    command: -p ${ACCOUNT_POSTGRES_PORT}
+      - "${ACCOUNT_POSTGRES_PORT}:5432"
     networks:
       - backend
 
@@ -26,8 +25,7 @@ services:
     volumes:
       - ./postgres_data/auth:/var/lib/postgresql/data
     ports:
-      - "${AUTH_POSTGRES_PORT}:${AUTH_POSTGRES_PORT}"
-    command: -p ${AUTH_POSTGRES_PORT}
+      - "${AUTH_POSTGRES_PORT}:5432"
     networks:
       - backend
 
@@ -35,10 +33,9 @@ services:
   auth_redis_cache:
     image: redis:latest
     container_name: auth_redis_cache
-    environment:
-      REDIS_PASSWORD: ${AUTH_REDIS_PASSWORD}
+    command: redis-server --requirepass ${AUTH_REDIS_PASSWORD}
     ports:
-      - "${AUTH_REDIS_PORT}:${AUTH_REDIS_PORT}"
+      - "${AUTH_REDIS_PORT}:6379"
     networks:
       - backend
 
@@ -67,8 +64,7 @@ services:
     volumes:
       - ./postgres_data/order:/var/lib/postgresql/data
     ports:
-      - "${POSTGRES_DATABASE_PORT}:${POSTGRES_DATABASE_PORT}"
-    command: -p ${POSTGRES_DATABASE_PORT}
+      - "${POSTGRES_DATABASE_PORT}:5432"
     networks:
       - backend
 
@@ -83,8 +79,7 @@ services:
     volumes:
       - ./postgres_data/category:/var/lib/postgresql/data
     ports:
-      - "${PRODUCT_POSTGRES_PORT}:${PRODUCT_POSTGRES_PORT}"
-    command: -p ${PRODUCT_POSTGRES_PORT}
+      - "${PRODUCT_POSTGRES_PORT}:5432"
     networks:
       - backend
 
@@ -93,8 +88,6 @@ services:
     image: redis:6.2-alpine
     container_name: product_redis_cache
     restart: always
-    ports:
-      - "${PRODUCT_REDIS_PORT}:${PRODUCT_REDIS_PORT}"
     command: >
       redis-server
       --appendonly yes
@@ -103,6 +96,8 @@ services:
       --save 60 10000
       --loglevel warning
       --requirepass ${PRODUCT_REDIS_PASSWORD}
+    ports:
+      - "${PRODUCT_REDIS_PORT}:6379"
     volumes:
       - redis_data:/data
     networks:
@@ -114,8 +109,8 @@ services:
     container_name: rabbitmq
     hostname: rabbitmq
     ports:
-      - "${RABBITMQ_PORT}:${RABBITMQ_PORT}"
-      - "${RABBITMQ_MANAGEMENT_PORT}:${RABBITMQ_MANAGEMENT_PORT}"
+      - "${RABBITMQ_PORT}:5672"
+      - "${RABBITMQ_MANAGEMENT_PORT}:15672"
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
