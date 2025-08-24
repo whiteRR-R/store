@@ -1,9 +1,10 @@
 from fastapi import FastAPI
-from container import Container
+from dishka.integrations.fastapi import setup_dishka
 from domain.exceptions import (
     DomainException,
     ValidationError
 )
+from infrastructure.ioc.container import create_container
 from presentation.controllers.auth_controller import router as auth_router
 from application.exceptions import (
     AuthException,
@@ -27,7 +28,8 @@ class Application:
     def __init__(self):
         """Инициализирует FastAPI приложение и настраивает зависимости."""
         self.app = FastAPI()
-        self.container = Container()
+        self.container = create_container()
+        setup_dishka(self.container, self.app)
         self._configure_routes()
         self._registration_exception_handler()
         
