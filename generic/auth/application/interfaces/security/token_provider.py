@@ -4,7 +4,7 @@ from application.dtos.jwt_token_dto import JWTTokensDTO
 from config import config_manager
 
 
-class JWTServiceProtocol(Protocol):
+class TokenProviderProtocol(Protocol):
     def _create_token(
         self,
         payload: dict,
@@ -34,7 +34,7 @@ class JWTServiceProtocol(Protocol):
         expire_time_in_days: int = config_manager.jwt.refresh_token_expire_time_day,
     ) -> str: ...
 
-    def generate_jwt_tokens(self, subject: str) -> JWTTokensDTO:
+    def generate_tokens(self, subject: str) -> JWTTokensDTO:
         """Генерует refresh и access токены и возвращает их"""
         ...
 

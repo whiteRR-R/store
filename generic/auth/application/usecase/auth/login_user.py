@@ -3,7 +3,7 @@ from application.exceptions import InvalidCredentialsException
 from domain.interface.repository.auth_repository import AuthRepositoryProtocol
 from domain.interface.repository.redis_repository import RedisRepositoryProtocol
 from domain.interface.services.hash_service import PasswordHasherProtocol
-from domain.interface.services.jwt_service import JWTServiceProtocol
+from application.interfaces.security.token_provider import TokenProviderProtocol
 
 
 class LoginUserInteractor:
@@ -12,7 +12,7 @@ class LoginUserInteractor:
         auth_repository: AuthRepositoryProtocol,
         redis_repository: RedisRepositoryProtocol,
         password_security: PasswordHasherProtocol,
-        jwt_service: JWTServiceProtocol,
+        jwt_service: TokenProviderProtocol,
     ):
         self.auth_repository = auth_repository
         self.redis_repository = redis_repository
@@ -26,7 +26,7 @@ class LoginUserInteractor:
         if not self.password_security.verify(user_credentials.password.encode(), user.hash_password):
             raise InvalidCredentialsException()
 
-        jwt_tokens = self.jwt_service.generate_jwt_tokens(user.username)
+        jwt_tokens = self.jwt_service.generate_tokens(user.username)
         refresh_token = self.jwt_service.decode_token(jwt_tokens.refresh_token)
         refresh_jti = refresh_token.get("jti")
         await self.redis_repository.set(f"refresh_token:{refresh_jti}", jwt_tokens.refresh_token)

@@ -2,11 +2,11 @@ from application.dtos.jwt_token_dto import JWTTokenDTO
 from application.exceptions import TokenProcessingException
 from config import config_manager
 from domain.interface.repository.redis_repository import RedisRepositoryProtocol
-from domain.interface.services.jwt_service import JWTServiceProtocol
+from application.interfaces.security.token_provider import TokenProviderProtocol
 
 
 class GenerateAccessTokenFromRefreshInteractor:
-    def __init__(self, redis_repository: RedisRepositoryProtocol, jwt_service: JWTServiceProtocol):
+    def __init__(self, redis_repository: RedisRepositoryProtocol, jwt_service: TokenProviderProtocol):
         self.redis_repository = redis_repository
         self.jwt_service = jwt_service
 

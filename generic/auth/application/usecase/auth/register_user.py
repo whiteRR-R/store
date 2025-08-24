@@ -4,7 +4,7 @@ from application.factories.user_factory import UserFactory
 from application.interfaces.gateways.user_gateway import UserGateway
 from domain.interface.services.hash_service import PasswordHasherProtocol
 from domain.interface.repository.auth_repository import AuthRepositoryProtocol
-from domain.interface.transaction_manager.transaction_manager import TransactionManagerProtocol
+from application.interfaces.transaction_manager import TransactionManagerProtocol
 import logging
 
 

@@ -1,11 +1,11 @@
 from config import config_manager
 from application.exceptions import TokenProcessingException
 from domain.interface.repository.redis_repository import RedisRepositoryProtocol
-from domain.interface.services.jwt_service import JWTServiceProtocol
+from application.interfaces.security.token_provider import TokenProviderProtocol
 
 
 class LogoutUserInteractor:
-    def __init__(self, redis_repository: RedisRepositoryProtocol, jwt_service: JWTServiceProtocol):
+    def __init__(self, redis_repository: RedisRepositoryProtocol, jwt_service: TokenProviderProtocol):
         self.redis_repository = redis_repository
         self.jwt_service = jwt_service
 

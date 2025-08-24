@@ -3,7 +3,7 @@ from application.exceptions import TokenProcessingException, UserNotFoundExcepti
 from domain.interface.services.hash_service import PasswordHasherProtocol
 from domain.interface.repository.auth_repository import AuthRepositoryProtocol
 from domain.interface.repository.redis_repository import RedisRepositoryProtocol
-from domain.interface.transaction_manager.transaction_manager import TransactionManagerProtocol
+from application.interfaces.transaction_manager import TransactionManagerProtocol
 
 
 class ResetPasswordInteractor:

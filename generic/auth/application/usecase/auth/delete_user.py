@@ -3,8 +3,8 @@ from application.dtos.jwt_token_dto import JWTTokenDTO
 from application.exceptions import UserNotFoundException, TokenProcessingException
 from domain.interface.repository.auth_repository import AuthRepositoryProtocol
 from domain.interface.repository.redis_repository import RedisRepositoryProtocol
-from domain.interface.services.jwt_service import JWTServiceProtocol
-from domain.interface.transaction_manager.transaction_manager import TransactionManagerProtocol
+from application.interfaces.security.token_provider import TokenProviderProtocol
+from application.interfaces.transaction_manager import TransactionManagerProtocol
 
 
 class DeleteUserInteractor:
@@ -12,7 +12,7 @@ class DeleteUserInteractor:
         self, 
         auth_repository: AuthRepositoryProtocol, 
         redis_repository: RedisRepositoryProtocol, 
-        jwt_service: JWTServiceProtocol,
+        jwt_service: TokenProviderProtocol,
         transaction_manager: TransactionManagerProtocol
     ):
         self.auth_repository = auth_repository

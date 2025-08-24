@@ -1,11 +1,11 @@
 from config import config_manager
 from application.exceptions import UserNotFoundException, TokenProcessingException
 from domain.interface.repository.auth_repository import AuthRepositoryProtocol
-from domain.interface.services.jwt_service import JWTServiceProtocol
+from application.interfaces.security.token_provider import TokenProviderProtocol
 
 
 class GetCurrentUserInfoInteractor:
-    def __init__(self, auth_repository: AuthRepositoryProtocol, jwt_service: JWTServiceProtocol):
+    def __init__(self, auth_repository: AuthRepositoryProtocol, jwt_service: TokenProviderProtocol):
         self.auth_repository = auth_repository
         self.jwt_service = jwt_service
 
