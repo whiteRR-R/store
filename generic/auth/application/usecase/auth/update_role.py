@@ -1,12 +1,12 @@
 from uuid import UUID
 from application.exceptions import UserNotFoundException
-from domain.interface.transaction_manager.transaction_manager import TransactionManager
-from domain.valueobject.role import Role
+from domain.interface.transaction_manager.transaction_manager import TransactionManagerProtocol
+from domain.enums.role import Role
 from domain.interface.repository.auth_repository import AuthRepositoryProtocol
 
 
 class UpdateRoleInteractor:
-    def __init__(self, auth_repository: AuthRepositoryProtocol, transaction_manager: TransactionManager):
+    def __init__(self, auth_repository: AuthRepositoryProtocol, transaction_manager: TransactionManagerProtocol):
         self.auth_repository = auth_repository
         self.transaction_manager = transaction_manager
 

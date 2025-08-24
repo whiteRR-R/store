@@ -1,7 +1,7 @@
 from config import config_manager
 from application.dtos.change_email import ChangeEmailDTO
 from application.exceptions import UserNotFoundException, EmailAlreadyExistsException, TokenProcessingException
-from domain.interface.transaction_manager.transaction_manager import TransactionManager
+from domain.interface.transaction_manager.transaction_manager import TransactionManagerProtocol
 from domain.valueobject.email import Email
 from domain.interface.repository.auth_repository import AuthRepositoryProtocol
 from domain.interface.services.jwt_service import JWTServiceProtocol
@@ -12,7 +12,7 @@ class UpdateEmailInteractor:
         self, 
         auth_repository: AuthRepositoryProtocol, 
         jwt_service: JWTServiceProtocol,
-        transaction_manager: TransactionManager
+        transaction_manager: TransactionManagerProtocol
     ):
         self.auth_repository = auth_repository
         self.jwt_service = jwt_service
