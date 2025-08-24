@@ -1,7 +1,7 @@
 from typing import Protocol
 
 
-class TransactionManager(Protocol):
+class TransactionManagerProtocol(Protocol):
     async def commit(self):
         ...
 
