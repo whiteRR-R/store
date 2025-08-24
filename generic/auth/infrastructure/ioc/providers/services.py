@@ -1,13 +1,13 @@
 from dishka import Provider, Scope, provide
 
 from domain.interface.services.jwt_service import JWTServiceProtocol
-from application.interfaces.security.password_security import PasswordSecurityProtocol
+from domain.interface.services.hash_service import PasswordHasherProtocol
 from infrastructure.services.jwt_service import JWTService
-from infrastructure.security.password_security import PasswordSecurity
+from infrastructure.services.security.password_security import BcryptPasswordHasher
 
 
 class ServicesProvider(Provider):
     scope = Scope.APP
 
-    password_service = provide(PasswordSecurity, provides=PasswordSecurityProtocol)
+    password_service = provide(BcryptPasswordHasher, provides=PasswordHasherProtocol)
     jwt_service = provide(JWTService, provides=JWTServiceProtocol)
