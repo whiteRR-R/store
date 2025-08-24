@@ -5,7 +5,7 @@ from domain.exceptions import (
     ValidationError
 )
 from infrastructure.ioc.container import create_container
-from presentation.controllers.auth_controller import router as auth_router
+from presentation.api.v1 import router as auth_router
 from application.exceptions import (
     AuthException,
     RegistrationException,

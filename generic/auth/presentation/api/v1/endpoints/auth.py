@@ -1,5 +1,4 @@
 from typing import Annotated
-from uuid import UUID
 from fastapi import APIRouter, Response, status, HTTPException, Depends, Request
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from dishka.integrations.fastapi import FromDishka, inject
@@ -15,7 +14,7 @@ from application.usecase.auth.get_current_user_info import GetCurrentUserInfoInt
 from application.usecase.auth.generate_access_token_from_refresh import GenerateAccessTokenFromRefreshInteractor
 from application.dtos.change_email import ChangeEmailDTO
 from application.dtos.login_dto import UserLoginDTO
-from application.dtos.jwt_token_dto import JWTTokensDTO
+from application.dtos.jwt_token_dto import JWTTokenDTO, JWTTokensDTO
 from application.dtos.user_dto import UserDTO
 from application.dtos.forgot_password_dto import ForgotPasswordDTO
 from application.dtos.reset_password_dto import ResetPasswordDTO
@@ -84,7 +83,7 @@ async def delete_account(
     auth_usecase: FromDishka[DeleteUserInteractor],
     token: str = Depends(oauth2_scheme),
 ):
-    await auth_usecase(token)
+    await auth_usecase(JWTTokenDTO(token=token))
     response.delete_cookie("access_token")
     response.delete_cookie("refresh_token")
     return DeleteUserResponse(message="User successfully deleted")
@@ -120,7 +119,7 @@ async def refresh_tokens(
     refresh_token = request.cookies.get("refresh_token")
     if not refresh_token:
         raise HTTPException(status_code=401, detail="Refresh token missing")
-    access_token = await auth_usecase(refresh_token)
+    access_token = await auth_usecase(JWTTokenDTO(token=refresh_token))
     response.set_cookie("access_token", access_token, httponly=True, secure=True, samesite="lax")
     return JWTTokenResponse(access_token=access_token, refresh_token=refresh_token)
 
