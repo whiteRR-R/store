@@ -6,6 +6,7 @@ class UserFactory:
     @staticmethod
     def from_dto(user_dto: UserCreateDTO) -> User:
         return User(
+            user_id=user_dto.user_id,
             username=user_dto.username,
             email=user_dto.email,
             hashed_password=user_dto.hashed_password,
