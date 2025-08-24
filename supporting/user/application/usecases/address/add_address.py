@@ -4,7 +4,7 @@ from application.exceptions import UserNotFoundException
 from application.factories.address_factory import AddressFactory
 from domain.interfaces.repositories.address_repository import AddressRepository
 from domain.interfaces.repositories.user_repository import UserRepository
-from domain.interfaces.transaction_manager import TransactionManager
+from application.common.transaction_manager import TransactionManager
 
 
 class AddUserAddressUseCase:

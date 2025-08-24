@@ -1,8 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from domain.interfaces.transaction_manager import TransactionManager
 
 
-class SQLAlchemyTransactionManager(TransactionManager):
+class SQLAlchemyTransactionManager:
     def __init__(self, session: AsyncSession):
         self.session = session
         

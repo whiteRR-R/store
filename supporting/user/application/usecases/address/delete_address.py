@@ -2,7 +2,7 @@ from uuid import UUID
 from application.exceptions import AddressNotFoundException
 from domain.interfaces.repositories.address_repository import AddressRepository
 from domain.interfaces.repositories.user_repository import UserRepository
-from domain.interfaces.transaction_manager import TransactionManager
+from application.common.transaction_manager import TransactionManager
 from infrastructure.exceptions import UserNotFoundException
 
 
