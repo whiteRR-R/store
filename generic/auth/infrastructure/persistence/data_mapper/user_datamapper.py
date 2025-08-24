@@ -1,5 +1,5 @@
 from domain.entities.user import User
-from domain.valueobject.role import Role
+from domain.enums.role import Role
 from application.factories.user_factory import UserFactory
 from infrastructure.persistence.models.user_model import UserModel
 from infrastructure.persistence.models.user_model import UserModel
@@ -19,7 +19,7 @@ class UserDataMapper:
 
     def to_entity(self, model: UserModel) -> User:
         """Преобразует ORM-модель в доменную сущность."""
-        return UserFactory.create(
+        return UserFactory.from_params(
             username=model.username,
             email=model.email,
             role=Role(model.role),
