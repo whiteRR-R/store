@@ -1,6 +1,7 @@
 import re
+from uuid import UUID
 from pydantic import BaseModel, EmailStr, Field, field_validator
-from domain.valueobject.role import Role
+from domain.enums.role import Role
 
 
 class UserDTO(BaseModel):
@@ -19,3 +20,12 @@ class UserDTO(BaseModel):
         if not re.search(r'[A-Za-z]', value):
             raise ValueError('Пароль должен содержать хотя бы одну букву')
         return value
+
+
+class UserGatewayDTO(BaseModel):
+    user_id: UUID
+    username: str
+    email: str
+    hashed_password: bytes
+    role: str
+    status: str = "active"
