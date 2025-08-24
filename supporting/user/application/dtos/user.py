@@ -10,6 +10,7 @@ class UserDTO(BaseModel):
     status: str
 
 class UserCreateDTO(BaseModel):
+    user_id: UUID
     username: str
     email: str
     hashed_password: str
