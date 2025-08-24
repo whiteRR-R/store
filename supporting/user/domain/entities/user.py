@@ -1,22 +1,6 @@
 from uuid import UUID
-from enum import Enum
-
-
-class UserRole(Enum):
-    ADMIN = "admin"
-    USER = "user"
-    GUEST = "guest"
-
-    def __repr__(self):
-        return self.value
-
-class UserStatus(Enum):
-    ACTIVE = "active"
-    INACTIVE = "inactive"
-    BANNED = "banned"
-    
-    def __repr__(self):
-        return self.value
+from domain.enums.role import UserRole
+from domain.enums.status import UserStatus
 
 
 class User:
@@ -25,7 +9,7 @@ class User:
         user_id: UUID,
         username: str,
         email: str,
-        hashed_password: str,
+        hashed_password: bytes,
         role: UserRole = UserRole.USER,
         status: UserStatus = UserStatus.INACTIVE,
     ):
