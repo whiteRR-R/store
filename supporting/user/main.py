@@ -12,6 +12,7 @@ class Application:
         setup_dishka(self.container, self.app)
 
     def __include_routers(self):
-        self.app.include_router(api_v1_router)
+        self.app.include_router(api_v1_router, tags=["auth"])
 
-app = Application()
+application = Application()
+app = application.app
