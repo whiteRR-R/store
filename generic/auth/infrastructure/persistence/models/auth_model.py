@@ -5,7 +5,7 @@ from domain.entities.user import User
 from infrastructure.persistence.database import Base
 
 
-class UserModel(Base):
+class AuthModel(Base):
     __tablename__ = "users"
     
     id: Mapped[uuid.UUID] = mapped_column(UUID, default=uuid.uuid4(), primary_key=True)

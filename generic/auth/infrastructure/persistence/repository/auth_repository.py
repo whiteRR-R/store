@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update
 from domain.entities.user import User
 from infrastructure.persistence.data_mapper.user_datamapper import UserDataMapper
-from infrastructure.persistence.models.user_model import UserModel
+from infrastructure.persistence.models.auth_model import AuthModel
 
 
 class SQLAlchemyAuthRepository:
@@ -23,8 +23,8 @@ class SQLAlchemyAuthRepository:
     async def update(self, user: User) -> None:
         """Обновляет данные пользователя."""
         stmt = (
-            update(UserModel)
-            .where(UserModel.username == user.username)
+            update(AuthModel)
+            .where(AuthModel.username == user.username)
             .values(
                 email=user.email,
                 hashed_password=user.hash_password,
@@ -36,7 +36,7 @@ class SQLAlchemyAuthRepository:
     async def delete(self, username: str) -> None:
         """Удаляет пользователя по username."""
         stmt = await self.session.execute(
-            select(UserModel).where(UserModel.username == username)
+            select(AuthModel).where(AuthModel.username == username)
         )
         user = stmt.scalar_one_or_none()
         if user:
@@ -45,7 +45,7 @@ class SQLAlchemyAuthRepository:
     async def get_by_username(self, username: str) -> Optional[User]:
         """ Находит пользователя по его имени (username). """
         stmt = await self.session.execute(
-            select(UserModel).where(UserModel.username == username)
+            select(AuthModel).where(AuthModel.username == username)
         )
         user = stmt.scalar_one_or_none()
         return self.user_datamapper.to_entity(user) if user else None
@@ -53,7 +53,7 @@ class SQLAlchemyAuthRepository:
     async def get_by_email(self, email: str) -> Optional[User]:
         """ Находит пользователя по его почте (email). """
         stmt = await self.session.execute(
-            select(UserModel).where(UserModel.email == email)
+            select(AuthModel).where(AuthModel.email == email)
         )
         user = stmt.scalar_one_or_none()
         return self.user_datamapper.to_entity(user) if user else None
