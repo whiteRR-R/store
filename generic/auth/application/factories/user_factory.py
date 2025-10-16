@@ -39,12 +39,3 @@ class UserFactory:
             role=user.role
             )
     
-    @staticmethod
-    def to_gateway_dto(user: User) -> UserGatewayDTO:
-        return UserGatewayDTO(
-            user_id=user.id,
-            username=user.username,
-            email=user.email,
-            hashed_password=user.hash_password,
-            role=user.role.value,
-        )
